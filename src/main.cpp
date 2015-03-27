@@ -10,7 +10,7 @@
 #include "Transform.hpp"
 #include "Camera.hpp"
 #include "NodeVisitor.hpp"
-
+#include "State.hpp"
 #include <memory>
 
 #include <glm/glm.hpp>
@@ -69,13 +69,11 @@ int main(int argc, char* argv[])
 	Shader s = Shader("../shaders/vshader.glsl", "../shaders/fshader.glsl");
 	NodeVisitor n = NodeVisitor();
 
-	glm::vec3 dr = glm::vec3(10,0,0);
-	glm::mat4 r = glm::translate(glm::mat4(1.f), dr);
 
-	std::cout<< glm::to_string(r[3]) << std::endl;
+//	State s1 = State();
 
-	r = glm::translate(r, dr);
-	std::cout<< glm::to_string(r[3]) << std::endl;
+	//if(s1.is)
+
 
 
 	while(window.isRunning()){
