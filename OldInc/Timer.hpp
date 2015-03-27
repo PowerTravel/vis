@@ -1,7 +1,5 @@
-#ifndef TIMER_H
-#define TIMER_H
-
-#include <GLFW/glfw3.h>
+#ifndef TIMER_HPP
+#define TIMER_HPP
 
 class Timer
 {
@@ -26,4 +24,4 @@ class Timer
 };
 
 
-#endif // TIMER_H
+#endif // TIMER_HPP

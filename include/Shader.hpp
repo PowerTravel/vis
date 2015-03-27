@@ -23,16 +23,6 @@ typedef std::shared_ptr<Shader> shader_ptr;
 class Shader{
 
 	public:
-/*
-		enum DataTypes{
-			VBO_VERTEX,
-			VBO_NORMAL,
-			VBO_TEXTURE_COORDINATE,
-			VBO_FACE,
-			UNIFORM,
-		};
-*/
-		Shader();
 		Shader(const char* vShaderFile, const char* fShaderFile);
 		virtual ~Shader();
 		void use();

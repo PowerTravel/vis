@@ -13,9 +13,14 @@ class Node;
 typedef std::shared_ptr<Node> node_ptr;
 #endif // NODE_PTR
 
+#ifndef CALLBACK_PTR
+#define CALLBACK_PTR
+typedef std::shared_ptr<UpdateCallback> callback_ptr;
+#endif // CALLBACL_PTR
+
 /*	
  *	Class: 		Node
- *	Purpose: 	BaseClass for the Scenegraph. 
+ *	Purpose: 	Abstract BaseClass for the Scenegraph. 
  *	Misc:		All other nodes inherit from this one.
  */
 class Node{
@@ -41,7 +46,7 @@ class Node{
 
 	protected:
 		N_Type _type;
-		state_ptr _state;
+		State _state;
 		callback_ptr _callback;
 };
 

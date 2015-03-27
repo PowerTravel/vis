@@ -29,3 +29,6 @@
 
 # Folders
 _build
+.DS_Store
+.hpp.swp
+.cpp.swp

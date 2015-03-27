@@ -1,7 +1,7 @@
 #include "NodeVisitor.hpp"
-#include "Geometry.hpp"
+//#include "Geometry.hpp"
 #include "Group.hpp"
-#include "Transform.hpp"
+//#include "Transform.hpp"
 
 NodeVisitor::NodeVisitor(){}
 
@@ -29,9 +29,9 @@ void NodeVisitor::init()
 void NodeVisitor::cleanup()
 {
 }
+
 void NodeVisitor::doTraverse(Node* node)
 {
-	
 	// Inject itself into the node
 	node->acceptVisitor(*this);
 	
@@ -41,30 +41,35 @@ void NodeVisitor::doTraverse(Node* node)
 	{
 		Group* grpPtr =(Group*) node;
 		NodeList childList = grpPtr->childList;
-		for(NodeList::const_iterator ci = childList.begin(); ci != childList.end(); ci++)
+		for(NodeList::iterator ci = childList.begin(); ci != childList.end(); ci++)
 		{
-			doTraverse(*ci);
+			doTraverse(ci->get());
 		}
 	}
+
 }
 
-void NodeVisitor::apply(RenderToTexture* tex)
-{
-	printf("Visiting RenderToTexture from NodeVisitor \n");
-}
-void NodeVisitor::apply(Geometry* g)
+void NodeVisitor::apply(Geometry* n)
 {
 	printf("Visiting Geometry from NodeVisitor \n");
 }
-void NodeVisitor::apply(Group* grp)
+
+void NodeVisitor::apply(Group* n)
 {
 	printf("Visiting Group from NodeVisitor\n");
 }
-void NodeVisitor::apply(Transform* t)
+
+void NodeVisitor::apply(Transform* n)
 {
 	printf("Visiting Transform from NodeVisitor \n");
 }
-void NodeVisitor::apply(Camera* cam)
+/*
+void NodeVisitor::apply(Camera* n)
 {
 	printf("Visiting Camera from NodeVisitor \n");
 }
+void NodeVisitor::apply(RenderToTexture* n)
+{
+	printf("Visiting RenderToTexture from NodeVisitor \n");
+}
+*/

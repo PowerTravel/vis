@@ -1,21 +1,22 @@
 #version 330 core
 out vec4 fragColor;
 
-		uniform vec4 ambientProduct[3],diffuseProduct[3],specularProduct[3]; 
+uniform vec4 ambientProduct[3],diffuseProduct[3],specularProduct[3]; 
 uniform float attenuation[3];
 uniform float shininess;
 uniform int usingDiffTexture, usingShadowMap, nrLights;
+//uniform sampler2D diffuseTextureID;//, shadowMapID;
 uniform sampler2D diffuseTextureID;//, shadowMapID;
-//uniform sampler2DShadow shadowMapID;
+//uniform sampler2D Shadow shadowMapID;
 uniform sampler2D shadowMapID;
-varying vec3 L[3],E[3],H[3],N[3];
-varying float R[3];
-varying vec2 texCoord0; 
-varying vec4 ShadowCoord;
+in vec3 L[3],E[3],H[3],N[3];
+in float R[3];
+in vec2 texCoord0; 
+in vec4 ShadowCoord;
 
 
 
-varying vec4 pos2;
+in vec4 pos2;
 
 void main() 
 { 
@@ -31,8 +32,8 @@ void main()
 		if(usingDiffTexture != 0)
 		{
 			float alpha=1;
-			diffuse = Kd*(alpha*texture2D(diffuseTextureID,texCoord0.st)+(1-alpha)*diffuseProduct[i]);
-			//diffuse = (alpha*texture2D(diffuseTextureID,texCoord0.st)+(1-alpha)*diffuseProduct[i]);
+			diffuse = Kd*(alpha*texture(diffuseTextureID,texCoord0.st)+(1-alpha)*diffuseProduct[i]);
+			//diffuse = (alpha*texture(diffuseTextureID,texCoord0.st)+(1-alpha)*diffuseProduct[i]);
 		}else{
 			diffuse = Kd*diffuseProduct[i];
 		}

@@ -5,6 +5,16 @@ add_executable(vis
 	src/main.cpp
 	src/MainWindow.cpp
 	src/Timer.cpp
+
+	src/Shader.cpp
+
+	src/Node.cpp
+	src/Geometry.cpp
+	src/Group.cpp
+	src/Transform.cpp
+	src/State.cpp
+	src/UpdateCallback.cpp
+	src/NodeVisitor.cpp
 )
 
 find_package(OpenGL REQUIRED)
@@ -53,10 +63,9 @@ target_link_libraries(vis
 
 
 
-# set compiler flags
-list(APPEND 
-	"${CMAKE_CXX_FLAGS} -g -std=c++11"
-)
+ #set compiler flags
+list( APPEND CMAKE_CXX_FLAGS 
+	"-std=c++0x ${CMAKE_CXX_FLAGS} -g")
 
 install(TARGETS vis DESTINATION bin)
 

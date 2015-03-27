@@ -1,14 +1,14 @@
 #include "Node.hpp"
-#include "NodeVisitor.hpp"
+
 Node::Node()
 {
-	_state = std::shared_ptr< State >(new State());
+	_state = State();
 	_type = NODE;
+	_callback = NULL;	
 }
 
 Node::~Node()
 {
-	_state = NULL;
 	_callback = NULL;
 }
 
@@ -65,7 +65,7 @@ UpdateCallback* Node::getUpdateCallback()
 void Node::setState(State* s)
 {
 	if(s != NULL){
-		_state->merge(s);
+		_state.merge(s);
 	}
 }
 
@@ -79,7 +79,7 @@ void Node::setState(State* s)
  */
 State* Node::getState()
 {
-	return _state.get();
+	return &_state;
 }
 
 /*

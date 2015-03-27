@@ -1,22 +1,15 @@
 #ifndef NODEVISITOR_HPP
 #define NODEVISITOR_HPP
 
-#include <memory>
 #include "State.hpp"
 #include "Node.hpp"
-#include <list>
 
 class Node;
 class Geometry;
 class Group;
 class Transform;
-class Camera;
-class RenderToTexture;
-
-#ifndef NODE_LIST
-#define NODE_LIST
-typedef std::list< Node* > NodeList;
-#endif //NODE_LIST
+//class Camera;
+//class RenderToTexture;
 
 /*	
  *	Class: 		NodeVisitor
@@ -34,11 +27,11 @@ class NodeVisitor{
 		virtual void traverse( Node* node );
 
 		// Each node has their own apply function
-		virtual void apply(RenderToTexture* tex);
-		virtual void apply(Geometry* g);
-		virtual void apply(Group* grp);
-		virtual void apply(Transform* t);
-		virtual void apply(Camera* cam);
+		virtual void apply(Geometry* n);
+		virtual void apply(Group* n);
+		virtual void apply(Transform* n);
+//		virtual void apply(Camera* n);
+//		virtual void apply(RenderToTexture* n);
 		
 	protected:
 		virtual void init();

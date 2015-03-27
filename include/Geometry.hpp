@@ -1,19 +1,12 @@
 #ifndef GEOMETRY_HPP
 #define GEOMETRY_HPP
+
 #include "Node.hpp"
-#include "Vec3.hpp"
 #include <assimp/scene.h>
 
 #include <GL/glew.h>
 #include <vector>
 
-class RenderVisitor;
-
-#ifndef GEOMETRY_PTR
-#define GEOMETRY_PTR
-class Geometry;
-typedef std::shared_ptr<Geometry> geometry_ptr;
-#endif //GEOMETRY_PTR
 
 #ifndef GEOMETRY_VEC
 #define GEOMETRY_VEC
@@ -22,15 +15,19 @@ typedef std::vector< std::shared_ptr<Geometry> > geometry_vec;
 #endif //GEOMETRY_VEC
 
 
+#ifndef GEOMETRY_PTR
+#define GEMOETRY_PTR
+class Geometry;
+typedef std::shared_ptr<Geometry> geometry_ptr;
+#endif // GEOMETRY_PTR
+
 /*
  * Class:	Geometry
  * Purpose:	Loads geometries
  * Misc:
  */
 class Geometry : public Node{
-
 	public:
-
 		enum DataType{
 			VERTEX,
 			TEXTURECOORDINATE,
@@ -45,15 +42,14 @@ class Geometry : public Node{
 		void acceptVisitor(NodeVisitor& v);
 		void draw();
 
-		// Helperfnction that loads a file
+		// Helperfunction that loads a file
 		static geometry_vec loadFile(const char* filePath);
 		// Create a geometry directly from arrays of floats and ints.
 		void createGeom(int nVerts, int nFaces, float* verts, float* norm, int* face, float* texCoords);
-	
 
 	private:
 		// Center of mass, not used atm.
-		Vec3 _cm;
+		float _cm[3];
 
 		bool loaded;
 
@@ -65,7 +61,6 @@ class Geometry : public Node{
 		GLuint textureBuffer;
 		GLuint normalBuffer;
 		GLuint faceBuffer;
-		
 		
 		void createGeom( const aiMesh* mesh );
 		void loadVertices(int nrVertices, float* vertices);

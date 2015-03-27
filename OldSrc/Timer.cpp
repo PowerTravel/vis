@@ -1,4 +1,5 @@
-#include "Timer.h"
+#include "Timer.hpp"
+#include <ctime>
 
 Timer::Timer()
 {
@@ -18,7 +19,7 @@ void Timer::start()
 	started = true;
 	paused = false;
 
-	startTime = glfwGetTime();
+	startTime = std::clock();
 }
 
 void Timer::stop()
@@ -31,9 +32,9 @@ float Timer::getTime()
 {
 	if(started){
 		if(paused){
-			return pausedTime;
+			return pausedTime/1000000.f;
 		}else{
-			return glfwGetTime() - startTime;
+			return (std::clock() - startTime)/1000000.f;
 		}
 	}
 
@@ -45,7 +46,7 @@ void Timer::pause()
 	if( (started) && (!paused)  ){
 		
 		paused = true;
-		pausedTime = glfwGetTime() - startTime;
+		pausedTime = std::clock() - startTime;
 	}
 }
 
@@ -54,7 +55,7 @@ void Timer::unpause()
 	if(paused){
 		paused = false;
 
-		startTime = glfwGetTime() - pausedTime;
+		startTime = std::clock() - pausedTime;
 
 		pausedTime = 0.0;
 	}

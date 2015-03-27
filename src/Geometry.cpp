@@ -1,14 +1,18 @@
 #include "Geometry.hpp"
-#include "RenderVisitor.hpp"
-#include "Texture.hpp"
+#include "NodeVisitor.hpp"
+//#include "Texture.hpp"
+
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
+
 
 Geometry::Geometry() 
 {
 	nrVertices = 0;
 	nrFaces = 0;
-	_cm = Vec3();
+	_cm[0] = 0;	
+	_cm[1] = 0;
+	_cm[2] = 0;
 	loaded = false;
 	glGenVertexArrays(1, &VAO);
 }
@@ -17,7 +21,9 @@ Geometry::Geometry(const aiMesh* mesh)
 {
 	nrVertices = 0;
 	nrFaces = 0;
-	_cm = Vec3();
+	_cm[0] = 0;	
+	_cm[1] = 0;
+	_cm[2] = 0;
 	glGenVertexArrays(1, &VAO);
 	
 	createGeom(mesh);
@@ -80,6 +86,7 @@ geometry_vec Geometry::loadFile(const char* filePath){
 			// from it
 			geomVec[i] = geometry_ptr(new Geometry(mesh));
 
+/*
 			// this state will carry materials and textures
 			State materialState = State();
 			aiMaterial* mat =scene->mMaterials[mesh->mMaterialIndex];
@@ -105,6 +112,7 @@ geometry_vec Geometry::loadFile(const char* filePath){
 			}
 			// And merge the state with the geometry
 			geomVec[i] -> setState( &materialState);
+*/
 		}
 	}
 	return geomVec;
@@ -173,11 +181,13 @@ void Geometry::createGeom( const aiMesh* mesh )
 
 		for(int i = 0; i<nrVertices; i++)
 		{
-			Vec3 v = Vec3(	mesh->mVertices[i].x,
+			float v[3] = {	mesh->mVertices[i].x,
 							mesh->mVertices[i].y,
-							mesh->mVertices[i].z);
+							mesh->mVertices[i].z};
 			// calculate the center of mass
-			_cm = _cm+v;
+			_cm[0] += v[0];
+			_cm[1] += v[1];
+			_cm[2] += v[2];
 			vertices[3*i+0] = v[0];
 			vertices[3*i+1] = v[1];
 			vertices[3*i+2] = v[2];
@@ -191,7 +201,7 @@ void Geometry::createGeom( const aiMesh* mesh )
 
 		delete vertices;
 	}
-	
+
 	// copy over the texture coordinates
 	if(mesh->HasTextureCoords(0)){
 		float* texCoords = new float[nrVertices * 2];
@@ -206,7 +216,7 @@ void Geometry::createGeom( const aiMesh* mesh )
 
 		delete texCoords;
 	}
-
+	
 	// copy over the normals
 	if( mesh->HasNormals() ){
 		float* normals = new float[3*nrVertices];

@@ -77,7 +77,7 @@ void MainWindow::getInput()
 {
 	glfwPollEvents();
 
-	if(KEYBIT & KEY::q == KEY::q)
+	if((KEYBIT & KEY::q )== KEY::q)
 	{
 		glfwSetWindowShouldClose(_window, true);
 	}

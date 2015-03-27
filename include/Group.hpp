@@ -17,6 +17,7 @@ class Group;
 typedef std::shared_ptr<Group> group_ptr;
 #endif // GROUP_PTR
 
+
 /*	
  *	Class: 		Group
  *	Purpose: 	A node that can have children.

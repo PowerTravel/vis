@@ -4,15 +4,15 @@ layout (location = 1) in vec2 tempTex;
 layout (location = 2) in vec3 vNormals;
 uniform mat4 M, V, P;
 uniform mat4 B,Pl,Vl,Ml;
-varying vec2 texCoord0; 
+out vec2 texCoord0; 
 uniform int nrLights;
 
 uniform vec3 lightPosition[3];
-varying vec3 L[3],E[3],H[3],N[3];
-varying float R[3];
-varying vec4 ShadowCoord;
+out vec3 L[3],E[3],H[3],N[3];
+out float R[3];
+out vec4 ShadowCoord;
 
-varying vec4 pos2;
+out vec4 pos2;
 
 void main()
 {

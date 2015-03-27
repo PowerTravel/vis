@@ -1,12 +1,12 @@
 #include "Transform.hpp"
-#include "Hmat.hpp"
 #include "NodeVisitor.hpp"
-#include "Vec3.hpp"
-#include <cstdio>
+
+#include <glm/gtc/matrix_transform.hpp>
+
 
 Transform::Transform()
 {
-	 _T=TransformMatrix();
+	 _m=mat4();
 }
 
 Transform::~Transform()
@@ -14,29 +14,29 @@ Transform::~Transform()
 
 }
 
-Hmat Transform::getM()
+mat4 Transform::get()
 {
-	return _T.get(); 
+	return _m; 
 }
 
-void Transform::setM(Hmat m)
+void Transform::set(mat4 m)
 {
-	_T.set(m); 
+	_m = m; 
 }
 
-void Transform::translate(Vec3 ds)
+void Transform::translate(vec3 ds)
 {
-	_T.translate(ds);
+	_m = glm::translate(_m, ds);
 }
 
-void Transform::rotate(float angle, Vec3 axis)
+void Transform::rotate(float angle, vec3 axis)
 {
-	_T.rotate(angle, axis);
+	_m = glm::rotate(_m, angle, axis);
 }
 
-void Transform::scale(Vec3 ds)
+void Transform::scale(vec3 ds)
 {
-	_T.scale(ds);
+	_m = glm::scale(_m,ds);
 }
 
 void Transform::acceptVisitor(NodeVisitor& visitor)
