@@ -6,14 +6,14 @@
 #include <GLFW/glfw3.h>
 #include "Timer.hpp"
 
-#ifndef KEY
-#define KEY
+#ifndef _KEY__
+#define _KEY__
 typedef unsigned long keybit;
 namespace KEY{
 	const keybit nokey	= 0;
 	const keybit q 		= 1;
 };
-#endif // KEY
+#endif // _KEY__
 
 class MainWindow
 {	
@@ -47,7 +47,7 @@ class MainWindow
 		GLFWwindow* _window;
 		
 		static bool INITIALIZED;
-		static KEY::keybit KEYBIT;
+		static keybit KEYBIT;
 
 		std::string _header;
 		bool _running;

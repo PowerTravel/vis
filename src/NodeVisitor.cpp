@@ -63,11 +63,12 @@ void NodeVisitor::apply(Transform* n)
 {
 	printf("Visiting Transform from NodeVisitor \n");
 }
-/*
+
 void NodeVisitor::apply(Camera* n)
 {
 	printf("Visiting Camera from NodeVisitor \n");
 }
+/*
 void NodeVisitor::apply(RenderToTexture* n)
 {
 	printf("Visiting RenderToTexture from NodeVisitor \n");

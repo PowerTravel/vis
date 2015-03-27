@@ -12,6 +12,7 @@ add_executable(vis
 	src/Geometry.cpp
 	src/Group.cpp
 	src/Transform.cpp
+	src/Camera.cpp
 	src/State.cpp
 	src/UpdateCallback.cpp
 	src/NodeVisitor.cpp

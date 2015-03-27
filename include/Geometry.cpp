@@ -1,1 +1,0 @@
-#ifndef GEOMETRY_HPP

@@ -8,6 +8,7 @@
 #include "Geometry.hpp"
 #include "Group.hpp"
 #include "Transform.hpp"
+#include "Camera.hpp"
 #include "NodeVisitor.hpp"
 
 #include <memory>
@@ -39,6 +40,10 @@ group_ptr build_graph()
 {
 	geometry_vec gvec = Geometry::loadFile("../models/box.obj");
 	group_ptr grp = group_ptr(new Group());
+
+	camera_ptr cam = camera_ptr(new Camera());
+	grp->addChild(cam);
+
 	transform_ptr trns1 = transform_ptr(new Transform());
 	trns1->translate(vec3(0.5,0,0));
 	transform_ptr trns2 = transform_ptr(new Transform());
@@ -49,8 +54,8 @@ group_ptr build_graph()
 		trns2->addChild(gvec[i]);
 	}
 
-	grp->addChild(trns1);
-	grp->addChild(trns2);
+	cam->addChild(trns1);
+	cam->addChild(trns2);
 
 	return grp;
 }
@@ -64,8 +69,14 @@ int main(int argc, char* argv[])
 	Shader s = Shader("../shaders/vshader.glsl", "../shaders/fshader.glsl");
 	NodeVisitor n = NodeVisitor();
 
-	std::cout<< glm::to_string(glm::mat4(1.0f)) << std::endl;
-	
+	glm::vec3 dr = glm::vec3(10,0,0);
+	glm::mat4 r = glm::translate(glm::mat4(1.f), dr);
+
+	std::cout<< glm::to_string(r[3]) << std::endl;
+
+	r = glm::translate(r, dr);
+	std::cout<< glm::to_string(r[3]) << std::endl;
+
 
 	while(window.isRunning()){
 		window.clear();
@@ -73,8 +84,8 @@ int main(int argc, char* argv[])
 		window.getInput();
 		window.update();
 
-	//	std::cout << "New Frame "<<std::endl;		
-	//	n.traverse(graph.get());
+		//std::cout << "New Frame "<<std::endl;		
+		//n.traverse(graph.get());
 		
 
 		window.swap();

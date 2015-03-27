@@ -1,12 +1,9 @@
 #include "Transform.hpp"
 #include "NodeVisitor.hpp"
 
-#include <glm/gtc/matrix_transform.hpp>
-
-
 Transform::Transform()
 {
-	 _m=mat4();
+	 _m=mat4(1.f);
 }
 
 Transform::~Transform()
@@ -26,17 +23,17 @@ void Transform::set(mat4 m)
 
 void Transform::translate(vec3 ds)
 {
-	_m = glm::translate(_m, ds);
+	_m = matlib::translate(_m, ds);
 }
 
 void Transform::rotate(float angle, vec3 axis)
 {
-	_m = glm::rotate(_m, angle, axis);
+	_m = matlib::rotate(_m, angle, axis);
 }
 
 void Transform::scale(vec3 ds)
 {
-	_m = glm::scale(_m,ds);
+	_m = matlib::scale(_m,ds);
 }
 
 void Transform::acceptVisitor(NodeVisitor& visitor)

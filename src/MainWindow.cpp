@@ -4,7 +4,7 @@
 
 
 bool MainWindow::INITIALIZED = false;
-KEY::keybit MainWindow::KEYBIT = KEY::nokey;
+keybit MainWindow::KEYBIT = KEY::nokey;
 
 MainWindow::MainWindow(int w, int h, int fps, std::string header)
 {
