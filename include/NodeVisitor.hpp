@@ -1,7 +1,6 @@
 #ifndef NODEVISITOR_HPP
 #define NODEVISITOR_HPP
 
-#include "State.hpp"
 #include "Node.hpp"
 
 class Node;

@@ -1,41 +1,132 @@
 #include "State.hpp"
-
+#include <gl/glew.h>
+#include <iostream>
 
 State::State()
 {
-	_state_map = std::map<attribute, attribute>(); 
+	_state_map = std::map<Attribute, Value>();
 	_shader = NULL;
 }
 State::~State()
 {
-
+	_shader = NULL;
 }
+
 void State::merge(State* s)
-{
-	// Get a list of keys that exist in s and add them to this
+{	
+	for(std::map<Attribute, Value>::iterator it = s->_state_map.begin(); it != s->_state_map.end(); it++)
+	{
+		this->set(it->first ,it->second);
+	}
+
+	if(s->contain(Attribute::SHADER))
+	{
+		this->set(Attribute::SHADER, s->_shader);
+	}
 }
 
 void State::apply()
 {
-	// This will be a big if chain.	
+	// SHADER
+	if(_shader != NULL){
+		_shader->use();
+	}else{
+		std::cerr<< "No shader when State::apply() is called, May cause undefined behaviour "<< std::endl;
+	}
+
+	// BACK_FACE_CULLING
+	glCullFace(GL_BACK);
+	if(_state_map.count(Attribute::BACK_FACE_CULLING)>0){
+		Value val = _state_map.at(Attribute::BACK_FACE_CULLING);
+		if(val == Value::OFF){
+			glEnable(GL_CULL_FACE);
+		}else if(val == Value::ON){
+			glDisable(GL_CULL_FACE);
+		}
+	// Default
+	}else{
+		glEnable(GL_CULL_FACE);
+	}
+
+	// RENDER_MODE
+	if(_state_map.count(Attribute::RENDER_MODE)>0){
+		Value val = _state_map.at(Attribute::RENDER_MODE);
+		if(val == Value::FILL){
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		}else if(val == Value::LINE){
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		
+		}else if(val == Value::POINT){
+			glPolygonMode(GL_FRONT_AND_BACK,GL_POINT);
+		
+		}
+	// Default
+	}else{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
+
+	
+	// COLOR MODE
+	// IMPLEMENT WHEN WE HAVE TEXTURES AND MATERIALS
+	if(_state_map.count(Attribute::COLOR_MODE)>0){
+		Value val = _state_map.at(Attribute::COLOR_MODE);
+		if(val == Value::TEXTURE){
+			// RENDER WITH DIFFUSE TEXTURE
+		}else if(val == Value::MATERIAL){
+			// RENDER WITH MATERIAL
+		}
+	}else{
+		// RENDER WITH DIFFUSE TEXTURE IF IT EXISTS
+		// ELSE RENDER WITH MATERIAL IF IT EXISTS
+		// ELSE RENDER WITH DEFAULT MATERIAL
+	}
 }
 
-void State::set(attribute atr, attribute val )
+void State::set(Attribute atr, Value val )
 {
-	_state_map.insert(std::pair<attribute,attribute>(atr,val));
+	_state_map[atr] = val;
 }
 
-void State::set(shader_ptr p)
+void State::set(Attribute atr, shader_ptr p)
 {
+	_state_map[Attribute::SHADER] = Value::ON;
 	_shader = p;
 }
 
-void State::get(shader_ptr p)
+bool State::get(Attribute atr, Value& val)
 {
-	p = _shader;
+	std::map<Attribute, Value>::iterator it = _state_map.find(atr);
+	if(it != _state_map.end()){
+		val = it->second;
+		return true;
+	}
+	return false;
 }
 
-void State::remove(attribute atr)
+bool State::get(Attribute atr, shader_ptr p)
 {
-	// remove atr from state_map
+	if(_shader != NULL){
+		p = _shader;
+		return true;
+	}
+	return false;
 }
+
+bool State::contain(Attribute atr)
+{
+	return _state_map.count(atr);
+}
+
+void State::remove(Attribute atr)
+{
+	std::map<Attribute, Value>::iterator it = _state_map.find(atr);
+	if(it != _state_map.end())
+	{
+		_state_map.erase(it);
+		
+		if(atr == Attribute::SHADER){
+			_shader = NULL;
+		}
+	}
+}
+

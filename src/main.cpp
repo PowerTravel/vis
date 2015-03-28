@@ -12,6 +12,8 @@
 #include "NodeVisitor.hpp"
 #include "State.hpp"
 #include <memory>
+#include <map>
+#include <vector>
 
 #include <glm/glm.hpp>
 //#include <glm/gtc/type_ptr.hpp>
@@ -68,14 +70,18 @@ int main(int argc, char* argv[])
 	group_ptr graph = build_graph();
 	Shader s = Shader("../shaders/vshader.glsl", "../shaders/fshader.glsl");
 	NodeVisitor n = NodeVisitor();
+/*
+	State s1 = State(); 
+	s1.set(State::Attribute::BACK_FACE_CULLING, State::Value::ON);
+	State s2 = State();
+	s2.set(State::Attribute::BACK_FACE_CULLING, State::Value::OFF);
+	s2.merge(&s1);
 
-
-//	State s1 = State();
-
-	//if(s1.is)
-
-
-
+	State::Value val;
+	if(s2.get(State::Attribute::BACK_FACE_CULLING,val))
+		if(val == State::Value::ON)
+			std::cout << s2.contain(State::Attribute::BACK_FACE_CULLING) << std::endl;
+*/
 	while(window.isRunning()){
 		window.clear();
 

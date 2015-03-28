@@ -3,7 +3,7 @@
 
 #include <GL/glew.h>
 #include <memory>
-#include <list>
+#include <vector>
 #include <map>
 
 #include "Shader.hpp"
@@ -20,24 +20,33 @@ typedef std::shared_ptr<State> state_ptr;
 class State{
 	
 	public:
-		
-		enum attribute{
+	
+		enum class Attribute{
+			// ATTRIBTUE
+			SHADER,				// Value: ON
+			BACK_FACE_CULLING, 	// Value: ON, OFF
+			RENDER_MODE,	   	// Value: POINT, LINE, FILL
+			COLOR_MODE		   	// Value: TEXTURE, MATERIAL
+
+
+			// NOT IMPLEMENTED
+			//MATERIAL, 		// Value: ON
+			//TEXTURE_DIFFUSE, 	// Value: ON
+			//TEXTURE_NORMAL,	// Value: ON
+			//TEXTURE_SHADOW 	// Value: ON
+		};
+
+		enum class Value{
 			// VALUES
 			ON,			// Value to BACK_FACE_CULLING, MATERIAL
 			OFF,		// Value to BACK_FACE_CULLING, MATERIAL
-			DOT,		// Value to RENDER_MODE
-			LINE,		// --||--
-			FILL, 		// --||--
-
 			
-			// ATTRIBTUE
-			BACK_FACE_CULLING, // args: ON, OFF
-			RENDER_MODE,	   // args: DOT, LINE, FILL
-			COLOR_MODE,		   // args: TEXTURE, MATERIAL
-
-			// BOTH
-			TEXTURE, // type args: DIFFUSE, SHADOW, NORMAL mm
-			MATERIAL // type args: ON, OFF.
+			POINT,		// Value to RENDER_MODE
+			LINE,		// Value to RENDER MODE
+			FILL,		// Value to RENDER_MODE
+			
+			TEXTURE,	// Value to COLOR_MODE
+			MATERIAL,	// Value to COLOR_MODE
 		};
 
 		State();
@@ -46,20 +55,21 @@ class State{
 		void merge(State* s);
 		void apply();
 
-		void set(attribute atr, attribute value);
-		void set(shader_ptr s);
-		//void set(Material m);
+		void set(Attribute atr, Value Value);
+		void set(Attribute atr, shader_ptr s);
 
-		void get(attribute type, attribute* value);
-		void get(shader_ptr s);
-		//void get(Material* m);
+		bool get(Attribute atr, Value& val);
+		bool get(Attribute atr, shader_ptr s);
 
-		void remove(attribute type);
-	
+		bool contain(Attribute atr);
+
+		void remove(Attribute atr);
+
+
 	private:
 
 		shader_ptr _shader;
-		std::map<attribute, attribute> _state_map;
+		std::map<Attribute, Value> _state_map;
 };
 
 #endif // STATE_HPP
