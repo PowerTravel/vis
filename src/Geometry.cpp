@@ -48,6 +48,8 @@ Geometry::~Geometry()
 	{
 		glDeleteBuffers(0, &faceBuffer);	
 	}
+	
+	glDeleteVertexArrays(1, &VAO);
 }
 
 /*
@@ -316,6 +318,7 @@ void Geometry::loadFaces(int nrFaces, int* faces)
  * Output:	-
  * Misc:	-
  */
+#include <iostream>
 void Geometry::draw()
 {
 	glBindVertexArray(VAO);

@@ -20,6 +20,7 @@ class MainWindow
 	public:
 		// Constructor and destructor
 		MainWindow(int w = 640, int h= 480, int fps = 60, std::string header = "Main Window" );
+		MainWindow(GLFWwindow* window, int fps = 60);
 		virtual ~MainWindow();
 
 		// Public members
@@ -30,7 +31,7 @@ class MainWindow
 		void clear();
 		void swap();
 
-		void get(GLFWwindow* window);
+		GLFWwindow* get();
 
 		void getWindowSize(int* x, int* y, int* w, int* h);
 		void setWindowSize(int x, int y, int w, int h);

@@ -4,7 +4,8 @@
 // Initiates the gl program. Reads, compiles and links the shaders.
 Shader::Shader(const char* vShaderFile, const char* fShaderFile)
 {
-	this->program = 0;
+	ut = UniTable();
+	_program = 0;
 	// Creates a new openGL program and returns a reference.
 	GLuint program = glCreateProgram();
 
@@ -94,18 +95,20 @@ Shader::Shader(const char* vShaderFile, const char* fShaderFile)
 		exit( EXIT_FAILURE  );
 	}
 	
-	this->program = program;
+	_program = program;
 
 	// M, V, P are default variables that all shaders are assumed to
-	// use, That is Model, View and Projection matrices
+	//se, That is Model, View and Projection matrices
 	createUniform("M");
 	createUniform("V");
 	createUniform("P");
+	std::cout <<" M=" <<getUniform("M")<< " V= " << getUniform("V") <<" P = "<<getUniform("P") << std::endl;
 }
+
 
 Shader::~Shader()
 {
-
+	glDeleteProgram(_program);
 }
 
 // Reads the content of a .glsl shader file and stores it in an allocated char array.
@@ -148,21 +151,21 @@ char* Shader::readShaderSource(const char* shaderFile)
 
 void Shader::use()
 {
-	glUseProgram(this->program);
+	glUseProgram(_program);
 }
 
 
 #include <iostream>
 void Shader::createAttribute(std::string name)
 {
-	GLuint location = glGetAttribLocation(program, name.c_str());
+	GLuint location = glGetAttribLocation(_program, name.c_str());
 	std::pair< std::string, GLuint > pair(name,location);
 	ut.insert(pair);
 
 }
 void Shader::createUniform(std::string name)
 {
-	GLuint location = glGetUniformLocation(program, name.c_str() );
+	GLuint location = glGetUniformLocation(_program, name.c_str() );
 	std::pair< std::string, GLuint > pair(name,location);
 	ut.insert(pair);
 }

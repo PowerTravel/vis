@@ -44,6 +44,7 @@ class Shader{
 
 		GLuint getUniform(std::string name);
 
+		GLuint _program;	
 	private:
 
 	struct ShaderFile{
@@ -53,7 +54,6 @@ class Shader{
 		GLuint id;
 	};
 
-		GLuint program;	
 		// UniformTable
 		UniTable ut;
 

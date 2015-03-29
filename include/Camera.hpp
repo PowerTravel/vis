@@ -37,7 +37,7 @@ class Camera : public Group
 		mat4 getViewMat();
 
 		// Support is given for perspective and orthographic projection
-		void setPerspectiveProjection(float fovy=35.f, float aspect=4/3.f, float near=1.f, float far=10);
+		void setPerspectiveProjection(float fovy=45.f, float aspect=4.0f/3.0f, float near=0.1f, float far=100);
 		void setOrthographicProjection(float left=-10.f, float right=10.f, float bottom=-10.f, float top=10.f, float near = 10.f, float far =-10.f );
 
 		void update();

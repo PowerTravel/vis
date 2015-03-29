@@ -59,11 +59,13 @@ class State{
 		void set(Attribute atr, shader_ptr s);
 
 		bool get(Attribute atr, Value& val);
-		bool get(Attribute atr, shader_ptr s);
+		bool get(Attribute atr, shader_ptr& s);
 
 		bool contain(Attribute atr);
 
 		void remove(Attribute atr);
+	
+		shader_ptr getShader();
 
 
 	private:
@@ -71,5 +73,17 @@ class State{
 		shader_ptr _shader;
 		std::map<Attribute, Value> _state_map;
 };
+/*
+typedef State::Attribute::SHADER 			ST_ATR_SHADER;
+typedef State::Attribute::BACK_FACE_CULLING	ST_ATR_BACK_FACE_CULLING; 
+typedef State::Attribute::RENDER_MODE		ST_ATR_RENDER_MODE;
+typedef State::Attribute::COLOR_MODE		ST_ATR_COLOR_MODE;
+typedef State::Value::ON			ST_VAL_ON;	
+typedef State::Value::OFF			ST_VAL_OFF;
+typedef State::Value::POINT			ST_VAL_POINT;
+typedef State::Value::LINE			ST_VAL_LINE;
+typedef State::Value::TEXTURE		ST_VAL_TEXTURE;
+typedef State::Value::MATERIAL		ST_VAL_MATERIAL;
+*/
 
 #endif // STATE_HPP

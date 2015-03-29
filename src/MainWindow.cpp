@@ -40,6 +40,28 @@ MainWindow::MainWindow(int w, int h, int fps, std::string header)
 	glfwSetKeyCallback(_window, &MainWindow::key_callback);
 }
 
+MainWindow::MainWindow(GLFWwindow* window, int fps)
+{
+	if(window != NULL)
+	{
+		_window = window;
+		_FPS = fps;
+		_countFPS = true;
+
+		setClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glLineWidth(1.0);
+		glPointSize(1.0);
+
+		_fpsLock = Timer();
+		_fpsLock.start();
+		_fpsCount = Timer();
+		_fpsCount.start();
+	
+		glfwSetKeyCallback(_window, &MainWindow::key_callback);
+		_running = true;
+	}
+}
+
 MainWindow::~MainWindow()
 {
 	glfwDestroyWindow(_window);
@@ -90,7 +112,6 @@ void MainWindow::update()
 
 void MainWindow::clear()
 {
-	glClearColor(_clearColor[0], _clearColor[1], _clearColor[2], _clearColor[3]);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 void MainWindow::swap()
@@ -123,9 +144,9 @@ void MainWindow::swap()
 	glfwSwapBuffers(_window);
 }
 
-void MainWindow::get(GLFWwindow* window)
+GLFWwindow* MainWindow::get()
 {
-	window = _window;
+	return _window;
 }
 
 void MainWindow::getWindowSize(int* x, int* y, int* w, int* h)
@@ -146,6 +167,7 @@ void MainWindow::setClearColor(float r, float g, float b, float w)
 	_clearColor[1] = g;
 	_clearColor[2] = b;
 	_clearColor[3] = w;
+	glClearColor(_clearColor[0], _clearColor[1], _clearColor[2], _clearColor[3]);
 }
 
 void MainWindow::key_callback(GLFWwindow* w, int key, int scancode, int action, int mods )

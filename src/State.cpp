@@ -14,6 +14,12 @@ State::~State()
 
 void State::merge(State* s)
 {	
+	if(s ==  NULL)
+	{
+		return;
+	}
+
+	// Add all static attributes
 	for(std::map<Attribute, Value>::iterator it = s->_state_map.begin(); it != s->_state_map.end(); it++)
 	{
 		this->set(it->first ,it->second);
@@ -21,7 +27,9 @@ void State::merge(State* s)
 
 	if(s->contain(Attribute::SHADER))
 	{
-		this->set(Attribute::SHADER, s->_shader);
+		//std::cout <<"State::merge(): M=" <<s->_shader->getUniform("M")<< " V= " << s->_shader->getUniform("V") <<" P = "<<s->_shader->getUniform("P") << std::endl;
+		this->set(Attribute::SHADER,s->_shader);
+	//	_shader = s->_shader; 
 	}
 }
 
@@ -39,9 +47,9 @@ void State::apply()
 	if(_state_map.count(Attribute::BACK_FACE_CULLING)>0){
 		Value val = _state_map.at(Attribute::BACK_FACE_CULLING);
 		if(val == Value::OFF){
-			glEnable(GL_CULL_FACE);
-		}else if(val == Value::ON){
 			glDisable(GL_CULL_FACE);
+		}else if(val == Value::ON){
+			glEnable(GL_CULL_FACE);
 		}
 	// Default
 	}else{
@@ -103,10 +111,14 @@ bool State::get(Attribute atr, Value& val)
 	return false;
 }
 
-bool State::get(Attribute atr, shader_ptr p)
+shader_ptr State::getShader(){
+	return _shader;
+}
+
+bool State::get(Attribute atr, shader_ptr& s)
 {
 	if(_shader != NULL){
-		p = _shader;
+		s = _shader;
 		return true;
 	}
 	return false;

@@ -6,10 +6,9 @@
 #include "Shader.hpp"
 
 #include "Geometry.hpp"
-#include "Group.hpp"
 #include "Transform.hpp"
 #include "Camera.hpp"
-#include "NodeVisitor.hpp"
+#include "RenderVisitor.hpp"
 #include "State.hpp"
 #include <memory>
 #include <map>
@@ -30,7 +29,7 @@ void setUpGlew()
 
 	glLineWidth(1.0);
 	glPointSize(1.0);
-	glClearColor(0.0,0.0,0.0,0.0);
+	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
 
 
 	glEnable(GL_DEPTH_TEST);
@@ -38,18 +37,62 @@ void setUpGlew()
 	//glFrontFace(GL_CW);
 }
 
+GLFWwindow* createWindow()
+{
+	if( !glfwInit() )
+	{
+		fprintf( stderr, "Failed to initialize GLFW\n" );
+		return NULL;
+	}
+
+	glfwWindowHint(GLFW_SAMPLES, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+
+	// Open a window and create its OpenGL context
+	GLFWwindow* window = glfwCreateWindow( 1024, 768, "Tutorial 02 - Red triangle", NULL, NULL);
+	if( window == NULL ){
+		fprintf( stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n" );
+		glfwTerminate();
+		return NULL;
+	}
+	glfwMakeContextCurrent(window);
+	
+	setUpGlew();
+	
+	return window;
+}
+
+
+
 group_ptr build_graph()
 {
+
+	shader_ptr s = shader_ptr(new Shader("../shaders/vshader.glsl", "../shaders/fshader.glsl"));
+	State state = State();
+	state.set(State::Attribute::SHADER,s);
+
 	geometry_vec gvec = Geometry::loadFile("../models/box.obj");
 	group_ptr grp = group_ptr(new Group());
+	grp->setState(&state);
 
 	camera_ptr cam = camera_ptr(new Camera());
 	grp->addChild(cam);
 
 	transform_ptr trns1 = transform_ptr(new Transform());
 	trns1->translate(vec3(0.5,0,0));
+	trns1->scale(vec3(0.5,0.5,0.5));
+	trns1->rotate(90,vec3(0,0,1));
+	state = State();
+	state.set(State::Attribute::RENDER_MODE, State::Value::LINE);
+	state.set(State::Attribute::BACK_FACE_CULLING, State::Value::OFF);
+	trns1->setState(&state);
+
 	transform_ptr trns2 = transform_ptr(new Transform());
 	trns2->translate(vec3(-0.5,0,0));
+	trns2->scale(vec3(0.5,0.5,0.5));
 
 	for(int i = 0; i<gvec.size(); i++){
 		trns1->addChild(gvec[i]);
@@ -60,40 +103,50 @@ group_ptr build_graph()
 	cam->addChild(trns2);
 
 	return grp;
+
+/*
+	geometry_vec gvec = Geometry::loadFile("../models/box.obj");
+	group_ptr grp = group_ptr(new Group());
+	for(int i = 0; i<gvec.size(); i++){
+		grp->addChild(gvec[i]);
+	}
+
+	shader_ptr s = shader_ptr(new Shader("../shaders/vshader.glsl", "../shaders/fshader.glsl"));
+	State state = State();
+	state.set(State::Attribute::SHADER,s);
+	grp->setState(&state);
+
+	return grp;
+*/
+
 }
 
-int main(int argc, char* argv[])
+int main( void )
 {
-	MainWindow window = MainWindow();
-	setUpGlew();
+	GLFWwindow* window = NULL;;
+	if( (window = createWindow()) == NULL)
+	{
+		return -1;
+	}
+	MainWindow mainWindow = MainWindow(window);
 
-	group_ptr graph = build_graph();
-	Shader s = Shader("../shaders/vshader.glsl", "../shaders/fshader.glsl");
-	NodeVisitor n = NodeVisitor();
-/*
-	State s1 = State(); 
-	s1.set(State::Attribute::BACK_FACE_CULLING, State::Value::ON);
-	State s2 = State();
-	s2.set(State::Attribute::BACK_FACE_CULLING, State::Value::OFF);
-	s2.merge(&s1);
+	group_ptr grp = build_graph();
+	RenderVisitor r = RenderVisitor();	
 
-	State::Value val;
-	if(s2.get(State::Attribute::BACK_FACE_CULLING,val))
-		if(val == State::Value::ON)
-			std::cout << s2.contain(State::Attribute::BACK_FACE_CULLING) << std::endl;
-*/
-	while(window.isRunning()){
-		window.clear();
+	while(mainWindow.isRunning()){
+		mainWindow.clear();
+		mainWindow.getInput();
+		mainWindow.update();	
 
-		window.getInput();
-		window.update();
+	//	std::cout << "NEW FRAME" << std::endl;
+		r.traverse(grp.get());
+	
+		// Swap buffers
+		mainWindow.swap();
+	} 
 
-		//std::cout << "New Frame "<<std::endl;		
-		//n.traverse(graph.get());
-		
-
-		window.swap();
-	} 	
+	// Close OpenGL window and terminate GLFW
+	glfwTerminate();
 
 	return 0;
 }

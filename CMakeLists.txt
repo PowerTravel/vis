@@ -16,6 +16,7 @@ add_executable(vis
 	src/State.cpp
 	src/UpdateCallback.cpp
 	src/NodeVisitor.cpp
+	src/RenderVisitor.cpp
 )
 
 find_package(OpenGL REQUIRED)
