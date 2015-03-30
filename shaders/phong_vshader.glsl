@@ -3,38 +3,23 @@ layout (location = 0) in vec3 vPosition;
 layout (location = 1) in vec2 tempTex;
 layout (location = 2) in vec3 vNormals;
 uniform mat4 M, V, P;
-uniform mat4 B,Pl,Vl,Ml;
-out vec2 texCoord0; 
-uniform int nrLights;
-
-uniform vec3 lightPosition[3];
-out vec3 L[3],E[3],H[3],N[3];
-out float R[3];
-out vec4 ShadowCoord;
-
-out vec4 pos2;
+uniform vec3 lPos;
+out vec3 L,E,H,N;
+out float r;
 
 void main()
 {
-	texCoord0 = tempTex;
 	mat4 VM = V*M;
 	vec4 vp = vec4(vPosition,1);
 	vec3 pos = (VM * vp).xyz;
 	vec4 vn = vec4(vNormals, 0.0);
 
-	for(int i = 0; i<nrLights; i++)
-	{
-		vec4 lp = vec4(lightPosition[i],1);
-		R[i] = length( (V*lp).xyz - pos);
-		L[i] = normalize( (V*lp).xyz - pos);
-		E[i] = normalize(-pos);
-		H[i] = normalize(L[i]+E[i]);
-		N[i] = normalize(VM*vn).xyz;
-	}
+	vec4 lp = vec4(lPos,1);
+	r = length( (V*lp).xyz - pos);
+	L = normalize( (V*lp).xyz - pos);
+	E = normalize(-pos);
+	H = normalize(L+E);
+	N = normalize(VM*vn).xyz;
 
-	ShadowCoord =B * Pl*Vl*Ml*vec4(vPosition, 1);
-
-//	gl_Position = ShadowCoord;
-	
 	gl_Position = P*vec4(pos,1);
 }

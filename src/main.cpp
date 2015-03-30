@@ -73,16 +73,19 @@ GLFWwindow* createWindow()
 group_ptr build_graph()
 {
 
-	shader_ptr s = shader_ptr(new Shader("../shaders/vshader.glsl", "../shaders/fshader.glsl"));
+	//shader_ptr s = shader_ptr(new Shader("../shaders/vshader.glsl", "../shaders/fshader.glsl"));
+	shader_ptr s = shader_ptr(new Shader("../shaders/phong_vshader.glsl", "../shaders/phong_fshader.glsl"));
 	s->createUniform("Diff");
 	s->createUniform("Amb");
 	s->createUniform("Spec");
 	s->createUniform("lPos");
+	s->createUniform("att");
+	s->createUniform("shi");
 
 	State state = State();
 	state.set(State::Attribute::SHADER,s);
 
-	geometry_vec gvec = Geometry::loadFile("../models/box.obj");
+	geometry_vec gvec = Geometry::loadFile("../models/sphere.obj");
 	group_ptr grp = group_ptr(new Group());
 	grp->setState(&state);
 

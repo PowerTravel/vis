@@ -1,69 +1,34 @@
 #version 330 core
 out vec4 fragColor;
 
-uniform vec4 ambientProduct[3],diffuseProduct[3],specularProduct[3]; 
-uniform float attenuation[3];
-uniform float shininess;
-uniform int usingDiffTexture, usingShadowMap, nrLights;
-//uniform sampler2D diffuseTextureID;//, shadowMapID;
-uniform sampler2D diffuseTextureID;//, shadowMapID;
-//uniform sampler2D Shadow shadowMapID;
-uniform sampler2D shadowMapID;
-in vec3 L[3],E[3],H[3],N[3];
-in float R[3];
-in vec2 texCoord0; 
-in vec4 ShadowCoord;
+uniform vec4 Amb,Diff,Spec; 
+uniform float shi, att;
 
-
-
-in vec4 pos2;
+in vec3 L,E,H,N;
+in float r;
 
 void main() 
 { 
-	float visibility=1;
 	vec4 color = vec4(0,0,0,0);
-	for(int i = 0; i<nrLights; i++)
-	{
-		vec4 ambient, diffuse, specular;
+	vec4 ambient, diffuse, specular;
 		
-		ambient = ambientProduct[i];
+	ambient = Amb;
 
-		float Kd = max(dot(L[i],N[i]), 0.0);
-		if(usingDiffTexture != 0)
-		{
-			float alpha=1;
-			diffuse = Kd*(alpha*texture(diffuseTextureID,texCoord0.st)+(1-alpha)*diffuseProduct[i]);
-			//diffuse = (alpha*texture(diffuseTextureID,texCoord0.st)+(1-alpha)*diffuseProduct[i]);
-		}else{
-			diffuse = Kd*diffuseProduct[i];
-		}
-
-		float Ks = pow(max( dot(N[i],H[i]), 0.0 ), shininess);
-		specular = Ks * specularProduct[i];
-
-		if(dot(L[i],N[i]) < 0.0)
-		{
-			diffuse = vec4(0.0,0.0,0.0,1.0);
-			specular = vec4(0.0, 0.0, 0.0, 1.0);
-		}
+	float Kd = max(dot(L,N), 0.0);
+	diffuse = Kd*Diff;
 	
-		float att = 1/( 1 + attenuation[i]*pow(R[i],2) );
-	
-		visibility = 1;
-		// We only support shadows for the first light
-		if(usingShadowMap != 0 && i==0){
-//			if(texture(shadowMapID, vec3(ShadowCoord.xy,1)) < ShadowCoord.z){	
-//			if(texture2D(shadowMapID, ShadowCoord.xy).z < ShadowCoord.z){	
-				//visibility=0.9;
-//			}
-		}
-		color += ambient+visibility*att*(diffuse+specular);
+	float Ks = pow(max( dot(N,H), 0.0 ), shi);
+	specular = Ks * Spec;
+
+	if(dot(L,N) < 0.0)
+	{
+		diffuse = vec4(0.0,0.0,0.0,1.0);
+		specular = vec4(0.0, 0.0, 0.0, 1.0);
 	}
 
+	//float attenuation = 1/( 1 + att*pow(r,2) );
+	float attenuation = 1;
+	color += ambient+attenuation*(diffuse+specular);
+
 	fragColor = color;
-	//fragColor = ShadowCoord;
-	//fragColor = texture2D( shadowMapID, ShadowCoord.xy).xxxx;
-	//fragColor = texture2D(shadowMapID, texCoord0.xy).xxxx;
-	//fragColor = vec4(ShadowCoord.xy,0,1);	fragColor = vec4(texCoord0.st,0,1);
-//	visibility = texture( shadowMapID, vec3(ShadowCoord.xy, (ShadowCoord.z)/ShadowCoord.w) );
 }

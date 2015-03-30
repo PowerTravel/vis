@@ -88,13 +88,16 @@ void State::apply()
 	vec4 amb  =	m.getAmbient(&l); 
 	vec4 spec = m.getSpecular(&l);
 	vec3 lPos = l.getPosition();
-	
+	float att = l.getAttenuation();
+	float shi = m.getShininess();
 	if(_shader != NULL)
 	{
 		_shader->setUniform4f("Diff", 1, &diff[0]);
 		_shader->setUniform4f("Amb", 1, &amb[0]);
 		_shader->setUniform4f("Spec", 1, &spec[0]);
-		_shader->setUniform3f("lPos", 1, &spec[0]);
+		_shader->setUniform3f("lPos", 1, &lPos[0]);
+		_shader->setUniform1f("att", 1, &att);
+		_shader->setUniform1f("shi", 1, &shi);
 	}
 
 

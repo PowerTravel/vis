@@ -6,7 +6,7 @@ CameraMovementCallback::CameraMovementCallback(camera_ptr cam)
 {	
 	_cam = cam;
 	_angularVelocity = 0.02;
-	_speed = 0.1;
+	_speed = 0.05;
 }
 
 CameraMovementCallback::~CameraMovementCallback()
