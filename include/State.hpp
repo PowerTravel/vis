@@ -7,8 +7,8 @@
 #include <map>
 
 #include "Shader.hpp"
-//#include "Material.hpp"
-//#include "Light.hpp"
+#include "Material.hpp"
+#include "Light.hpp"
 //#include "Texture.hpp"
 
 #ifndef _STATE_PTR
@@ -26,11 +26,11 @@ class State{
 			SHADER,				// Value: ON
 			BACK_FACE_CULLING, 	// Value: ON, OFF
 			RENDER_MODE,	   	// Value: POINT, LINE, FILL
-			COLOR_MODE		   	// Value: TEXTURE, MATERIAL
+			COLOR_MODE,		   	// Value: TEXTURE, MATERIAL
+			MATERIAL	 		// Value: ON
 
 
 			// NOT IMPLEMENTED
-			//MATERIAL, 		// Value: ON
 			//TEXTURE_DIFFUSE, 	// Value: ON
 			//TEXTURE_NORMAL,	// Value: ON
 			//TEXTURE_SHADOW 	// Value: ON
@@ -57,9 +57,11 @@ class State{
 
 		void set(Attribute atr, Value Value);
 		void set(Attribute atr, shader_ptr s);
+		void set(Attribute atr, material_ptr m);
 
 		bool get(Attribute atr, Value& val);
 		bool get(Attribute atr, shader_ptr& s);
+		bool get(Attribute atr, material_ptr& m);
 
 		bool contain(Attribute atr);
 
@@ -67,10 +69,10 @@ class State{
 	
 		shader_ptr getShader();
 
-
 	private:
 
 		shader_ptr _shader;
+		material_ptr _material;
 		std::map<Attribute, Value> _state_map;
 };
 /*

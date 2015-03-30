@@ -6,10 +6,12 @@ State::State()
 {
 	_state_map = std::map<Attribute, Value>();
 	_shader = NULL;
+	_material = NULL;
 }
 State::~State()
 {
 	_shader = NULL;
+	_material = NULL;
 }
 
 void State::merge(State* s)
@@ -27,9 +29,12 @@ void State::merge(State* s)
 
 	if(s->contain(Attribute::SHADER))
 	{
-		//std::cout <<"State::merge(): M=" <<s->_shader->getUniform("M")<< " V= " << s->_shader->getUniform("V") <<" P = "<<s->_shader->getUniform("P") << std::endl;
 		this->set(Attribute::SHADER,s->_shader);
-	//	_shader = s->_shader; 
+	}
+	
+	if(s->contain(Attribute::MATERIAL))
+	{
+		this->set(Attribute::MATERIAL,s->_material);
 	}
 }
 
@@ -74,6 +79,26 @@ void State::apply()
 	}
 
 	
+	Light l = Light();
+	Material m = Material(Material::PEARL);
+	if(_material != NULL){
+		m = *_material;
+	}
+	vec4 diff = m.getDiffuse(&l);
+	vec4 amb  =	m.getAmbient(&l); 
+	vec4 spec = m.getSpecular(&l);
+	vec3 lPos = l.getPosition();
+	
+	if(_shader != NULL)
+	{
+		_shader->setUniform4f("Diff", 1, &diff[0]);
+		_shader->setUniform4f("Amb", 1, &amb[0]);
+		_shader->setUniform4f("Spec", 1, &spec[0]);
+		_shader->setUniform3f("lPos", 1, &spec[0]);
+	}
+
+
+	/*
 	// COLOR MODE
 	// IMPLEMENT WHEN WE HAVE TEXTURES AND MATERIALS
 	if(_state_map.count(Attribute::COLOR_MODE)>0){
@@ -88,6 +113,7 @@ void State::apply()
 		// ELSE RENDER WITH MATERIAL IF IT EXISTS
 		// ELSE RENDER WITH DEFAULT MATERIAL
 	}
+	*/
 }
 
 void State::set(Attribute atr, Value val )
@@ -101,6 +127,12 @@ void State::set(Attribute atr, shader_ptr p)
 	_shader = p;
 }
 
+void State::set(Attribute atr, material_ptr m)
+{
+	_state_map[Attribute::MATERIAL] = Value::ON;
+	_material = m;
+}
+
 bool State::get(Attribute atr, Value& val)
 {
 	std::map<Attribute, Value>::iterator it = _state_map.find(atr);
@@ -111,14 +143,19 @@ bool State::get(Attribute atr, Value& val)
 	return false;
 }
 
-shader_ptr State::getShader(){
-	return _shader;
-}
-
 bool State::get(Attribute atr, shader_ptr& s)
 {
 	if(_shader != NULL){
 		s = _shader;
+		return true;
+	}
+	return false;
+}
+
+bool State::get(Attribute atr, material_ptr& m)
+{
+	if(_material != NULL){
+		m = _material;
 		return true;
 	}
 	return false;
@@ -138,6 +175,10 @@ void State::remove(Attribute atr)
 		
 		if(atr == Attribute::SHADER){
 			_shader = NULL;
+		}
+		
+		if(atr == Attribute::MATERIAL){
+			_material = NULL;
 		}
 	}
 }

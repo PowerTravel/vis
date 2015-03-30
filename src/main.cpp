@@ -74,6 +74,11 @@ group_ptr build_graph()
 {
 
 	shader_ptr s = shader_ptr(new Shader("../shaders/vshader.glsl", "../shaders/fshader.glsl"));
+	s->createUniform("Diff");
+	s->createUniform("Amb");
+	s->createUniform("Spec");
+	s->createUniform("lPos");
+
 	State state = State();
 	state.set(State::Attribute::SHADER,s);
 
