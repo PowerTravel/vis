@@ -1,186 +1,71 @@
-#include <iostream>
-#include "MainWindow.hpp"
-#include <sstream>
+#ifndef MAINWINDOW_HPP
+#define MAINWINDOW_HPP
 
+#include <string>
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+#include "Timer.hpp"
 
-bool MainWindow::INITIALIZED = false;
-keybit MainWindow::KEYBIT = KEY::nokey;
+#ifndef _KEY__
+#define _KEY__
+typedef unsigned long keybit;
+namespace KEY{
+	const keybit nokey	= 0;
+	const keybit q 		= 1;
+};
+#endif // _KEY__
 
-MainWindow::MainWindow(int w, int h, int fps, std::string header)
-{
-	_window = NULL;
-	_running = false;
-	_FPS = fps;
-	_header = header;
-	_countFPS = true;
-
-	setClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-
-	_fpsLock = Timer();
-	_fpsLock.start();
-	_fpsCount = Timer();
-	_fpsCount.start();
-
-	glfwSetErrorCallback(error_callback);
-	if(initGLFW())
-	{
-		std::stringstream title;
-		title<< _header << " FPS: " << _FPS;
-		_window = glfwCreateWindow(w, h, title.str().c_str(), NULL, NULL);
-
-		if(_window == NULL){
-			glfwTerminate();
-		}else{
-			_running = true;
-		}
-	}
-
-	glfwMakeContextCurrent(_window);
-
-	glfwSetKeyCallback(_window, &MainWindow::key_callback);
-}
-
-MainWindow::MainWindow(GLFWwindow* window, int fps)
-{
-	if(window != NULL)
-	{
-		_window = window;
-		_FPS = fps;
-		_countFPS = true;
-
-		setClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glLineWidth(1.0);
-		glPointSize(1.0);
-
-		_fpsLock = Timer();
-		_fpsLock.start();
-		_fpsCount = Timer();
-		_fpsCount.start();
-	
-		glfwSetKeyCallback(_window, &MainWindow::key_callback);
-		_running = true;
-	}
-}
-
-MainWindow::~MainWindow()
-{
-	glfwDestroyWindow(_window);
-	glfwTerminate();
-}
-
-
-bool MainWindow::initGLFW()
-{
-	// If this is the first window, we initialiez glfw with it.
-	if( !INITIALIZED )
-	{
-		if( !glfwInit() ){
-			return false;
-		}
-
-		glfwWindowHint(GLFW_SAMPLES, 4);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);	
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);	
-		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);	
-		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // Needed for osx
-		
-		INITIALIZED = true;
-	}
-
-	return true;
-}
-
-bool MainWindow::isRunning()
-{
-	return _running;
-}
-
-void MainWindow::getInput()
-{
-	glfwPollEvents();
-
-	if((KEYBIT & KEY::q )== KEY::q)
-	{
-		glfwSetWindowShouldClose(_window, true);
-	}
-}
-
-void MainWindow::update()
-{
-	_running = !glfwWindowShouldClose(_window);
-}
-
-void MainWindow::clear()
-{
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-}
-void MainWindow::swap()
-{
-	// Lock the program to FRAMES_PER_SECOND
-	if( _fpsLock.isStarted() && !_fpsLock.isPaused() )
-	{
-		while(_fpsLock.getTime()*_FPS < 1.0 )
-		{
-			// Do nothing. Just wait.
-		}
-		_fpsLock.start();
-	}
-	
-	// Show fps in the title
-	if( _countFPS )
-	{
-		if( _fpsCount.getTime() >= 1.0 )
-		{
-			std::stringstream title;
-			title<< _header << " FPS: " << _frameCounter;
-			std::string str = title.str();
-			glfwSetWindowTitle( _window, str.c_str() );
-			_frameCounter = 0;	
-			_fpsCount.start();
-		}
-	}
-
-	_frameCounter ++;
-	glfwSwapBuffers(_window);
-}
-
-GLFWwindow* MainWindow::get()
-{
-	return _window;
-}
-
-void MainWindow::getWindowSize(int* x, int* y, int* w, int* h)
-{
-	glfwGetWindowPos( _window, x, y );
-	glfwGetWindowSize( _window, w, h );
-}
-
-void MainWindow::setWindowSize(int x, int y, int w, int h)
-{
-	glfwSetWindowSize( _window, w, h);
-	glfwSetWindowPos( _window, x, y);
-}
-
-void MainWindow::setClearColor(float r, float g, float b, float w)
-{
-	_clearColor[0] = r;	
-	_clearColor[1] = g;
-	_clearColor[2] = b;
-	_clearColor[3] = w;
-	glClearColor(_clearColor[0], _clearColor[1], _clearColor[2], _clearColor[3]);
-}
-
-void MainWindow::key_callback(GLFWwindow* w, int key, int scancode, int action, int mods )
+class MainWindow
 {	
-	if(key == GLFW_KEY_Q){
-		if(action == GLFW_PRESS ){
-			KEYBIT += KEY::q;
-		}else if(action == GLFW_RELEASE){
-			KEYBIT -= KEY::q;
-		}
-	}
-}
-void MainWindow::error_callback(int error, const char* error_message)
-{
-	std::cerr << error_message << std::endl;
-}
+	public:
+		// Constructor and destructor
+		MainWindow(int w = 640, int h= 480, int fps = 60, std::string header = "Main Window" );
+		MainWindow(GLFWwindow* window, int fps = 60);
+		virtual ~MainWindow();
+
+		// Public members
+		bool isRunning();
+
+		void getInput();
+		void update();
+		void clear();
+		void swap();
+
+		GLFWwindow* get();
+
+		void getWindowSize(int* x, int* y, int* w, int* h);
+		void setWindowSize(int x, int y, int w, int h);
+
+		void setClearColor(float r, float g, float b, float w);
+
+
+		void setKeyCallback(void (*));
+	private:
+
+		// Fields
+		GLFWwindow* _window;
+		
+		static bool INITIALIZED;
+		static keybit KEYBIT;
+
+		std::string _header;
+		bool _running;
+
+		Timer _fpsLock;
+		Timer _fpsCount;
+		int _FPS;
+		int _frameCounter;
+		bool _countFPS;
+		float _clearColor[4];
+
+		// Initiates glfw and creates a window.
+		bool initGLFW();
+		bool initGlew();
+
+		static void key_callback(GLFWwindow* w, int key, int scancode, int action, int mods );
+		static void error_callback(int error, const char* error_message);
+};
+
+
+
+#endif // MAINWINDOW_HPP
