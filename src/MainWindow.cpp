@@ -6,24 +6,41 @@
 bool MainWindow::INITIALIZED = false;
 keybit MainWindow::KEYBIT = KEY::nokey;
 
-MainWindow::MainWindow(int w, int h, int fps, std::string header)
+GLFWwindow* MainWindow::_window = NULL;
+bool MainWindow::_running = false;
+int MainWindow::_FPS = 60;
+std::string MainWindow::_header;
+
+Timer MainWindow::_fpsLock = Timer();
+Timer MainWindow::_fpsCount = Timer();
+int MainWindow::_frameCounter= 0;
+
+MainWindow& MainWindow::getInstance()
 {
-	_window = NULL;
-	_running = false;
-	_FPS = fps;
-	_header = header;
-	_countFPS = true;
+	static MainWindow instance;
+	return instance;
+}
 
 
-	_fpsLock = Timer();
-	_fpsLock.start();
-	_fpsCount = Timer();
-	_fpsCount.start();
+MainWindow::MainWindow()
+{
+}
 
+
+MainWindow::~MainWindow()
+{
+}
+
+
+void MainWindow::init(int w, int h, int fps, std::string header)
+{
 	if(!INITIALIZED)
 	{
-		glfwSetErrorCallback(error_callback);
 		if(initGLFW())
+		_fpsLock.start();
+		_fpsCount.start();
+		_FPS = fps;
+		_header = header;
 		{
 			std::stringstream title;
 			title<< _header << " FPS: " << _FPS;
@@ -47,19 +64,15 @@ MainWindow::MainWindow(int w, int h, int fps, std::string header)
 			_running = true;
 			INITIALIZED = true;
 		}
+	}else{
+		std::cerr<<"MainWindow already created." << std::endl;
 	}
+
 }
-
-
-MainWindow::~MainWindow()
-{
-	glfwDestroyWindow(_window);
-	glfwTerminate();
-}
-
 
 bool MainWindow::initGLFW()
 {
+	glfwSetErrorCallback(error_callback);
 	// If this is the first window, we initialiez glfw with it.
 	if( !glfwInit() ){
 		return false;
@@ -91,6 +104,16 @@ bool MainWindow::initGlew()
 	glDepthMask(GL_TRUE);
 	return true;
 }
+
+void MainWindow::destroy()
+{
+	if(INITIALIZED)
+	{
+		glfwDestroyWindow(_window);
+		glfwTerminate();
+	}
+}
+
 
 bool MainWindow::isRunning()
 {
@@ -129,24 +152,21 @@ void MainWindow::swap()
 	}
 	
 	// Show fps in the title
-	if( _countFPS )
+	if( _fpsCount.getTime() >= 1.0 )
 	{
-		if( _fpsCount.getTime() >= 1.0 )
-		{
-			std::stringstream title;
-			title<< _header << " FPS: " << _frameCounter;
-			std::string str = title.str();
-			glfwSetWindowTitle( _window, str.c_str() );
-			_frameCounter = 0;	
-			_fpsCount.start();
-		}
+		std::stringstream title;
+		title<< _header << " FPS: " << _frameCounter;
+		std::string str = title.str();
+		glfwSetWindowTitle( _window, str.c_str() );
+		_frameCounter = 0;	
+		_fpsCount.start();
 	}
 
 	_frameCounter ++;
 	glfwSwapBuffers(_window);
 }
 
-GLFWwindow* MainWindow::get()
+GLFWwindow* MainWindow::getWindow()
 {
 	return _window;
 }
@@ -165,11 +185,7 @@ void MainWindow::setWindowSize(int x, int y, int w, int h)
 
 void MainWindow::setClearColor(float r, float g, float b, float w)
 {
-	_clearColor[0] = r;	
-	_clearColor[1] = g;
-	_clearColor[2] = b;
-	_clearColor[3] = w;
-	glClearColor(_clearColor[0], _clearColor[1], _clearColor[2], _clearColor[3]);
+	glClearColor(r,g,b,w);
 }
 
 void MainWindow::key_callback(GLFWwindow* w, int key, int scancode, int action, int mods )

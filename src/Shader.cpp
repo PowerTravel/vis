@@ -102,7 +102,6 @@ Shader::Shader(const char* vShaderFile, const char* fShaderFile)
 	createUniform("M");
 	createUniform("V");
 	createUniform("P");
-	std::cout <<" M=" <<getUniform("M")<< " V= " << getUniform("V") <<" P = "<<getUniform("P") << std::endl;
 }
 
 

@@ -1,6 +1,7 @@
 #include "CameraMovementCallback.hpp"
+#include "MainWindow.hpp"
+#include "MatLib.hpp"
 #include <iostream>
-#include "Scene.hpp"
 CameraMovementCallback::CameraMovementCallback(camera_ptr cam)
 {	
 	_cam = cam;
@@ -10,73 +11,57 @@ CameraMovementCallback::CameraMovementCallback(camera_ptr cam)
 
 CameraMovementCallback::~CameraMovementCallback()
 {
-
 }
 
 void CameraMovementCallback::execute()
 {
-	//getKeyState();
-}
+	GLFWwindow* window = MainWindow::getInstance().getWindow();
 
-// Reads the keystate from the keyState singleton class
-// and updates the camera
-void CameraMovementCallback::getKeyState()
-{	
-	
-	if( st & key_state_bit::KEY_W) 
+	if( glfwGetKey(window, GLFW_KEY_W)  == GLFW_PRESS) 
 	{
-		_cam->translate(Vec3(0,0,-_speed));
+		_cam->translate(vec3(0,0,-_speed));
 	}
-	if( st & key_state_bit::KEY_A)
+	if( glfwGetKey(window, GLFW_KEY_S)  == GLFW_PRESS) 
 	{
-		_cam->translate(Vec3(-_speed,0,0));
+		_cam->translate(vec3(0,0,_speed));
 	}
-	if( st & key_state_bit::KEY_S )
+	if( glfwGetKey(window, GLFW_KEY_A)  == GLFW_PRESS) 
 	{
-		_cam->translate(Vec3(0,0,_speed));
+		_cam->translate(vec3(-_speed,0,0));
 	}
-	if( st & key_state_bit::KEY_D )
+	if( glfwGetKey(window, GLFW_KEY_D)  == GLFW_PRESS) 
 	{
-		_cam->translate( Vec3(_speed,0,0));
+		_cam->translate(vec3(_speed,0,0));
 	}
-
-	if( st & key_state_bit::KEY_Z )
+	if( glfwGetKey(window, GLFW_KEY_Z)  == GLFW_PRESS) 
 	{
-		_cam->translate(Vec3(0,-_speed,0));
-
+		_cam->translate(vec3(0,-_speed,0));
 	}
-	if( st & key_state_bit::KEY_X )
+	if( glfwGetKey(window, GLFW_KEY_X)  == GLFW_PRESS) 
 	{
-		_cam->translate(Vec3(0,_speed,0));
-
+		_cam->translate(vec3(0,_speed,0));
 	}
-	if( st & key_state_bit::KEY_R)
+	if( glfwGetKey(window, GLFW_KEY_UP)  == GLFW_PRESS) 
 	{
-		_cam->lookAt(Vec3(0,0,4), Vec3(0,0,0), Vec3(0,1,0));
-		_cam->setPerspectiveProjection();
+		_cam->rotate(_angularVelocity,vec3(1,0,0));
 	}
-	if( st & key_state_bit::KEY_T)
+	if( glfwGetKey(window, GLFW_KEY_DOWN)  == GLFW_PRESS) 
 	{
-		_cam->lookAt(Vec3(0,5,4), Vec3(0,0,0), Vec3(0,1,0));
-		_cam->setPerspectiveProjection();
+		_cam->rotate(-_angularVelocity,vec3(1,0,0));
+	}
+	if( glfwGetKey(window, GLFW_KEY_LEFT)  == GLFW_PRESS) 
+	{
+		_cam->rotate(_angularVelocity,vec3(0,1,0));
+	}
+	if( glfwGetKey(window, GLFW_KEY_RIGHT)  == GLFW_PRESS) 
+	{
+		_cam->rotate(-_angularVelocity,vec3(0,1,0));
 	}
 	
-	KeyState::Special_Key_State sst = KeyState::getInstance().get_special();
-	if( sst & special_key_state_bit::SPECIAL_KEY_UP )
+	
+	if( glfwGetKey(window, GLFW_KEY_R)  == GLFW_PRESS) 
 	{
-		_cam->rotate(_angularVelocity, Vec3(-1,0,0));
-	}
-	if( sst & special_key_state_bit::SPECIAL_KEY_DOWN )
-	{
-		_cam->rotate(_angularVelocity, Vec3(1,0,0));
-	}
-	if( sst & special_key_state_bit::SPECIAL_KEY_LEFT )
-	{
-		_cam->rotate(_angularVelocity, Vec3(0,-1,0));
-	}
-	if( sst & special_key_state_bit::SPECIAL_KEY_RIGHT )
-	{
-		_cam->rotate(_angularVelocity, Vec3(0,1,0));
+		_cam->lookAt(vec3(0.f,0.f,3.f),vec3(0.f,0.f,0.f),vec3(0.f, 1.f, 0.f) );
 	}
 
 }

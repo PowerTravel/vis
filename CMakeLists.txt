@@ -14,10 +14,12 @@ add_executable(vis
 	src/Transform.cpp
 	src/Camera.cpp
 	src/State.cpp
-	src/UpdateCallback.cpp
 	src/NodeVisitor.cpp
 	src/RenderVisitor.cpp
 	src/UpdateVisitor.cpp
+	
+	src/UpdateCallback.cpp
+	src/CameraMovementCallback.cpp
 )
 
 find_package(OpenGL REQUIRED)

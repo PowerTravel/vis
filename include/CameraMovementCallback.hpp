@@ -15,7 +15,6 @@ class CameraMovementCallback : public UpdateCallback
 		virtual ~CameraMovementCallback();
 
 		void execute();
-		void getKeyState();
 
 	private:
 		camera_ptr _cam;

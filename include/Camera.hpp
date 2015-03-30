@@ -46,7 +46,14 @@ class Camera : public Group
 		mat4 _P; // Projection matrix
 		mat4 _V; // View matrix
 
-		bool _projectionChange;
+		vec3 _pos;
+		vec3 _at;
+
+		vec3 _dr;
+		mat4 _dw;
+		bool _moved, _projectionChange;
+
+		mat4 getRigidInv();
 };
 
 #endif // CAMERA_HPP

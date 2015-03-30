@@ -11,6 +11,8 @@
 #include "RenderVisitor.hpp"
 #include "UpdateVisitor.hpp"
 #include "State.hpp"
+
+#include "CameraMovementCallback.hpp"
 #include <memory>
 #include <map>
 #include <vector>
@@ -80,6 +82,7 @@ group_ptr build_graph()
 	grp->setState(&state);
 
 	camera_ptr cam = camera_ptr(new Camera());
+	cam->connectCallback(callback_ptr(new CameraMovementCallback(cam)));
 	grp->addChild(cam);
 
 	transform_ptr trns1 = transform_ptr(new Transform());
@@ -124,28 +127,28 @@ group_ptr build_graph()
 
 int main( void )
 {
-	MainWindow mainWindow = MainWindow(1024, 768);
-	//setUpGlew();
+	//MainWindow mainWindow = MainWindow();
+	MainWindow::getInstance().init(1024,768);
+	//mainWindow.init(1024,768);
 
 	group_ptr grp = build_graph();
 	RenderVisitor r = RenderVisitor();	
 	UpdateVisitor u = UpdateVisitor();	
 
-	while(mainWindow.isRunning()){
-		mainWindow.clear();
-		mainWindow.getInput();
-		mainWindow.update();	
+	//while(mainWindow.isRunning()){
+	while(MainWindow::getInstance().isRunning()){
+		MainWindow::getInstance().clear();
+		MainWindow::getInstance().getInput();
+		MainWindow::getInstance().update();	
 
 	//	std::cout << "NEW FRAME" << std::endl;
 		u.traverse(grp.get());
 		r.traverse(grp.get());
 	
 		// Swap buffers
-		mainWindow.swap();
+		MainWindow::getInstance().swap();
 	} 
 
-	// Close OpenGL window and terminate GLFW
-	//glfwTerminate();
-
+	MainWindow::getInstance().destroy();
 	return 0;
 }
