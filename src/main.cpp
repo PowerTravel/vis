@@ -9,6 +9,7 @@
 #include "Transform.hpp"
 #include "Camera.hpp"
 #include "RenderVisitor.hpp"
+#include "UpdateVisitor.hpp"
 #include "State.hpp"
 #include <memory>
 #include <map>
@@ -52,7 +53,7 @@ GLFWwindow* createWindow()
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
 	// Open a window and create its OpenGL context
-	GLFWwindow* window = glfwCreateWindow( 1024, 768, "Tutorial 02 - Red triangle", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow( 1024, 768, "Main Window", NULL, NULL);
 	if( window == NULL ){
 		fprintf( stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n" );
 		glfwTerminate();
@@ -123,15 +124,12 @@ group_ptr build_graph()
 
 int main( void )
 {
-	GLFWwindow* window = NULL;;
-	if( (window = createWindow()) == NULL)
-	{
-		return -1;
-	}
-	MainWindow mainWindow = MainWindow(window);
+	MainWindow mainWindow = MainWindow(1024, 768);
+	//setUpGlew();
 
 	group_ptr grp = build_graph();
 	RenderVisitor r = RenderVisitor();	
+	UpdateVisitor u = UpdateVisitor();	
 
 	while(mainWindow.isRunning()){
 		mainWindow.clear();
@@ -139,6 +137,7 @@ int main( void )
 		mainWindow.update();	
 
 	//	std::cout << "NEW FRAME" << std::endl;
+		u.traverse(grp.get());
 		r.traverse(grp.get());
 	
 		// Swap buffers
@@ -146,7 +145,7 @@ int main( void )
 	} 
 
 	// Close OpenGL window and terminate GLFW
-	glfwTerminate();
+	//glfwTerminate();
 
 	return 0;
 }
