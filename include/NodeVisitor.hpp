@@ -8,6 +8,7 @@ class Geometry;
 class Group;
 class Transform;
 class Camera;
+class ParticleSystem;
 //class RenderToTexture;
 
 /*	
@@ -30,6 +31,7 @@ class NodeVisitor{
 		virtual void apply(Group* n);
 		virtual void apply(Transform* n);
 		virtual void apply(Camera* n);
+		virtual void apply(ParticleSystem* n);
 //		virtual void apply(RenderToTexture* n);
 		
 	protected:

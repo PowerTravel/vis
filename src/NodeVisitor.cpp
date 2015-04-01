@@ -68,6 +68,11 @@ void NodeVisitor::apply(Camera* n)
 {
 	printf("Visiting Camera from NodeVisitor \n");
 }
+
+void NodeVisitor::apply(ParticleSystem* n)
+{
+	printf("Visiting ParticleSystem from NodeVisitor \n");
+}
 /*
 void NodeVisitor::apply(RenderToTexture* n)
 {

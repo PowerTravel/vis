@@ -13,6 +13,7 @@ add_executable(vis
 	src/Group.cpp
 	src/Transform.cpp
 	src/Camera.cpp
+	src/ParticleSystem.cpp
 	src/State.cpp
 	src/NodeVisitor.cpp
 	src/RenderVisitor.cpp
@@ -48,7 +49,7 @@ include_directories(
 	${GLEW_INCLUDE_LIBRARIES}
 	external/assimp-3.1.1/include
 	external/glm-0.9.6.3
-	external/gmtl-0.6.1
+	external/eigen-3.2.4
 	include
 )
 
