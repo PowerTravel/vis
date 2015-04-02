@@ -29,6 +29,8 @@ int main( void )
 		if( (i % 60) == 0) std::cout << "new_Sec"<< std::endl;
 	}
 
+	p.printToFile("bajsloek.m");
+
 /*
 	//MainWindow mainWindow = MainWindow();
 	MainWindow::getInstance().init(1024,768);

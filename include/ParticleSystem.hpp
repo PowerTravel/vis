@@ -1,5 +1,6 @@
 #ifndef PARTICLE_SYSTEM_HPP
 #define PARTICLE_SYSTEM_HPP
+#include <random>
 
 #include "Node.hpp"
 #include <Eigen/Dense>
@@ -10,15 +11,26 @@ class NodeVisitor;
 class ParticleSystem : public Node
 {
 
+	struct systemdata{
+		double t;
+		double K;
+		int n;
+
+		friend std::ostream& operator<<(std::ostream& os, const systemdata& data){
+			os << data.t <<" " << data.K << " " << data.n;
+			return os;
+		}
+	};
 	public:
 
-		ParticleSystem(int maxNrParticles= 100);
+		ParticleSystem(int maxNrParticles= 1000);
 		virtual ~ParticleSystem();
 
 		void update();
 		void draw();
 		
 		void acceptVisitor(NodeVisitor& v);
+		void printToFile(std::string filename);
 	private:
 		struct metadata{
 			double cameraDistance;
@@ -53,8 +65,13 @@ class ParticleSystem : public Node
 		void add_new_particles();
 
 		// DEBUG etc
-		std::vector<double> E;
+		float _time;
+		std::vector<systemdata> _ddata;
 
+		int totDeath;
+		int totBirth;
+
+		std::default_random_engine _gauss_num_gen;
 };
 
 #endif // PARTICLE_SYSTEM_HPP

@@ -1,5 +1,4 @@
 #include "State.hpp"
-#include <gl/glew.h>
 #include <iostream>
 
 State::State()
