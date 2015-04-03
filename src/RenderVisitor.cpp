@@ -3,6 +3,7 @@
 #include "RenderVisitor.hpp"
 #include "Transform.hpp"
 #include "Geometry.hpp"
+#include "ParticleSystem.hpp"
 #include "Camera.hpp"
 #include <iostream>
 
@@ -18,6 +19,41 @@ RenderVisitor::~RenderVisitor()
 
 }
 
+void RenderVisitor::apply(ParticleSystem* n)
+{
+	if(send_data_to_shader(n))
+	{
+		n->draw();
+	}
+	decrease_aList();
+}
+
+bool RenderVisitor::send_data_to_shader(Node* n)
+{
+	_M = aList.front().m;
+
+	// We sync the geometries state with the lates entry in the aList without adding it to the aList.
+	state_ptr state = syncStates(aList.front().s.get(),n->getState() );
+
+	//if( state->contain(ST_ATR_SHADER) )
+	if( !state->contain(State::Attribute::SHADER) )
+	{
+		std::cerr<<"No shader present. Not rendering geometry."<<std::endl;
+		return false;
+	}
+	// Apply the state to openGL
+	state->apply();
+
+	// Send the Model View and projection matrices to the shader
+	shader_ptr shader;
+	state->get(State::Attribute::SHADER, shader);
+	shader->setUniformMatrix("M", 1, &_M[0][0]);
+	shader->setUniformMatrix("V", 1, &_V[0][0]);
+	shader->setUniformMatrix("P", 1, &_P[0][0]);
+
+	return true;
+}
+
 /*
  * Name:	apply (Geometry)
  * Purpose: Renders a geometry with the accumulated transformation
@@ -26,49 +62,12 @@ RenderVisitor::~RenderVisitor()
  * Output:	-	
  * Misc:	-
  */
-void RenderVisitor::apply(Geometry* g)
+void RenderVisitor::apply(Geometry* n)
 {
-
-	// this matrix contain the accumulated ModelMatrix.
-	_M = aList.front().m;
-
-	// We sync the geometries state with the lates entry in the aList without adding it to the aList.
-	state_ptr state = syncStates(aList.front().s.get(),g->getState() );
-
-	//if( state->contain(ST_ATR_SHADER) )
-	if( state->contain(State::Attribute::SHADER) )
+	if(send_data_to_shader(n))
 	{
-		// Apply the state to openGL
-		state->apply();
-
-		mat4 P = matlib::perspective(45.f, 4.0f/3.0f, 0.1f,100.0f);
-		mat4 V = matlib::lookAt(vec3(4,3,3), vec3(0,0,0), vec3(0,1,0));
-		mat4 M = mat4(1.f);
-
-
-		// Send the Model View and projection matrices to the shader
-		shader_ptr shader;
-		state->get(State::Attribute::SHADER, shader);
-		shader->setUniformMatrix("M", 1, &_M[0][0]);
-		if(_isModelviewSet){
-			shader->setUniformMatrix("V", 1, &_V[0][0]);
-			shader->setUniformMatrix("P", 1, &_P[0][0]);
-
-		}else{
-			std::cerr<<"No CameraMatrix active. Probably not rendering properly."<<std::endl;
-		}
-		
-		// draw the geometry
-		g->draw();
-
-	}else{
-		std::cerr<<"No shader present. Not rendering geometry."<<std::endl;
+		n->draw();
 	}
-	
-	// Since we are in a leaf we now want to erase all entries
-	// in these lists up to the entry that has unvisited children.
-	//std::cout << aList.size() << std::endl;
-
 	decrease_aList();
 }
 

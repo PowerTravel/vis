@@ -22,16 +22,6 @@ group_ptr build_graph();
 
 int main( void )
 {
-
-	ParticleSystem p = ParticleSystem();
-	for(int i = 0; i<1000; i++){
-		p.update();
-		if( (i % 60) == 0) std::cout << "new_Sec"<< std::endl;
-	}
-
-	p.printToFile("bajsloek.m");
-
-/*
 	//MainWindow mainWindow = MainWindow();
 	MainWindow::getInstance().init(1024,768);
 	//mainWindow.init(1024,768);
@@ -55,15 +45,15 @@ int main( void )
 		// Swap buffers
 		MainWindow::getInstance().swap();
 	} 
+
 	MainWindow::getInstance().destroy();
-*/
+
 	return 0;
 }
 
 group_ptr build_graph()
 {
-
-	//shader_ptr s = shader_ptr(new Shader("../shaders/vshader.glsl", "../shaders/fshader.glsl"));
+	// Create shader state
 	shader_ptr s = shader_ptr(new Shader("../shaders/phong_vshader.glsl", "../shaders/phong_fshader.glsl"));
 	s->createUniform("Diff");
 	s->createUniform("Amb");
@@ -75,14 +65,14 @@ group_ptr build_graph()
 	State state = State();
 	state.set(State::Attribute::SHADER,s);
 
-	geometry_vec gvec = Geometry::loadFile("../models/sphere.obj");
+	// Create Nodes
+	// Root
 	group_ptr grp = group_ptr(new Group());
 	grp->setState(&state);
-
+	// Camera
 	camera_ptr cam = camera_ptr(new Camera());
 	cam->connectCallback(callback_ptr(new CameraMovementCallback(cam)));
-	grp->addChild(cam);
-
+	// Transform 1 and 2
 	transform_ptr trns1 = transform_ptr(new Transform());
 	trns1->translate(vec3(0.5,0,0));
 	trns1->scale(vec3(0.5,0.5,0.5));
@@ -95,14 +85,26 @@ group_ptr build_graph()
 	transform_ptr trns2 = transform_ptr(new Transform());
 	trns2->translate(vec3(-0.5,0,0));
 	trns2->scale(vec3(0.5,0.5,0.5));
+	
+	// ParticleSystem
+	partsys_ptr ps = partsys_ptr(new ParticleSystem);
+
+	// Geometry
+	geometry_vec gvec = Geometry::loadFile("../models/sphere.obj");
+
+
+	// Link the tree
+
+	grp->addChild(cam);
+
+	cam->addChild(trns1);
+	cam->addChild(trns2);
+	cam->addChild(ps);
 
 	for(int i = 0; i<gvec.size(); i++){
 		trns1->addChild(gvec[i]);
 		trns2->addChild(gvec[i]);
 	}
-
-	cam->addChild(trns1);
-	cam->addChild(trns2);
 
 	return grp;
 }

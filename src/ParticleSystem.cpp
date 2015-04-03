@@ -9,15 +9,15 @@ ParticleSystem::ParticleSystem(int maxNrParticles)
 	_n = 0;
 
 	// (for now) Hardcoded Constants
-	_h = 1/60.0f;
-	_g << 0,9.82,0;
-	_pos << 0,0,0;
-	_var_p  << 0.5,0.5,0.5;
-	_vel << 0,0.2,0;
-	_var_v << 0.5,0.5,0.5;
-	_mass = 1;
-	_ppf = 10;
-	_life = 1;
+	_h = 1/60.0f;			// Timesteps
+	_g << 0,9.82,0;			// Gravity
+	_pos << 0,0,0;			// emission postition
+	_var_p  << 0.5,0.5,0.5;	// emission position variance	
+	_vel << 0,0.2,0;		// emission velocity
+	_var_v << 0.5,0.5,0.5;	// emission velocity variance
+	_mass = 1;				// Particle mass
+	_ppf = 1;				// New particles per frame
+	_life = 1;				// lifetime [s]
 
 	_f = Eigen::VectorXd(3*_N);
 	for(int i = 0; i<_N; ++i)
@@ -32,17 +32,45 @@ ParticleSystem::ParticleSystem(int maxNrParticles)
 	_v = Eigen::VectorXd(3*_N);
 
 	_mdata = new metadata[maxNrParticles];
+	std::default_random_engine _gauss_num_gen;
 
-	_h = 1/60.0f;
 		
 	 _ddata = std::vector<systemdata>();
+	
+	// Debugconstants
 	 _time = 0;
-
 	 totDeath = 0;
 	 totBirth = 0;
-	
-	std::default_random_engine _gauss_num_gen;
+
+	 // Render related stuff	
+	createQuad();
+	createParticleBuffer();	
 }
+void ParticleSystem::createParticleBuffer()
+{
+	glBindVertexArray(VAO);
+
+	glGenBuffers(1, &particleBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, particleBuffer);
+	glBufferData(GL_ARRAY_BUFFER, _N*3*sizeof(GLfloat), NULL, GL_STREAM_DRAW);
+
+	glVertexAttribPointer(STREAM, 3, GL_FLOAT, GL_FALSE, 0,(GLvoid*) NULL);
+	glEnableVertexAttribArray(STREAM);
+
+	glBindVertexArray(0);
+}
+
+void ParticleSystem::sendParticlesToBuffer()
+{
+	glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, particleBuffer);
+	glBufferData(GL_ARRAY_BUFFER, _N*3*sizeof(GLfloat), NULL, GL_STREAM_DRAW);
+	glBufferSubData(GL_ARRAY_BUFFER,0, _n*3*sizeof(GLfloat), &_x(0));
+	
+	glBindVertexArray(0);
+}
+
+
 ParticleSystem::~ParticleSystem()
 {
 	if(_mdata != NULL)
@@ -151,13 +179,14 @@ void ParticleSystem::update()
 	// Calculate energy
 	double k = 0;
 //	double k = _v.segment(0,3*_n).transpose() * _M.block(0,0,3*_n,3*_n) * _v.segment(0,3*_n);
-	//std::cout << k << std::endl;
-	systemdata sd = {_time, k, _n};
-	_ddata.push_back( sd );
+//	systemdata sd = {_time, k, _n};
+//	_ddata.push_back( sd );
 
 	_time += _h;
-}
 
+	sendParticlesToBuffer();
+//	printToFile("bajsloek.m");
+}
 void ParticleSystem::printToFile(std::string filename)
 {
 	std::ofstream file;
@@ -166,7 +195,44 @@ void ParticleSystem::printToFile(std::string filename)
 	{
 		file << _ddata[i] <<  std::endl;
 	}
+	
 	file.close();
+}
+
+void ParticleSystem::createQuad()
+{
+	float vec[] = {	-0.5,-0.5,0,
+					0.5,-0.5,0,
+					-0.5,0.5,0,
+					0.5,0.5,0};	
+
+	float norm[] = {	0,0,1,
+						0,0,1,
+						0,0,1,
+						0,0,1};
+
+	int face[] = { 	0,1,2,
+			   		1,3,2};
+
+	float tex[] = {	0,0,
+					1,0,
+					0,1,
+					1,1};
+	
+	Geometry::createGeom(4, 2, vec,  norm,  face, tex);
+}
+
+void ParticleSystem::draw()
+{
+	glPointSize(4.0);
+	glDisable(GL_CULL_FACE);
+	glBindVertexArray(VAO);
+	glVertexAttribDivisor(VERTEX,0);
+	glVertexAttribDivisor(STREAM,1);
+	glDrawElementsInstanced(GL_TRIANGLES,3*nrFaces,GL_UNSIGNED_INT,(void*)NULL, _n);
+	//glDrawElements(GL_TRIANGLES, 3*nrFaces,GL_UNSIGNED_INT,0);
+	glBindVertexArray(0);
+	glPointSize(1.0);
 }
 
 void ParticleSystem::acceptVisitor(NodeVisitor& v)

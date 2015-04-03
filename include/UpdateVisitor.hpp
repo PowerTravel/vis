@@ -19,10 +19,11 @@ class UpdateVisitor : public NodeVisitor{
 
 		void windowChanged();
 
-		void apply(Geometry* g);
-		void apply(Group* grp);
-		void apply(Transform* t);
-		void apply(Camera* cam);
+		void apply(Geometry* n);
+		void apply(ParticleSystem* n);
+		void apply(Group* n);
+		void apply(Transform* n);
+		void apply(Camera* n);
 
 	protected:
 

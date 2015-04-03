@@ -2,13 +2,19 @@
 #define PARTICLE_SYSTEM_HPP
 #include <random>
 
-#include "Node.hpp"
+#include "Geometry.hpp"
 #include <Eigen/Dense>
 #include <Eigen/SparseCore>
 
 class NodeVisitor;
 
-class ParticleSystem : public Node
+#ifndef PARTICLE_SYSTEM_PTR
+#define PARTICLE_SYSTEM_PTR
+class ParticleSystem;
+typedef std::shared_ptr<ParticleSystem> partsys_ptr;
+#endif // PARTICLE_SYSTEM_PTR
+
+class ParticleSystem : public Geometry
 {
 
 	struct systemdata{
@@ -40,6 +46,7 @@ class ParticleSystem : public Node
 			};
 		};
 
+
 		// Update Properties
 		double _h;				// The length of each time step
 		Eigen::Vector3d _g;
@@ -60,9 +67,19 @@ class ParticleSystem : public Node
 		Eigen::VectorXd _x, _v;			// Position and velocity
 		metadata* _mdata;				// Metadata about the part
 
+		
+		GLuint particleBuffer;
+
+
 		// Private functions
 		void remove_dead_particles();
 		void add_new_particles();
+
+
+		// Rendering functions
+		void createQuad();
+		void createParticleBuffer();
+		void sendParticlesToBuffer();
 
 		// DEBUG etc
 		float _time;

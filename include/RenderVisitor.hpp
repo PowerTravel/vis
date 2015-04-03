@@ -22,6 +22,7 @@ class RenderVisitor : public NodeVisitor{
 		virtual ~RenderVisitor();
 		
 		void apply(Geometry* n);
+		void apply(ParticleSystem* n);
 		void apply(Group* n);
 		void apply(Transform* n);
 		void apply(Camera* n);
@@ -50,6 +51,7 @@ class RenderVisitor : public NodeVisitor{
 		void decrease_aList();
 	
 		state_ptr syncStates(State* lastState, State* newState);
+		bool send_data_to_shader(Node* n);
 
 };
 

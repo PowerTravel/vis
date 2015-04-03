@@ -2,6 +2,7 @@
 layout (location = 0) in vec3 vPosition;
 layout (location = 1) in vec2 tempTex;
 layout (location = 2) in vec3 vNormals;
+layout (location = 4) in vec3 vPart;
 uniform mat4 M, V, P;
 uniform vec3 lPos;
 out vec3 L,E,H,N;
@@ -21,5 +22,5 @@ void main()
 	H = normalize(L+E);
 	N = normalize(VM*vn).xyz;
 
-	gl_Position = P*vec4(pos,1);
+	gl_Position = P*vec4(pos+vPart,1);
 }

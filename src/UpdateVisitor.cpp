@@ -2,6 +2,7 @@
 #include "Transform.hpp"
 #include "Camera.hpp"
 #include "Geometry.hpp"
+#include "ParticleSystem.hpp"
 
 UpdateVisitor::UpdateVisitor()
 {
@@ -18,22 +19,27 @@ void UpdateVisitor::cleanup()
 
 UpdateVisitor::~UpdateVisitor(){}
 
-void UpdateVisitor::apply(Geometry* g)
+void UpdateVisitor::apply(Geometry* n)
 {
-	g->update();
+	n->update();
 }
 
-void UpdateVisitor::apply(Group* grp)
+void UpdateVisitor::apply(ParticleSystem* n)
 {
-	grp->update();
+	n->update();
 }
 
-void UpdateVisitor::apply(Transform* t)
+void UpdateVisitor::apply(Group* n)
 {
-	t->update();
+	n->update();
 }
 
-void UpdateVisitor::apply(Camera* cam)
+void UpdateVisitor::apply(Transform* n)
+{
+	n->update();
+}
+
+void UpdateVisitor::apply(Camera* n)
 {
 /*
 	if(_windowChanged == true)	
@@ -45,5 +51,5 @@ void UpdateVisitor::apply(Camera* cam)
 		cam->setPerspectiveProjection(45,w/h,0.1f, 100);
 	}
 */
-	cam->update();
+	n->update();
 }

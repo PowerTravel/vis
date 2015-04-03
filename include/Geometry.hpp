@@ -32,7 +32,8 @@ class Geometry : public Node{
 			VERTEX,
 			TEXTURECOORDINATE,
 			NORMAL,
-			FACE
+			FACE,
+			STREAM
 		};
 
 		Geometry();
@@ -47,16 +48,18 @@ class Geometry : public Node{
 		// Create a geometry directly from arrays of floats and ints.
 		void createGeom(int nVerts, int nFaces, float* verts, float* norm, int* face, float* texCoords);
 
+	protected:
+		int nrVertices;
+		int nrFaces;
+		
+		GLuint VAO;
+
 	private:
 		// Center of mass, not used atm.
 		float _cm[3];
 
 		bool loaded;
 
-		int nrVertices;
-		int nrFaces;
-		
-		GLuint VAO;
 		GLuint vertexBuffer;
 		GLuint textureBuffer;
 		GLuint normalBuffer;
