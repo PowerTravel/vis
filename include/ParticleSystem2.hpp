@@ -1,8 +1,8 @@
 #ifndef PARTICLE_SYSTEM_HPP
 #define PARTICLE_SYSTEM_HPP
+#include <random>
 
 #include "Geometry.hpp"
-#include "Emitter.hpp"
 #include <Eigen/Dense>
 #include <Eigen/SparseCore>
 
@@ -18,9 +18,9 @@ class ParticleSystem : public Geometry
 {
 
 	struct systemdata{
-		double t; 	// Time
-		double K; 	// Kinetic Energy
-		int n;		// Nr of particles
+		double t;
+		double K;
+		int n;
 
 		friend std::ostream& operator<<(std::ostream& os, const systemdata& data){
 			os << data.t <<" " << data.K << " " << data.n;
@@ -28,7 +28,8 @@ class ParticleSystem : public Geometry
 		}
 	};
 	public:
-		ParticleSystem(int maxNrParticles= 6000);
+
+		ParticleSystem(int maxNrParticles= 1000);
 		virtual ~ParticleSystem();
 
 		void update();
@@ -36,8 +37,6 @@ class ParticleSystem : public Geometry
 		
 		void acceptVisitor(NodeVisitor& v);
 		void printToFile(std::string filename);
-		
-		void load(const char* filePath);
 	private:
 		struct metadata{
 			double cameraDistance;
@@ -53,11 +52,10 @@ class ParticleSystem : public Geometry
 		Eigen::Vector3d _g;
 		Eigen::VectorXd _f; //Acceleration due to gravity of the system
 		//	Emission Properties
-		Emitter _init_pos;
-		Emitter _init_vel;
-
-
-
+		Eigen::Vector3d _pos;  // Initial Position;
+		Eigen::Vector3d _var_p;   // Variance 
+		Eigen::Vector3d _vel;  // Initial Velocity;
+		Eigen::Vector3d _var_v;   // Variance 
 		int _N;					// Max # Particles
 		int _n;					// Current # Particles
 		int _ppf;				// # Particles to add per frame
@@ -87,7 +85,10 @@ class ParticleSystem : public Geometry
 		float _time;
 		std::vector<systemdata> _ddata;
 
-		std::vector<Eigen::Vector3d> _posVec;
+		int totDeath;
+		int totBirth;
+
+		std::default_random_engine _gauss_num_gen;
 };
 
 #endif // PARTICLE_SYSTEM_HPP

@@ -10,7 +10,7 @@ Camera::Camera()
 	_dw = mat4(1.0f);
 	_dr = vec3(0.0f,0.0f,0.0f);	
 	
-	lookAt(vec3(0.0f,0.0f,3.0f), vec3(0.0f,0.0f,0.0f) , vec3(0.f, 1.f, 0.f) );
+	lookAt(vec3(0.0f,0.0f,30.0f), vec3(0.0f,0.0f,0.0f) , vec3(0.f, 1.f, 0.f) );
 	setPerspectiveProjection();
 }
 

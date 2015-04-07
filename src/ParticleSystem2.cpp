@@ -2,25 +2,22 @@
 #include "NodeVisitor.hpp"
 #include <iostream>
 #include <fstream>
-#include <assimp/Importer.hpp>
-#include <assimp/postprocess.h>
 
 ParticleSystem::ParticleSystem(int maxNrParticles)
 {
-
 	_N = maxNrParticles;
 	_n = 0;
 
 	// (for now) Hardcoded Constants
 	_h = 1/60.0f;			// Timesteps
-	_g << 0,-9.82,0;			// Gravity
-
-	_init_pos = Emitter(0,0,0,0.1,0.1,0.1);
-	_init_vel = Emitter(0,0,0,6.0,6.0,6.0);
-
+	_g << 0,9.82,0;			// Gravity
+	_pos << 0,0,0;			// emission postition
+	_var_p  << 0.5,0.5,0.5;	// emission position variance	
+	_vel << 0,0.2,0;		// emission velocity
+	_var_v << 0.5,0.5,0.5;	// emission velocity variance
 	_mass = 1;				// Particle mass
-	_ppf = 10;				// New particles per frame
-	_life = 10;				// lifetime [s]
+	_ppf = 1;				// New particles per frame
+	_life = 1;				// lifetime [s]
 
 	_f = Eigen::VectorXd(3*_N);
 	for(int i = 0; i<_N; ++i)
@@ -30,8 +27,7 @@ ParticleSystem::ParticleSystem(int maxNrParticles)
 
 
 	//_M = Eigen::SparseMatrix(3*_N, 3*_N);	
-	//_M = Eigen::MatrixXd(3*_N, 3*_N);	
-	_M = Eigen::MatrixXd(3, 3);	
+	_M = Eigen::MatrixXd(3*_N, 3*_N);	
 	_x = Eigen::VectorXd(3*_N);	
 	_v = Eigen::VectorXd(3*_N);
 
@@ -43,14 +39,13 @@ ParticleSystem::ParticleSystem(int maxNrParticles)
 	
 	// Debugconstants
 	 _time = 0;
+	 totDeath = 0;
+	 totBirth = 0;
 
+	 // Render related stuff	
 	createQuad();
-	//load("../models/sphere.obj");
 	createParticleBuffer();	
-
-	//add_new_particles();
 }
-
 void ParticleSystem::createParticleBuffer()
 {
 	glBindVertexArray(VAO);
@@ -70,9 +65,8 @@ void ParticleSystem::sendParticlesToBuffer()
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, particleBuffer);
 	glBufferData(GL_ARRAY_BUFFER, _N*3*sizeof(GLfloat), NULL, GL_STREAM_DRAW);
-	Eigen::VectorXf x = _x.segment(0,3*_n).cast<float>();
-	glBufferSubData(GL_ARRAY_BUFFER,0, _n*3*sizeof(GLfloat), &x(0));
-
+	glBufferSubData(GL_ARRAY_BUFFER,0, _n*3*sizeof(GLfloat), &_x(0));
+	
 	glBindVertexArray(0);
 }
 
@@ -92,6 +86,7 @@ void ParticleSystem::remove_dead_particles()
 	while(_mdata[_n-1].life<=0 && _n>0)
 	{
 		_n--;
+		totDeath ++;
 	}
 
 	for(int i=0; i<_n; ++i)
@@ -108,8 +103,10 @@ void ParticleSystem::remove_dead_particles()
 			// but we don't have to swap this time
 			_x.segment(3*i, 3) = _x.segment(3*(_n-1), 3);
 			_v.segment(3*i, 3) = _v.segment(3*(_n-1), 3);
-			//_M.block(3*i, 3*i, 3, 3) = _M.block(3*(_n-1), 3*(_n-1), 3, 3);
+			_M.block(3*i, 3*i, 3, 3) = _M.block(3*(_n-1), 3*(_n-1), 3, 3);
+
 			_n--;
+			totDeath ++;
 		}
 		
 		// Decrease the life of the particle
@@ -131,22 +128,42 @@ void ParticleSystem::add_new_particles()
 
 	// Add new particles to _x, _v, _M.
 	// _x and _v are added with a gaussian distribution
-	_init_pos.generate(n, &_x[_n]);
-	_init_vel.generate(n, &_v[_n]);
-	//_M.block(3*_n,3*_n,3*n,3*n) =_mass * Eigen::MatrixXd::Identity(3*n,3*n);
-
+	std::normal_distribution<double> dist_pos_x = 
+					std::normal_distribution<double>(_pos(0),_var_p(0));
+	std::normal_distribution<double> dist_pos_y =
+					std::normal_distribution<double>(_pos(1),_var_p(1));
+	std::normal_distribution<double> dist_pos_z =
+					std::normal_distribution<double>(_pos(2),_var_p(2));
+	
+	std::normal_distribution<double> dist_vel_x = 
+					std::normal_distribution<double>(_vel(0),_var_v(0));
+	std::normal_distribution<double> dist_vel_y = 
+					std::normal_distribution<double>(_vel(1),_var_v(1));
+	std::normal_distribution<double> dist_vel_z = 
+					std::normal_distribution<double>(_vel(2),_var_v(2));
+	//std::cout << _pos.transpose() << " : " << _var_p.transpose() <<" : " << _vel.transpose()  <<" : " <<_var_v.transpose() <<std::endl;
+	//std::cout<< (rand()/(double)(RAND_MAX)) << std::endl;
 	for(int i = 0; i<n; ++i)
 	{
+		 // Generate a gaussian distribution
+		_x(_n+3*i+0) = dist_pos_x(_gauss_num_gen);
+		_x(_n+3*i+1) = dist_pos_y(_gauss_num_gen);
+		_x(_n+3*i+2) = dist_pos_z(_gauss_num_gen);
+    	_v(_n+3*i+0) = dist_vel_x(_gauss_num_gen);
+    	_v(_n+3*i+1) = dist_vel_y(_gauss_num_gen);
+    	_v(_n+3*i+2) = dist_vel_z(_gauss_num_gen);
+		_M.block(_n+3*i,_n+3*i,3,3) =_mass * Eigen::MatrixXd::Identity(3,3);
+		
 		// Set metadata
 		_mdata[_n+i].life = _life;
 	}
 
+	totBirth += n;
 	_n += n;
 }
 
 void ParticleSystem::update()
 {
-
 	// Remove dead particles
 	remove_dead_particles();
 	
@@ -160,7 +177,7 @@ void ParticleSystem::update()
 
 
 	// Calculate energy
-//	double k = 0;
+	double k = 0;
 //	double k = _v.segment(0,3*_n).transpose() * _M.block(0,0,3*_n,3*_n) * _v.segment(0,3*_n);
 //	systemdata sd = {_time, k, _n};
 //	_ddata.push_back( sd );
@@ -168,7 +185,7 @@ void ParticleSystem::update()
 	_time += _h;
 
 	sendParticlesToBuffer();
-
+//	printToFile("bajsloek.m");
 }
 void ParticleSystem::printToFile(std::string filename)
 {
@@ -205,45 +222,17 @@ void ParticleSystem::createQuad()
 	Geometry::createGeom(4, 2, vec,  norm,  face, tex);
 }
 
-void ParticleSystem::load(const char* filePath)
-{
-
-	// Let assimp read the file, Triangluate and do other
-	// optimization stuff
-	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile(filePath,
-							aiProcess_OptimizeMeshes |
-							aiProcess_Triangulate | 
-							aiProcess_JoinIdenticalVertices|
-							aiProcess_GenSmoothNormals);
-	if(!scene){
-		fprintf(stderr, "Failed to load model '%s' \n '%s'\n ", filePath, importer.GetErrorString());
-		return;
-	}
-
-	geometry_vec geomVec = geometry_vec(scene->mNumMeshes);
-	// Start to load meshes
-	aiMesh* mesh = scene-> mMeshes[0];
-	if( !mesh )
-	{
-		fprintf(stderr, "failed to load mesh. \n");
-	}else{
-		// If the mesh succseded to load we create a new geometry
-		// from it
-		Geometry::Geometry(mesh);
-	}
-}
-
-
 void ParticleSystem::draw()
 {
+	glPointSize(4.0);
 	glDisable(GL_CULL_FACE);
 	glBindVertexArray(VAO);
 	glVertexAttribDivisor(VERTEX,0);
 	glVertexAttribDivisor(STREAM,1);
 	glDrawElementsInstanced(GL_TRIANGLES,3*nrFaces,GL_UNSIGNED_INT,(void*)NULL, _n);
-//	glDrawElements(GL_TRIANGLES, 3*nrFaces,GL_UNSIGNED_INT,0);
+	//glDrawElements(GL_TRIANGLES, 3*nrFaces,GL_UNSIGNED_INT,0);
 	glBindVertexArray(0);
+	glPointSize(1.0);
 }
 
 void ParticleSystem::acceptVisitor(NodeVisitor& v)

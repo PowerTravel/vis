@@ -5,6 +5,7 @@ add_executable(vis
 	src/main.cpp
 	src/MainWindow.cpp
 	src/Timer.cpp
+	src/Emitter.cpp
 
 	src/Shader.cpp
 
@@ -14,6 +15,7 @@ add_executable(vis
 	src/Transform.cpp
 	src/Camera.cpp
 	src/ParticleSystem.cpp
+
 	src/State.cpp
 	src/NodeVisitor.cpp
 	src/RenderVisitor.cpp
