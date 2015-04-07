@@ -30,8 +30,6 @@ int main( void )
 	RenderVisitor r = RenderVisitor();	
 	UpdateVisitor u = UpdateVisitor();	
 
-
-
 	//while(mainWindow.isRunning()){
 	while(MainWindow::getInstance().isRunning()){
 		MainWindow::getInstance().clear();
@@ -41,10 +39,12 @@ int main( void )
 	//	std::cout << "NEW FRAME" << std::endl;
 		u.traverse(grp.get());
 		r.traverse(grp.get());
-	
+
 		// Swap buffers
 		MainWindow::getInstance().swap();
 	} 
+
+//	p.printToFile("bajsloek.m");
 
 	MainWindow::getInstance().destroy();
 

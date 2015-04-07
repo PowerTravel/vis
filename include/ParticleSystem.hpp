@@ -27,8 +27,19 @@ class ParticleSystem : public Geometry
 			return os;
 		}
 	};
+	
+	struct frameData{
+		double x;
+		double y;
+		double z;
+
+		friend std::ostream& operator<<(std::ostream& os, const frameData& data){
+			os << data.x <<" " << data.y << " " << data.z;
+			return os;
+		}
+	};
 	public:
-		ParticleSystem(int maxNrParticles= 6000);
+		ParticleSystem(int maxNrParticles=18000);
 		virtual ~ParticleSystem();
 
 		void update();
@@ -86,8 +97,10 @@ class ParticleSystem : public Geometry
 		// DEBUG etc
 		float _time;
 		std::vector<systemdata> _ddata;
+		std::vector< std::vector<frameData>  > _fd;
 
 		std::vector<Eigen::Vector3d> _posVec;
+		void add_frame_data();
 };
 
 #endif // PARTICLE_SYSTEM_HPP

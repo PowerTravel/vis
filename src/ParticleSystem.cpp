@@ -13,14 +13,14 @@ ParticleSystem::ParticleSystem(int maxNrParticles)
 
 	// (for now) Hardcoded Constants
 	_h = 1/60.0f;			// Timesteps
-	_g << 0,-9.82,0;			// Gravity
+	_g << 0,-10,0;			// Gravity
 
 	_init_pos = Emitter(0,0,0,0.1,0.1,0.1);
-	_init_vel = Emitter(0,0,0,6.0,6.0,6.0);
+	_init_vel = Emitter(0,50,0, 10, 10, 10);
 
 	_mass = 1;				// Particle mass
 	_ppf = 10;				// New particles per frame
-	_life = 10;				// lifetime [s]
+	_life = 30;				// lifetime [s]
 
 	_f = Eigen::VectorXd(3*_N);
 	for(int i = 0; i<_N; ++i)
@@ -48,7 +48,19 @@ ParticleSystem::ParticleSystem(int maxNrParticles)
 	//load("../models/sphere.obj");
 	createParticleBuffer();	
 
+	_fd = std::vector< std::vector<frameData>  >();
 	//add_new_particles();
+}
+
+void ParticleSystem::add_frame_data()
+{
+	std::vector<frameData> fd;
+	for(int i = 0; i<_n; i++)
+	{
+		frameData f = {_x(3*i+0),_x(3*i+1),_x(3*i+2)};
+		fd.push_back(f);
+	}
+	_fd.push_back(fd);
 }
 
 void ParticleSystem::createParticleBuffer()
@@ -119,29 +131,30 @@ void ParticleSystem::remove_dead_particles()
 
 void ParticleSystem::add_new_particles()
 {
-	int n = _ppf; // The number of new particles to add
-	int spaceLeft = _N - _n;
-	if(n > spaceLeft)
-	{
-		n = spaceLeft;
+	if(_n < _N){
+		int n = _ppf; // The number of new particles to add
+		int spaceLeft = _N - _n;
+		if(n > spaceLeft)
+		{
+			n = spaceLeft;
+		}
+		if(n < 0){
+			n = 0;
+		}
+		// Add new particles to _x, _v, _M.
+		// _x and _v are added with a gaussian distribution
+		_init_pos.generate(n, &_x[3*_n]);
+		_init_vel.generate(n, &_v[3*_n]);
+		//_M.block(3*_n,3*_n,3*n,3*n) =_mass * Eigen::MatrixXd::Identity(3*n,3*n);
+	
+		for(int i = 0; i<n; ++i)
+		{
+			// Set metadata
+			_mdata[_n+i].life = _life;
+		}
+	
+		_n += n;
 	}
-	if(n < 0){
-		n = 0;
-	}
-
-	// Add new particles to _x, _v, _M.
-	// _x and _v are added with a gaussian distribution
-	_init_pos.generate(n, &_x[_n]);
-	_init_vel.generate(n, &_v[_n]);
-	//_M.block(3*_n,3*_n,3*n,3*n) =_mass * Eigen::MatrixXd::Identity(3*n,3*n);
-
-	for(int i = 0; i<n; ++i)
-	{
-		// Set metadata
-		_mdata[_n+i].life = _life;
-	}
-
-	_n += n;
 }
 
 void ParticleSystem::update()
@@ -154,9 +167,9 @@ void ParticleSystem::update()
 	add_new_particles();
 
 	// Update living particles
-	_v.segment(0,_n) = _v.segment(0,_n) + _h*_f.segment(0,_n);
-	_x.segment(0,_n) = _x.segment(0,_n) + _h*_v.segment(0,_n);
-	//std::cout << _v.segment(0,3).transpose() <<std::endl;
+	_v.segment(0,3*_n) = _v.segment(0,3*_n) + _h*_f.segment(0,3*_n);
+	_x.segment(0,3*_n) = _x.segment(0,3*_n) + _h*_v.segment(0,3*_n);
+	//std::cout << _n << "/" << _N <<std::endl;
 
 
 	// Calculate energy
@@ -169,14 +182,17 @@ void ParticleSystem::update()
 
 	sendParticlesToBuffer();
 
+//	add_frame_data();
 }
 void ParticleSystem::printToFile(std::string filename)
 {
 	std::ofstream file;
 	file.open(filename, std::ios::out | std::ios::trunc);
-	for(int i = 0; i<_ddata.size(); ++i)
+	for(int i = 0; i<_fd.size(); ++i)
 	{
-		file << _ddata[i] <<  std::endl;
+		for(int j = 0; j<_fd[i].size(); j++){
+			file << _fd[i][j] <<  std::endl;
+		}
 	}
 	
 	file.close();
