@@ -25,9 +25,10 @@ void main()
 		diffuse = vec4(0.0,0.0,0.0,1.0);
 		specular = vec4(0.0, 0.0, 0.0, 1.0);
 	}
-
-	//float attenuation = 1/( 1 + att*pow(r,2) );
-	float attenuation = 1;
+	
+	float attt = 0.001;
+	float attenuation = 1/( 1 + attt*pow(r,2) );
+//	float attenuation = 1;
 	color += ambient+attenuation*(diffuse+specular);
 
 	fragColor = color;

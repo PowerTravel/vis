@@ -8,59 +8,35 @@
 ParticleSystem::ParticleSystem(int maxNrParticles)
 {
 
+	// Simulation Constants
 	_N = maxNrParticles;
 	_n = 0;
-
-	// (for now) Hardcoded Constants
 	_h = 1/60.0f;			// Timesteps
 	_g << 0,-10,0;			// Gravity
-
-	_init_pos = Emitter(0,0,0,0.1,0.1,0.1);
-	_init_vel = Emitter(0,50,0, 10, 10, 10);
-
-	_mass = 1;				// Particle mass
+	_mass = 0.1;			// Particle mass
 	_ppf = 10;				// New particles per frame
-	_life = 30;				// lifetime [s]
-
-	_f = Eigen::VectorXd(3*_N);
-	for(int i = 0; i<_N; ++i)
-	{
-		_f.segment(3*i,3) = _g*_mass;
-	}
+	_life = 5;				// lifetime [s]
+	_forces_changed = true;
 
 
+	_mdata = new Metadata[_N];
 	//_M = Eigen::SparseMatrix(3*_N, 3*_N);	
 	//_M = Eigen::MatrixXd(3*_N, 3*_N);	
 	_M = Eigen::MatrixXd(3, 3);	
 	_x = Eigen::VectorXd(3*_N);	
 	_v = Eigen::VectorXd(3*_N);
 
-	_mdata = new metadata[maxNrParticles];
-	std::default_random_engine _gauss_num_gen;
+	_init_pos = Emitter(0.0,  0.0, 0.0, 0.1f, 0.1f, 0.1f);
+	_init_vel = Emitter(0.0, 15.0, 0.0, 1.0f, 1.0f, 1.0f);
 
-		
-	 _ddata = std::vector<systemdata>();
-	
-	// Debugconstants
-	 _time = 0;
-
+	// Render stuff
 	createQuad();
 	//load("../models/sphere.obj");
 	createParticleBuffer();	
-
-	_fd = std::vector< std::vector<frameData>  >();
-	//add_new_particles();
-}
-
-void ParticleSystem::add_frame_data()
-{
-	std::vector<frameData> fd;
-	for(int i = 0; i<_n; i++)
-	{
-		frameData f = {_x(3*i+0),_x(3*i+1),_x(3*i+2)};
-		fd.push_back(f);
-	}
-	_fd.push_back(fd);
+	 
+	
+	// Energy stuffu
+	_ddata = std::vector<Energy>();
 }
 
 void ParticleSystem::createParticleBuffer()
@@ -112,7 +88,7 @@ void ParticleSystem::remove_dead_particles()
 		if(_mdata[i].life <= 0)
 		{
 			// Swap the dead particle with the last particle
-			metadata swap = _mdata[i];
+			Metadata swap = _mdata[i];
 			_mdata[i] = _mdata[_n-1];
 			_mdata[_n-1] = swap;
 			
@@ -157,6 +133,20 @@ void ParticleSystem::add_new_particles()
 	}
 }
 
+void ParticleSystem::calculate_forces()
+{
+	if(_forces_changed)
+	{
+		_f = Eigen::VectorXd(3*_N);
+		for(int i = 0; i<_N; ++i)
+		{
+			_f.segment(3*i,3) = _g*_mass;
+		}
+		_forces_changed = false;
+	}
+}
+
+
 void ParticleSystem::update()
 {
 
@@ -166,35 +156,32 @@ void ParticleSystem::update()
 	// Emit new particles
 	add_new_particles();
 
+	// Calc Forces
+	calculate_forces();
+
 	// Update living particles
-	_v.segment(0,3*_n) = _v.segment(0,3*_n) + _h*_f.segment(0,3*_n);
+	_v.segment(0,3*_n) = _v.segment(0,3*_n) + (_h/_mass)*_f.segment(0,3*_n);
 	_x.segment(0,3*_n) = _x.segment(0,3*_n) + _h*_v.segment(0,3*_n);
-	//std::cout << _n << "/" << _N <<std::endl;
+//	std::cout << _n << "/" << _N <<std::endl;
 
 
 	// Calculate energy
 //	double k = 0;
 //	double k = _v.segment(0,3*_n).transpose() * _M.block(0,0,3*_n,3*_n) * _v.segment(0,3*_n);
-//	systemdata sd = {_time, k, _n};
+//	Energy sd = {_time, k, _n};
 //	_ddata.push_back( sd );
 
-	_time += _h;
-
 	sendParticlesToBuffer();
-
-//	add_frame_data();
 }
+
 void ParticleSystem::printToFile(std::string filename)
 {
 	std::ofstream file;
 	file.open(filename, std::ios::out | std::ios::trunc);
-	for(int i = 0; i<_fd.size(); ++i)
+	for(int i = 0; i<_ddata.size(); ++i)
 	{
-		for(int j = 0; j<_fd[i].size(); j++){
-			file << _fd[i][j] <<  std::endl;
-		}
+		file << _ddata[i] <<  std::endl;
 	}
-	
 	file.close();
 }
 

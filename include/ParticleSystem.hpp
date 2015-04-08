@@ -17,29 +17,19 @@ typedef std::shared_ptr<ParticleSystem> partsys_ptr;
 class ParticleSystem : public Geometry
 {
 
-	struct systemdata{
+	struct Energy{
 		double t; 	// Time
 		double K; 	// Kinetic Energy
 		int n;		// Nr of particles
 
-		friend std::ostream& operator<<(std::ostream& os, const systemdata& data){
+		friend std::ostream& operator<<(std::ostream& os, const Energy& data){
 			os << data.t <<" " << data.K << " " << data.n;
 			return os;
 		}
 	};
 	
-	struct frameData{
-		double x;
-		double y;
-		double z;
-
-		friend std::ostream& operator<<(std::ostream& os, const frameData& data){
-			os << data.x <<" " << data.y << " " << data.z;
-			return os;
-		}
-	};
 	public:
-		ParticleSystem(int maxNrParticles=18000);
+		ParticleSystem(int maxNrParticles=20000);
 		virtual ~ParticleSystem();
 
 		void update();
@@ -47,60 +37,56 @@ class ParticleSystem : public Geometry
 		
 		void acceptVisitor(NodeVisitor& v);
 		void printToFile(std::string filename);
+
 		
-		void load(const char* filePath);
 	private:
-		struct metadata{
+		struct Metadata{
 			double cameraDistance;
 			double life;
-			bool operator<(metadata& that){
+			bool operator<(Metadata& that){
 				return 	this->cameraDistance > that.cameraDistance;
 			};
 		};
 
+		// Buffer ID for particles
+		GLuint particleBuffer;
 
 		// Update Properties
-		double _h;				// The length of each time step
 		Eigen::Vector3d _g;
 		Eigen::VectorXd _f; //Acceleration due to gravity of the system
 		//	Emission Properties
+		Eigen:: Vector3d _emitter_pos_spread;
+		Eigen:: Vector3d _emitter_dir_spread;
 		Emitter _init_pos;
 		Emitter _init_vel;
-
-
 
 		int _N;					// Max # Particles
 		int _n;					// Current # Particles
 		int _ppf;				// # Particles to add per frame
-		double _life, _mass;  	// Initial life and mass
+		double _h;				// The length of each time step
+		double _life; 			// Lifetime
+		double _mass; 		 	// Mass
 
 		// Particle Properties
 		//Eigen::SparseMatrix<double> _M;	// Mass matrix
-		Eigen::MatrixXd _M;	// Mass matrix
+		Eigen::MatrixXd _M;				// Mass matrix
 		Eigen::VectorXd _x, _v;			// Position and velocity
-		metadata* _mdata;				// Metadata about the part
+		Metadata* _mdata;				// Metadata about the part
 
-		
-		GLuint particleBuffer;
-
-
-		// Private functions
+		// Simulation functions
 		void remove_dead_particles();
 		void add_new_particles();
-
+		void calculate_forces();
+		bool _forces_changed;
 
 		// Rendering functions
 		void createQuad();
+		void load(const char* filePath);
 		void createParticleBuffer();
 		void sendParticlesToBuffer();
 
 		// DEBUG etc
-		float _time;
-		std::vector<systemdata> _ddata;
-		std::vector< std::vector<frameData>  > _fd;
-
-		std::vector<Eigen::Vector3d> _posVec;
-		void add_frame_data();
+		std::vector<Energy> _ddata;
 };
 
 #endif // PARTICLE_SYSTEM_HPP

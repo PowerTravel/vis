@@ -11,7 +11,7 @@ out float r;
 void main()
 {
 	mat4 VM = V*M;
-	vec4 vp = vec4(vPosition,1);
+	vec4 vp = vec4(vPosition+vParticle,1);
 	vec3 pos = (VM * vp).xyz;
 	vec4 vn = vec4(vNormals, 0.0);
 
@@ -25,5 +25,5 @@ void main()
 
 	vec3 vPart = (V * vec4(vParticle,1)).xyz;
 
-	gl_Position = P*vec4(pos+vPart,1);
+	gl_Position = P*vec4(pos,1);
 }

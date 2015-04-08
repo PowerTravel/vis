@@ -6,7 +6,7 @@ CameraMovementCallback::CameraMovementCallback(camera_ptr cam)
 {	
 	_cam = cam;
 	_angularVelocity = 0.02;
-	_speed = 0.05;
+	_speed = 0.4;
 }
 
 CameraMovementCallback::~CameraMovementCallback()
@@ -57,7 +57,6 @@ void CameraMovementCallback::execute()
 	{
 		_cam->rotate(-_angularVelocity,vec3(0,1,0));
 	}
-	
 	
 	if( glfwGetKey(window, GLFW_KEY_R)  == GLFW_PRESS) 
 	{

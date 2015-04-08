@@ -3,7 +3,7 @@
 Light::Light()
 {
 	_on = true;
-	_position = vec3(4,4,4);	
+	_position = vec3(10,10,10);	
 	_ambient = vec4(0.7,0.7,0.7,1);
 	_diffuse = vec4(0.7,0.7,0.7,1);
 	_specular = vec4(0.7,0.7,0.7,1);
