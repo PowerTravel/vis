@@ -55,9 +55,6 @@ class Geometry : public Node{
 		GLuint VAO;
 
 	private:
-		// Center of mass, not used atm.
-		float _cm[3];
-
 		bool loaded;
 
 		GLuint vertexBuffer;

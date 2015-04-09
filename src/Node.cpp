@@ -4,7 +4,8 @@ Node::Node()
 {
 	_state = State();
 	_type = NODE;
-	_callback = NULL;	
+	_callback = NULL;
+	_bb = BoundingBox();
 }
 
 Node::~Node()

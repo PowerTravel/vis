@@ -31,6 +31,7 @@ class UpdateVisitor : public NodeVisitor{
 		virtual void cleanup();
 
 	private:
+
 		bool _windowChanged;
 };
 

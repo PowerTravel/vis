@@ -15,6 +15,7 @@ add_executable(vis
 	src/Transform.cpp
 	src/Camera.cpp
 	src/ParticleSystem.cpp
+	src/BoundingBox.cpp
 
 	src/State.cpp
 	src/NodeVisitor.cpp

@@ -5,6 +5,7 @@
 #include "Emitter.hpp"
 #include <Eigen/Dense>
 #include <Eigen/SparseCore>
+#include <list>
 
 class NodeVisitor;
 
@@ -16,7 +17,6 @@ typedef std::shared_ptr<ParticleSystem> partsys_ptr;
 
 class ParticleSystem : public Geometry
 {
-
 	struct Energy{
 		double t; 	// Time
 		double K; 	// Kinetic Energy
@@ -84,6 +84,9 @@ class ParticleSystem : public Geometry
 		void load(const char* filePath);
 		void createParticleBuffer();
 		void sendParticlesToBuffer();
+
+		// Collision list
+		std::list<Node*> CollisionList;
 
 		// DEBUG etc
 		std::vector<Energy> _ddata;

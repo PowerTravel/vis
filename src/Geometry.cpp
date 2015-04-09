@@ -10,9 +10,6 @@ Geometry::Geometry()
 {
 	nrVertices = 0;
 	nrFaces = 0;
-	_cm[0] = 0;	
-	_cm[1] = 0;
-	_cm[2] = 0;
 	loaded = false;
 	glGenVertexArrays(1, &VAO);
 }
@@ -21,9 +18,6 @@ Geometry::Geometry(const aiMesh* mesh)
 {
 	nrVertices = 0;
 	nrFaces = 0;
-	_cm[0] = 0;	
-	_cm[1] = 0;
-	_cm[2] = 0;
 	glGenVertexArrays(1, &VAO);
 	
 	createGeom(mesh);
@@ -139,6 +133,8 @@ geometry_vec Geometry::loadFile(const char* filePath){
  */
 void Geometry::createGeom(int nVerts, int nFaces, float* verts, float* norm, int* face, float* texCoords)
 {
+	_bb = BoundingBox(nVerts, verts);
+
 	nrVertices = nVerts;
 	nrFaces = nFaces;	
 
@@ -186,20 +182,15 @@ void Geometry::createGeom( const aiMesh* mesh )
 			float v[3] = {	mesh->mVertices[i].x,
 							mesh->mVertices[i].y,
 							mesh->mVertices[i].z};
-			// calculate the center of mass
-			_cm[0] += v[0];
-			_cm[1] += v[1];
-			_cm[2] += v[2];
 			vertices[3*i+0] = v[0];
 			vertices[3*i+1] = v[1];
 			vertices[3*i+2] = v[2];
 		}
-		_cm[0] = _cm[0]/nrVertices;	
-		_cm[1] = _cm[1]/nrVertices;	
-		_cm[2] = _cm[2]/nrVertices;	
 
 		// load the data to the gpu
 		loadVertices(nrVertices, vertices);
+
+		_bb = BoundingBox(nrVertices, vertices);
 
 		delete vertices;
 	}
@@ -261,6 +252,7 @@ void Geometry::createGeom( const aiMesh* mesh )
 // Vertecies are loaded to space 0;
 void Geometry::loadVertices(int nrVertices, float* vertices)
 {
+
 	glBindVertexArray(VAO);
 
 	glGenBuffers(1, &vertexBuffer);

@@ -4,6 +4,7 @@
 #include <memory>
 #include "State.hpp"
 #include "UpdateCallback.hpp"
+#include "BoundingBox.hpp"
 
 class NodeVisitor;
 
@@ -24,7 +25,6 @@ typedef std::shared_ptr<UpdateCallback> callback_ptr;
  *	Misc:		All other nodes inherit from this one.
  */
 class Node{
-
 
 	public:
 		// Identifyer if the Node is able to have children or not.
@@ -48,6 +48,8 @@ class Node{
 		N_Type _type;
 		State _state;
 		callback_ptr _callback;
+		BoundingBox _bb;
+
 };
 
 
