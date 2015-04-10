@@ -85,13 +85,6 @@ void BoundingBox::build(int n, float* points)
 	_x = max(0) * coord_sys.col(0);
 	_y = max(1) * coord_sys.col(1);
 	_z = max(2) * coord_sys.col(2);
-	
-	std::cout << max << std::endl;
-	std::cout << coord_sys << std::endl;
-
-	//std::cout << _x << std::endl;
-	//std::cout << _y << std::endl;
-	//std::cout << _z << std::endl;
 }
 
 void BoundingBox::build(int n, BoundingBox* bbList)
