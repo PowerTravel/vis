@@ -26,7 +26,7 @@ void main()
 		specular = vec4(0.0, 0.0, 0.0, 1.0);
 	}
 	
-	float attt = 0.001;
+	float attt = 0.0;
 	float attenuation = 1/( 1 + attt*pow(r,2) );
 //	float attenuation = 1;
 	color += ambient+attenuation*(diffuse+specular);

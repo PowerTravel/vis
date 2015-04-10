@@ -60,15 +60,17 @@ void BoundingBox::build(int n, float* points)
 					es.eigenvectors().real().col(2);
 	
 	//Scale the axis to fit the span of the object
-	Eigen::Vector3d diff = pts.segment(0,3) - mean;
+	//Eigen::Vector3d diff = pts.segment(0,3) - mean;
+	Eigen::Vector3d p = pts.segment(0,3);
+	Eigen::Vector3d diff = p - mean;
 	Eigen::Vector3d max;
-	for( int i = 0; i<n; ++i )
+	max << 	p.transpose() * coord_sys.col(0),
+			p.transpose() * coord_sys.col(1),
+			p.transpose() * coord_sys.col(2);
+	for( int i = 1; i<n; ++i )
 	{
-		Eigen::Vector3d p = pts.segment(3*i,3);
-		max << 	p.transpose() * coord_sys.col(0),
-				p.transpose() * coord_sys.col(1),
-				p.transpose() * coord_sys.col(2);
-
+		p = pts.segment(3*i,3);
+		diff = p - mean;
 		for( int j = 0; j<3; ++j )
 		{
 			double dot = diff.transpose() * coord_sys.col(j);
@@ -83,6 +85,13 @@ void BoundingBox::build(int n, float* points)
 	_x = max(0) * coord_sys.col(0);
 	_y = max(1) * coord_sys.col(1);
 	_z = max(2) * coord_sys.col(2);
+	
+	std::cout << max << std::endl;
+	std::cout << coord_sys << std::endl;
+
+	//std::cout << _x << std::endl;
+	//std::cout << _y << std::endl;
+	//std::cout << _z << std::endl;
 }
 
 void BoundingBox::build(int n, BoundingBox* bbList)
