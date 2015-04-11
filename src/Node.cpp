@@ -108,7 +108,7 @@ void Node::dirty()
 		if(! (*ci)->_dirty)
 		{
 			(*ci)->dirty();
-			std::cerr << "dirtying" << std::endl;
+//			std::cerr << "dirtying" << std::endl;
 		}
 	}
 }
@@ -117,7 +117,7 @@ void Node::clean()
 {	
 	if(_dirty)
 	{
-		std::cout << "Cleaning Node" << std::endl;
+//		std::cout << "Cleaning Node" << std::endl;
 	}
 	_dirty = false;
 }

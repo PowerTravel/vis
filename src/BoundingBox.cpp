@@ -111,7 +111,6 @@ bool BoundingBox::intersect(BoundingBox* box_ptr1, BoundingBox* box_ptr2)
 void BoundingBox::getCorners(double* corners)
 {
 	int npv = 3; // Nr of Particles per Vertex
-	double foo[8*3];
 	for(int i = 0; i<npv; i++)
 	{
 		corners[0*npv + i] = _mean(i) + _x(i) + _y(i) + _z(i);

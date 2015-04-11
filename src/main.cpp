@@ -45,7 +45,7 @@ int main( void )
 		MainWindow::getInstance().getInput();
 		MainWindow::getInstance().update();	
 
-		std::cout << "NEW FRAME" << std::endl;
+	//	std::cout << "NEW FRAME" << std::endl;
 		u.traverse(grp.get());
 		r.traverse(grp.get());
 
