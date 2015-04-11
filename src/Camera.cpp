@@ -91,9 +91,7 @@ mat4 Camera::getRigidInv()
 
 void Camera::update()
 {
-	if( _callback!= NULL){
-		_callback->execute();
-	}
+	Node::update();
 	if(_moved)
 	{
 		mat4 v_inv = getRigidInv();

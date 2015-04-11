@@ -45,8 +45,9 @@ void NodeVisitor::doTraverse(Node* node)
 		{
 			doTraverse(ci->get());
 		}
-	}
 
+		grpPtr->clean();
+	}
 }
 
 void NodeVisitor::apply(Geometry* n)

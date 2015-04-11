@@ -2,7 +2,6 @@
 #define GROUP_HPP
 
 #include "Node.hpp"
-#include <list>
 
 class NodeVisitor;
 
@@ -10,6 +9,7 @@ class NodeVisitor;
 #define NODE_LIST
 typedef std::list< std::shared_ptr<Node> > NodeList;
 #endif // NODE_LIST
+
 
 #ifndef GROUP_PTR
 #define GROUP_PTR
@@ -33,10 +33,13 @@ class Group: public Node{
 		void destroy();
 		
 		void acceptVisitor(NodeVisitor& v);
+		virtual void clean();
 		
 		int getNrChildren();
 		
 		NodeList childList;
 	private:
+
+		void updateBoundingBox();
 };
 #endif // GROUP_HPP

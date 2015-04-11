@@ -1,11 +1,13 @@
 #include "Node.hpp"
+#include "Group.hpp"
 
 Node::Node()
 {
+	parentList = std::list<Node*>();
 	_state = State();
 	_type = NODE;
-	_callback = NULL;
-	_bb = BoundingBox();
+	_callback = NULL;	
+	_dirty = true;
 }
 
 Node::~Node()
@@ -96,4 +98,31 @@ State* Node::getState()
 Node::N_Type Node::getType()
 {
 	return _type;
+}
+
+void Node::dirty()
+{
+	_dirty = true;
+	for(std::list<Node*>::iterator ci = parentList.begin(); ci!=parentList.end(); ++ci )
+	{
+		if(! (*ci)->_dirty)
+		{
+			(*ci)->dirty();
+			std::cerr << "dirtying" << std::endl;
+		}
+	}
+}
+
+void Node::clean()
+{	
+	if(_dirty)
+	{
+		std::cout << "Cleaning Node" << std::endl;
+	}
+	_dirty = false;
+}
+
+void Node::getBoundingBoxCorners(double* points)
+{
+	_bb.getCorners(points);
 }

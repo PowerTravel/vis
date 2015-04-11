@@ -24,6 +24,7 @@ add_executable(vis
 	
 	src/UpdateCallback.cpp
 	src/CameraMovementCallback.cpp
+	src/RotTransCallback.cpp
 
 	src/Light.cpp
 	src/Material.cpp

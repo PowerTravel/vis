@@ -27,7 +27,7 @@ ParticleSystem::ParticleSystem(int maxNrParticles)
 	_v = Eigen::VectorXd(3*_N);
 
 	_init_pos = Emitter(0.0,  0.0, 0.0, 0.1f, 0.1f, 0.1f);
-	_init_vel = Emitter(0.0, 15.0, 0.0, 1.0f, 1.0f, 1.0f);
+	_init_vel = Emitter(0.0, 30.0, 0.0, 1.0f, 5.0f, 1.0f);
 
 	// Render stuff
 	createQuad();

@@ -1,11 +1,14 @@
 #ifndef NODE_HPP
 #define NODE_HPP
 
+#include <iostream> // Debug
 #include <memory>
+#include <list>
 #include "State.hpp"
 #include "UpdateCallback.hpp"
 #include "BoundingBox.hpp"
 
+class Group;
 class NodeVisitor;
 
 #ifndef NODE_PTR
@@ -43,13 +46,18 @@ class Node{
 		void setState(State* s);
 		State* getState();	
 
+		virtual void clean();
+		void dirty();
 
+		std::list< Node* > parentList;
+
+		void getBoundingBoxCorners(double* points);
 	protected:
 		N_Type _type;
 		State _state;
 		callback_ptr _callback;
 		BoundingBox _bb;
-
+		bool _dirty;
 };
 
 
