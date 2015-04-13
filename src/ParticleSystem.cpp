@@ -5,17 +5,17 @@
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 
-ParticleSystem::ParticleSystem(int maxNrParticles)
+ParticleSystem::ParticleSystem()
 {
 
 	// Simulation Constants
-	_N = maxNrParticles;
+	_N = 2000;
 	_n = 0;
 	_h = 1/60.0f;			// Timesteps
 	_g << 0,-10,0;			// Gravity
 	_mass = 0.1;			// Particle mass
-	_ppf = 10;				// New particles per frame
-	_life = 5;				// lifetime [s]
+	_ppf = 2;				// New particles per frame
+	_life = 10;				// lifetime [s]
 	_forces_changed = true;
 
 

@@ -29,7 +29,7 @@ class ParticleSystem : public Geometry
 	};
 	
 	public:
-		ParticleSystem(int maxNrParticles=20000);
+		ParticleSystem();
 		virtual ~ParticleSystem();
 
 		void update();

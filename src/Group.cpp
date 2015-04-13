@@ -1,10 +1,14 @@
 #include "Group.hpp"
 #include "NodeVisitor.hpp"
-#include <cstdio>
+#include <iostream>
 Group::Group()
 {
 	_type = Node::GROUP;
-	childList = std::list<std::shared_ptr<Node> >();
+	_dFlag = STATE & TRANSFORM;
+	
+	_childList = NodeList();
+	_cit = _childList.begin();
+
 }
 
 Group::~Group()
@@ -14,9 +18,9 @@ Group::~Group()
 
 void Group::destroy()
 {
-	while(!childList.empty())
+	while(!_childList.empty())
 	{
-		childList.pop_back();
+		_childList.pop_back();
 	}
 }
 
@@ -29,8 +33,15 @@ void Group::destroy()
  */
 void Group::addChild(std::shared_ptr<Node> nodePtr )
 {
-	childList.push_back(nodePtr);
-	nodePtr->parentList.push_back(this);
+	_childList.push_back(nodePtr);
+	nodePtr->addParent(this);
+	
+	// if this was the first element
+	if(_childList.size() == 1)
+	{
+		// We set the iterator to point at it
+		_cit = _childList.begin();
+	}
 }
 
 /*
@@ -42,7 +53,7 @@ void Group::addChild(std::shared_ptr<Node> nodePtr )
  */
 int Group::getNrChildren()
 {
-	return childList.size();
+	return _childList.size();
 }
 
 /*
@@ -57,38 +68,83 @@ void Group::acceptVisitor(NodeVisitor& v)
 	v.apply(this);
 }
 
-void Group::clean()
-{	
-	if(_dirty)
-	{
-//		std::cout << "Cleaning Group" << std::endl;
-		updateBoundingBox();	
-	}
-	_dirty = false;
-}
 
 void Group::updateBoundingBox()
 {
-	int nrBoxes = childList.size();
+	int nrBoxes = _childList.size();
 	int nrVertPerBox = 8;
 	int nrFloatPerVert = 3;
 	int stride = nrVertPerBox * nrFloatPerVert;
+	
 	double* points = new double[nrBoxes*stride];
 	int i = 0;
-	for(NodeList::iterator it = childList.begin(); it!=childList.end(); it++)
+	for(NodeList::iterator it = _childList.begin(); it!=_childList.end(); it++)
 	{
-		(*it)->getBoundingBoxCorners(&points[i*stride]);
-/*
-	for(int i = 0; i<8; i++)
-		{
-			//std::cout << corners[i] << std::endl;
-			std::cout << points[3*i + 0] << ", " << points[3*i + 1] << ", " <<  points[3*i + 2]   << std::endl;
-		}
-		std::cout << "==========" << std::endl;
-*/	
+//		(*it)->getBoundingBoxCorners(&points[i*stride]);
 		i++;
 	}
-	_bb = BoundingBox(nrVertPerBox * nrBoxes, points);
-
+//	(*_glit).bb = BoundingBox(nrVertPerBox * nrBoxes, points);
 	delete [] points;
+}
+
+void Group::dirty(dirty_bit bit)
+{
+	// Cant accept CLEAN bit
+	if(bit == CLEAN)
+	{
+		return;
+	}
+	if( (bit & _dFlag) != bit  )
+	{
+		std::cout << "Group: dirtying " << std::endl;
+		std::cout << "	Bit:  " << bit  << std::endl;
+		std::cout << "	Flag: " << _dFlag  << std::endl;
+		// Bits that exist in both bit and _dFlag
+		int same = _dFlag & bit; 
+		// Bits that exists in either but not both
+		int different = _dFlag ^ bit; 	
+		_dFlag = same +  different;
+		std::cout << "	Same:  " << same  << std::endl;
+		std::cout << "	diff: " << different  << std::endl;
+	}
+}
+
+void Group::clean()
+{	
+	_dFlag = CLEAN;
+}
+
+Node* Group::getChild()
+{
+	if(_cit != _childList.end())
+	{
+		return (*_cit).get();
+	}
+	return NULL;
+}
+
+void Group::nextChild()
+{
+	if( _cit != _childList.end() )
+	{
+		_cit++;
+	}
+}
+
+void Group::firstChild()
+{
+	_cit = _childList.begin();
+}
+
+
+void Group::reset()
+{
+	//std::cout << "Grp Reset" << std::endl;
+	_cit = _childList.begin();
+	while(_cit != _childList.end())
+	{
+		(*_cit)->reset();
+		_cit++;
+	}
+	_cit = _childList.begin();
 }

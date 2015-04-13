@@ -8,6 +8,7 @@
 
 Geometry::Geometry() 
 {
+	_bb = BoundingBox();
 	nrVertices = 0;
 	nrFaces = 0;
 	loaded = false;
@@ -323,3 +324,7 @@ void Geometry::acceptVisitor(NodeVisitor& v)
 	v.apply(this);
 }
 
+void Geometry::getBoundingBoxCorners(double* points)
+{
+	_bb.getCorners(points);
+}

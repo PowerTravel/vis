@@ -24,19 +24,19 @@ void Transform::set(mat4 m)
 void Transform::translate(vec3 ds)
 {
 	_m = matlib::translate(_m, ds);
-	dirty();
+	dirty(TRANSFORM);
 }
 
 void Transform::rotate(float angle, vec3 axis)
 {
 	_m = matlib::rotate(_m, angle, axis);
-	dirty();
+	dirty(TRANSFORM);
 }
 
 void Transform::scale(vec3 ds)
 {
 	_m = matlib::scale(_m,ds);
-	dirty();
+	dirty(TRANSFORM);
 }
 
 void Transform::acceptVisitor(NodeVisitor& visitor)

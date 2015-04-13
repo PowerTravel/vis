@@ -24,7 +24,7 @@ class NodeVisitor{
 		virtual ~NodeVisitor();
 
 		// A method for traversing the scene graph
-		virtual void traverse( Node* node );
+		virtual void traverse( Group* node );
 
 		// Each node has their own apply function
 		virtual void apply(Geometry* n);
@@ -35,8 +35,10 @@ class NodeVisitor{
 //		virtual void apply(RenderToTexture* n);
 		
 	protected:
-		virtual void init();
-		virtual void cleanup();
+		std::list<Node*> _nList;
+
+		virtual void init(Group* node);
+		virtual void reset(Group* node);
 	private:
 		void doTraverse(Node* node);
 };

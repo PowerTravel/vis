@@ -1,21 +1,21 @@
-#ifndef UPDATE_VISITOR_HPP
-#define UPDATE_VISITOR_HPP
+#ifndef LOCAL_UPDATE_VISITOR_HPP
+#define LOCAL_UPDATE_VISITOR_HPP
 
 #include "NodeVisitor.hpp"
 
 
 /*	
- *	Class: 		UpdateVisitor
+ *	Class: 		LocalUpdateVisitor
  *	Purpose: 	Traverses the scenegraph and calls the update-method
  *				of all the nodes which if they carry a callback
  *				will call that.
  *	Misc:		Derived from NodeVisitor
  */
-class UpdateVisitor : public NodeVisitor{
+class LocalUpdateVisitor : public NodeVisitor{
 	
 	public:	
-		UpdateVisitor();
-		virtual ~UpdateVisitor();
+		LocalUpdateVisitor();
+		virtual ~LocalUpdateVisitor();
 
 		void windowChanged();
 
@@ -35,4 +35,4 @@ class UpdateVisitor : public NodeVisitor{
 		bool _windowChanged;
 };
 
-#endif // UPDATE_VISITOR_HPP
+#endif // LOCAL_UPDATE_VISITOR_HPP

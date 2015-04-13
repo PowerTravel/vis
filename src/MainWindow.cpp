@@ -144,6 +144,12 @@ void MainWindow::swap()
 	// Lock the program to FRAMES_PER_SECOND
 	if( _fpsLock.isStarted() && !_fpsLock.isPaused() )
 	{
+	/*
+		if(_fpsLock.getTime()*_FPS >= 1.0)
+		{
+			std::cerr << "MainWindow::FPS_DROP!" << std::endl;
+		}
+	*/
 		while(_fpsLock.getTime()*_FPS < 1.0 )
 		{
 			// Do nothing. Just wait.

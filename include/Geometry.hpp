@@ -28,14 +28,6 @@ typedef std::shared_ptr<Geometry> geometry_ptr;
  */
 class Geometry : public Node{
 	public:
-		enum DataType{
-			VERTEX,
-			TEXTURECOORDINATE,
-			NORMAL,
-			FACE,
-			STREAM
-		};
-
 		Geometry();
 		Geometry(const aiMesh* mesh);
 		virtual ~Geometry();
@@ -48,13 +40,25 @@ class Geometry : public Node{
 		// Create a geometry directly from arrays of floats and ints.
 		void createGeom(int nVerts, int nFaces, float* verts, float* norm, int* face, float* texCoords);
 
+		void getBoundingBoxCorners(double* points);
 	protected:
+		enum DataType{
+			VERTEX,
+			TEXTURECOORDINATE,
+			NORMAL,
+			FACE,
+			STREAM
+		};
+
 		int nrVertices;
 		int nrFaces;
 		
 		GLuint VAO;
-
+		
+		
 	private:
+
+		BoundingBox _bb;
 		bool loaded;
 
 		GLuint vertexBuffer;

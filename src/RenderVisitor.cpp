@@ -83,7 +83,7 @@ void RenderVisitor::apply(Group* n)
 	// This node will never have transformation matrices,
 	// But it may have children and a state, thus we add a unit matrix
 	// together with the number of children it has.
-	modify_aList(n->childList.size(), mat4(1.0f) , n->getState());
+	modify_aList(n->getNrChildren(), mat4(1.0f) , n->getState());
 }
 
 /*
@@ -102,7 +102,7 @@ void RenderVisitor::apply(Camera* n)
 	_isModelviewSet = true;
 
 	// See apply (Group)
-	modify_aList(n->childList.size(), mat4(1.0f), n->getState());
+	modify_aList(n->getNrChildren(), mat4(1.0f), n->getState());
 }
 
 
@@ -116,7 +116,7 @@ void RenderVisitor::apply(Camera* n)
  */
 void RenderVisitor::apply(Transform* n)
 {	
-	modify_aList(n->childList.size(), n->get(), n->getState());
+	modify_aList(n->getNrChildren(), n->get(), n->getState());
 }
 
 /*

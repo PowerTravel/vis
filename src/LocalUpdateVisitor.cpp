@@ -1,46 +1,46 @@
-#include "UpdateVisitor.hpp"
+#include "LocalUpdateVisitor.hpp"
 #include "Transform.hpp"
 #include "Camera.hpp"
 #include "Geometry.hpp"
 #include "ParticleSystem.hpp"
 
-UpdateVisitor::UpdateVisitor()
+LocalUpdateVisitor::LocalUpdateVisitor()
 {
 
 }
 
-void UpdateVisitor::init()
+void LocalUpdateVisitor::init()
 {
 
 }
-void UpdateVisitor::cleanup()
+void LocalUpdateVisitor::cleanup()
 {
 	_windowChanged = false;
 }
 
-UpdateVisitor::~UpdateVisitor(){}
+LocalUpdateVisitor::~LocalUpdateVisitor(){}
 
-void UpdateVisitor::apply(Geometry* n)
+void LocalUpdateVisitor::apply(Geometry* n)
 {
 	n->update();
 }
 
-void UpdateVisitor::apply(ParticleSystem* n)
+void LocalUpdateVisitor::apply(ParticleSystem* n)
 {
 	n->update();
 }
 
-void UpdateVisitor::apply(Group* n)
+void LocalUpdateVisitor::apply(Group* n)
 {
 	n->update();
 }
 
-void UpdateVisitor::apply(Transform* n)
+void LocalUpdateVisitor::apply(Transform* n)
 {
 	n->update();
 }
 
-void UpdateVisitor::apply(Camera* n)
+void LocalUpdateVisitor::apply(Camera* n)
 {
 /*
 	if(_windowChanged == true)	

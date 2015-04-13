@@ -20,7 +20,7 @@ add_executable(vis
 	src/State.cpp
 	src/NodeVisitor.cpp
 	src/RenderVisitor.cpp
-	src/UpdateVisitor.cpp
+	src/LocalUpdateVisitor.cpp
 	
 	src/UpdateCallback.cpp
 	src/CameraMovementCallback.cpp

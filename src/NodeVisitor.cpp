@@ -1,9 +1,13 @@
 #include "NodeVisitor.hpp"
+#include <iostream>
 //#include "Geometry.hpp"
 #include "Group.hpp"
 //#include "Transform.hpp"
 
-NodeVisitor::NodeVisitor(){}
+NodeVisitor::NodeVisitor()
+{
+	_nList = std::list<Node*>();
+}
 
 NodeVisitor::~NodeVisitor(){}
 
@@ -16,38 +20,43 @@ NodeVisitor::~NodeVisitor(){}
  * Output:	-	
  * Misc:	-
  */
-void NodeVisitor::traverse(Node* node)
+void NodeVisitor::traverse(Group* node)
 {
-	init();
+	init(node);
 	doTraverse(node);
-	cleanup();
+	reset(node);
 }
 
-void NodeVisitor::init()
+void NodeVisitor::init(Group* node)
 {
+	node->reset();
 }
-void NodeVisitor::cleanup()
+
+void NodeVisitor::reset(Group* node)
 {
+	node->reset();
 }
 
 void NodeVisitor::doTraverse(Node* node)
 {
+	//_nList.push_front(node);
+
 	// Inject itself into the node
 	node->acceptVisitor(*this);
 	
-	// If the node is of type GROUP we traverse it's subtree if it
-	// is a GROUP
 	if(node->getType() ==  Node::GROUP  )
 	{
 		Group* grpPtr =(Group*) node;
-		NodeList childList = grpPtr->childList;
-		for(NodeList::iterator ci = childList.begin(); ci != childList.end(); ci++)
+		grpPtr->firstChild();
+		Node* childNode = NULL;
+		while( (childNode = grpPtr->getChild() ) != NULL )
 		{
-			doTraverse(ci->get());
+			doTraverse( childNode );
+			grpPtr->nextChild();
 		}
-
-		grpPtr->clean();
 	}
+
+	//_nList.pop_front();
 }
 
 void NodeVisitor::apply(Geometry* n)

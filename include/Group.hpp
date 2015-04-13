@@ -26,20 +26,40 @@ typedef std::shared_ptr<Group> group_ptr;
 class Group: public Node{
 
 	public:
+
+		enum dirty_bit{
+			CLEAN = 0,
+			STATE = 1,
+			TRANSFORM = 2
+		};
+
 		Group();
 		virtual	~Group();
 
-		void addChild( std::shared_ptr<Node> nodePtr);
 		void destroy();
-		
+		void reset();
+
 		void acceptVisitor(NodeVisitor& v);
+		void updateBoundingBox();
+
 		virtual void clean();
-		
+		void dirty(dirty_bit bit);
+	
+
+		// Navigation
+		void addChild( std::shared_ptr<Node> nodePtr);
 		int getNrChildren();
+		Node* getChild();
+		void nextChild();
+		void firstChild();
 		
-		NodeList childList;
+	protected:
+		NodeList _childList;
+		NodeList::iterator _cit;
+		// Data that depends on the rest of the scenegraph
+		int _dFlag; // Dirty Flag
+
 	private:
 
-		void updateBoundingBox();
 };
 #endif // GROUP_HPP

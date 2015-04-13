@@ -1,13 +1,18 @@
 #include "Node.hpp"
 #include "Group.hpp"
+#include <iostream> // Debug
 
 Node::Node()
 {
-	parentList = std::list<Node*>();
 	_state = State();
 	_type = NODE;
 	_callback = NULL;	
-	_dirty = true;
+
+	_parentList = std::list<Group*>();
+	_pit = _parentList.begin();
+
+	_globals = std::list<global_data>();
+	_glit = _globals.begin();
 }
 
 Node::~Node()
@@ -100,29 +105,55 @@ Node::N_Type Node::getType()
 	return _type;
 }
 
-void Node::dirty()
-{
-	_dirty = true;
-	for(std::list<Node*>::iterator ci = parentList.begin(); ci!=parentList.end(); ++ci )
-	{
-		if(! (*ci)->_dirty)
-		{
-			(*ci)->dirty();
-//			std::cerr << "dirtying" << std::endl;
-		}
-	}
-}
-
-void Node::clean()
-{	
-	if(_dirty)
-	{
-//		std::cout << "Cleaning Node" << std::endl;
-	}
-	_dirty = false;
-}
-
 void Node::getBoundingBoxCorners(double* points)
 {
-	_bb.getCorners(points);
+	// PLACEHOLDER CODE
+	BoundingBox B = BoundingBox();
+	B.getCorners(points); 
+
+
+//	(*_glit).bb.getCorners(points);
+}
+
+void Node::reset()
+{
+//	std::cout << "Node Reset" << std::endl;
+	_pit = _parentList.begin();	
+}
+		
+int Node::getNrParents()
+{
+	return _parentList.size();
+}
+
+void Node::addParent(Group* grp)
+{
+	_parentList.push_back(grp);
+	if(_parentList.size() == 1)
+	{
+		_pit = _parentList.begin();
+	}
+}
+
+Group* Node::getParent()
+{
+	if(_pit != _parentList.end() )
+	{
+		return *_pit;	
+	} 
+
+	return NULL;
+}
+
+void Node::firstParent(Group* grp)
+{
+	_pit = _parentList.begin();
+}
+
+void Node::nextParent(Group* grp)
+{
+	if(_pit != _parentList.end() )
+	{
+		_pit ++;	
+	}
 }
