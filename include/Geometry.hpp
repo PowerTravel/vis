@@ -26,7 +26,7 @@ typedef std::shared_ptr<Geometry> geometry_ptr;
  * Purpose:	Loads geometries
  * Misc:
  */
-class Geometry : public Node{
+class Geometry : public VirtualRenderNode{
 	public:
 		Geometry();
 		Geometry(const aiMesh* mesh);
@@ -54,7 +54,6 @@ class Geometry : public Node{
 		int nrFaces;
 		
 		GLuint VAO;
-		
 		
 	private:
 

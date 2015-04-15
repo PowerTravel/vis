@@ -64,6 +64,11 @@ void NodeVisitor::apply(Geometry* n)
 	printf("Visiting Geometry from NodeVisitor \n");
 }
 
+void NodeVisitor::apply(RenderNode* n)
+{
+	printf("Visiting RenderNode from NodeVisitor \n");
+}
+
 void NodeVisitor::apply(Group* n)
 {
 	printf("Visiting Group from NodeVisitor\n");

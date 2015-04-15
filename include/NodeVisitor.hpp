@@ -9,6 +9,7 @@ class Group;
 class Transform;
 class Camera;
 class ParticleSystem;
+class RenderNode;
 //class RenderToTexture;
 
 /*	
@@ -28,6 +29,7 @@ class NodeVisitor{
 
 		// Each node has their own apply function
 		virtual void apply(Geometry* n);
+		virtual void apply(RenderNode* n);
 		virtual void apply(Group* n);
 		virtual void apply(Transform* n);
 		virtual void apply(Camera* n);

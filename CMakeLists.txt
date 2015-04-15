@@ -11,6 +11,7 @@ add_executable(vis
 
 	src/Node.cpp
 	src/Geometry.cpp
+	src/RenderNode.cpp
 	src/Group.cpp
 	src/Transform.cpp
 	src/Camera.cpp
@@ -21,6 +22,7 @@ add_executable(vis
 	src/NodeVisitor.cpp
 	src/RenderVisitor.cpp
 	src/LocalUpdateVisitor.cpp
+	src/GlobalUpdateVisitor.cpp
 	
 	src/UpdateCallback.cpp
 	src/CameraMovementCallback.cpp

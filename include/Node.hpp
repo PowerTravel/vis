@@ -36,7 +36,8 @@ class Node{
 		enum dirty_bit{
 			CLEAN = 0,
 			STATE = 1,
-			TRANSFORM = 2
+			TRANSFORM = 2,
+			RESET = 4
 		};
 
 		
@@ -87,6 +88,11 @@ class Node{
 
 		std::list<global_data> _globals;
 		std::list<global_data>::iterator _glit;
+};
+
+class VirtualRenderNode : public Node{
+	public:
+		virtual void draw() = 0;
 };
 
 

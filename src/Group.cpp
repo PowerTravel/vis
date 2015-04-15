@@ -96,16 +96,11 @@ void Group::dirty(dirty_bit bit)
 	}
 	if( (bit & _dFlag) != bit  )
 	{
-		std::cout << "Group: dirtying " << std::endl;
-		std::cout << "	Bit:  " << bit  << std::endl;
-		std::cout << "	Flag: " << _dFlag  << std::endl;
 		// Bits that exist in both bit and _dFlag
 		int same = _dFlag & bit; 
 		// Bits that exists in either but not both
 		int different = _dFlag ^ bit; 	
 		_dFlag = same +  different;
-		std::cout << "	Same:  " << same  << std::endl;
-		std::cout << "	diff: " << different  << std::endl;
 	}
 }
 
