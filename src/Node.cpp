@@ -145,12 +145,12 @@ Group* Node::getParent()
 	return NULL;
 }
 
-void Node::firstParent(Group* grp)
+void Node::firstParent()
 {
 	_pit = _parentList.begin();
 }
 
-void Node::nextParent(Group* grp)
+void Node::nextParent()
 {
 	if(_pit != _parentList.end() )
 	{

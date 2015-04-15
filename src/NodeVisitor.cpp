@@ -6,7 +6,7 @@
 
 NodeVisitor::NodeVisitor()
 {
-	_nList = std::list<Node*>();
+//	_nList = std::list<Node*>();
 }
 
 NodeVisitor::~NodeVisitor(){}
@@ -39,11 +39,18 @@ void NodeVisitor::reset(Group* node)
 
 void NodeVisitor::doTraverse(Node* node)
 {
+/*
+	if(node->getType() == Node::NODE)
+	{
+		std::cout << "NodeVisitor:: LEAF" << std::endl;
+		printParentChain(node);
+	}
+*/
 	//_nList.push_front(node);
 
 	// Inject itself into the node
 	node->acceptVisitor(*this);
-	
+
 	if(node->getType() ==  Node::GROUP  )
 	{
 		Group* grpPtr =(Group*) node;
@@ -53,10 +60,20 @@ void NodeVisitor::doTraverse(Node* node)
 		{
 			doTraverse( childNode );
 			grpPtr->nextChild();
+			grpPtr->nextParent();
 		}
 	}
 
 	//_nList.pop_front();
+}
+
+void NodeVisitor::printParentChain(Node* node)
+{
+	if(node->getNrParents() > 0)
+	{
+		std::cout << "NodeVisitor:: got " << node->getNrParents() <<" Parent" << std::endl;
+		printParentChain(node->getParent());
+	}
 }
 
 void NodeVisitor::apply(Geometry* n)

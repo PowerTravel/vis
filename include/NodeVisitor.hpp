@@ -37,12 +37,15 @@ class NodeVisitor{
 //		virtual void apply(RenderToTexture* n);
 		
 	protected:
-		std::list<Node*> _nList;
+//		std::list<Node*> _nList;
 
 		virtual void init(Group* node);
 		virtual void reset(Group* node);
 	private:
 		void doTraverse(Node* node);
+
+
+		void printParentChain(Node* node);
 };
 
 

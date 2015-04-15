@@ -4,6 +4,8 @@
 #include "Geometry.hpp"
 #include "ParticleSystem.hpp"
 
+#include <iostream>
+
 LocalUpdateVisitor::LocalUpdateVisitor()
 {
 
@@ -32,6 +34,7 @@ void LocalUpdateVisitor::apply(ParticleSystem* n)
 
 void LocalUpdateVisitor::apply(Group* n)
 {
+	//std::cout << "LocalUpdateVisitor nrParents:" << n->getNrParents() << std::endl;
 	n->update();
 }
 

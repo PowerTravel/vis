@@ -34,10 +34,6 @@ int main( void )
 	LocalUpdateVisitor lu = LocalUpdateVisitor();		// Visits and make LOCAL changes to the nodes
 	GlobalUpdateVisitor gu = GlobalUpdateVisitor();		// Visits and make GLOBAL changes to the nodes
 	//PhysicsVisitor fv = PhysicsVisitor();				// Updates physics related nodes
-	RenderVisitor r = RenderVisitor();					// Renders the scene
-
-//	NodeVisitor n = NodeVisitor();
-//	n.traverse(grp.get());
 	
 	while(MainWindow::getInstance().isRunning())
 	{
@@ -45,10 +41,9 @@ int main( void )
 		MainWindow::getInstance().getInput();
 		MainWindow::getInstance().update();	
 
-		std::cout << "NEW FRAME" << std::endl;	
+//		std::cout << "NEW FRAME" << std::endl;	
 		lu.traverse(grp.get());
 		gu.traverse(grp.get());
-	//	r.traverse(grp.get());
 
 		MainWindow::getInstance().swap();
 	} 

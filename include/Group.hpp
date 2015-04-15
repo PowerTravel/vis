@@ -40,11 +40,12 @@ class Group: public Node{
 		void reset();
 
 		void acceptVisitor(NodeVisitor& v);
+		
 		void updateBoundingBox();
 
 		virtual void clean();
 		void dirty(dirty_bit bit);
-	
+		int getDirtyFlag();
 
 		// Navigation
 		void addChild( std::shared_ptr<Node> nodePtr);

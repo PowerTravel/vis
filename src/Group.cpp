@@ -94,6 +94,7 @@ void Group::dirty(dirty_bit bit)
 	{
 		return;
 	}
+	// We set the bit if it is not already set
 	if( (bit & _dFlag) != bit  )
 	{
 		// Bits that exist in both bit and _dFlag
@@ -107,6 +108,11 @@ void Group::dirty(dirty_bit bit)
 void Group::clean()
 {	
 	_dFlag = CLEAN;
+}
+
+int Group::getDirtyFlag()
+{
+	return _dFlag;
 }
 
 Node* Group::getChild()

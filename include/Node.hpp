@@ -61,8 +61,8 @@ class Node{
 		int getNrParents();
 		void addParent(Group* grp);
 		Group* getParent();
-		void firstParent(Group* grp);
-		void nextParent(Group* grp);
+		void firstParent();
+		void nextParent();
 
 	protected:
 		struct global_data{

@@ -34,23 +34,10 @@ class GlobalUpdateVisitor : public NodeVisitor
 		};
 
 		// A list containing the updated aggregate_data at each node.
-		std::list<aggregate_data> aList;
 		std::list<RenderNode> _rList;
 		std::list<RenderNode>::iterator _rit;
-
-		mat4 _M; // Model matrix
-		mat4 _V; // View matrix
-		mat4 _P; // Projection matrix
-		bool _isModelviewSet;
 		
-		// Manipulates the aList
-		void modify_aList(int count, mat4 m, State* s);
 		void modify_rList(int count, mat4* m, mat4* v, mat4* p, State* s);
-		void decrease_aList();
-	
-		state_ptr syncStates(State* lastState, State* newState);
-		bool send_data_to_shader(Node* n);
-
 		void draw(VirtualRenderNode& n);
 };
 
