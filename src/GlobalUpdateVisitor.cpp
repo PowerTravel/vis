@@ -6,11 +6,10 @@
 #include "Geometry.hpp"
 #include "ParticleSystem.hpp"
 
-GlobalUpdateVisitor::GlobalUpdateVisitor()
+GlobalUpdateVisitor::GlobalUpdateVisitor(std::shared_ptr<RenderList> rl)
 {
-
+	_rList = rl;
 }
-
 GlobalUpdateVisitor::~GlobalUpdateVisitor()
 {
 
@@ -18,38 +17,30 @@ GlobalUpdateVisitor::~GlobalUpdateVisitor()
 
 void GlobalUpdateVisitor::init(Group* grp)
 {
-	NodeVisitor::init(grp);
-	_rList = std::list<RenderNode>();
-	if(  _rList.empty() )
+	std::list<RenderNode>& rl =  _rList->list;
+	rl = std::list<RenderNode>();
+	if(  rl.empty() )
 	{	
-		_rList.push_back(RenderNode());
-		_rit = _rList.begin();
+		rl.push_back(RenderNode());
+		_rit = rl.begin();
 	}
 }
-
-void GlobalUpdateVisitor::reset(Group* grp)
-{
-	NodeVisitor::reset(grp);
-	while(!_rList.empty())
-	{
-		draw(_rList.front());	
-		_rList.pop_front();
-	}
-}
-
 
 void GlobalUpdateVisitor::apply(ParticleSystem* n)
 {
-
 	_rit->setGeometry(n);
 	modify_rList(0, NULL,NULL,NULL, n->getState());
+
+	//printParentChain(n);
 }
 
 void GlobalUpdateVisitor::apply(Geometry* n)
 {
 	_rit->setGeometry(n);
-
 	modify_rList(0, NULL, NULL, NULL, n->getState());
+	
+//	printParentChain(n);
+
 }
 
 /*
@@ -119,17 +110,23 @@ void GlobalUpdateVisitor::modify_rList(int count, mat4* m, mat4* v, mat4* p, Sta
 	{
 		std::list<RenderNode>::iterator it = _rit;
 		it++;
-		_rList.insert(it, count-1, *_rit );
+		_rList->list.insert(it, count-1, *_rit );
 	}
 
 	// If we are adding a leaf (aka count == 0), Advance the iterator
-	if( (count == 0) && (_rit != _rList.end()) )
+	if( (count == 0) && (_rit != _rList->list.end()) )
 	{
 		_rit++;
 	}
 }
 
-void GlobalUpdateVisitor::draw(VirtualRenderNode& n)
+void GlobalUpdateVisitor::printParentChain(Node* n)
 {
-	n.draw();
+	Group* grp = n->getParent();
+	while( grp != NULL)
+	{
+		std::cout << "GotParent" << std::endl;
+		grp = grp->getParent();
+	}
 }
+

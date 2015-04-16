@@ -10,9 +10,6 @@ Node::Node()
 
 	_parentList = std::list<Group*>();
 	_pit = _parentList.begin();
-
-	_globals = std::list<global_data>();
-	_glit = _globals.begin();
 }
 
 Node::~Node()
@@ -117,7 +114,6 @@ void Node::getBoundingBoxCorners(double* points)
 
 void Node::reset()
 {
-//	std::cout << "Node Reset" << std::endl;
 	_pit = _parentList.begin();	
 }
 		
@@ -137,12 +133,11 @@ void Node::addParent(Group* grp)
 
 Group* Node::getParent()
 {
-	if(_pit != _parentList.end() )
+	if(_parentList.empty() || (_pit == _parentList.end()) )
 	{
-		return *_pit;	
-	} 
-
-	return NULL;
+		return NULL;
+	}
+	return *_pit;	
 }
 
 void Node::firstParent()
@@ -152,8 +147,40 @@ void Node::firstParent()
 
 void Node::nextParent()
 {
-	if(_pit != _parentList.end() )
+	auto it = _pit;
+	it ++;
+	if(it != _parentList.end() )
 	{
 		_pit ++;	
 	}
 }
+
+void Node::dirty(dirty_bit bit)
+{
+	// Cant accept CLEAN bit
+	if(bit == CLEAN)
+	{
+		return;
+	}
+	// We set the bit if it is not already set
+	if( (bit & _dFlag) != bit  )
+	{
+		// Bits that exist in both bit and _dFlag
+		int same = _dFlag & bit; 
+		// Bits that exists in either but not both
+		int different = _dFlag ^ bit; 	
+		_dFlag = same +  different;
+//	std::cout << "Node::Dirty: " << bit << std::endl;
+	}else{
+		// If it IS already set we return
+		return;
+	}
+	
+	// Dirty all the nodes above with the bit
+	Group* grp = getParent();
+	if(grp!=NULL)
+	{
+		grp->dirty(bit);
+	}
+}
+

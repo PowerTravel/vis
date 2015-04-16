@@ -25,14 +25,6 @@ class LocalUpdateVisitor : public NodeVisitor{
 		void apply(Transform* n);
 		void apply(Camera* n);
 
-	protected:
-
-		virtual void init();
-		virtual void cleanup();
-
-	private:
-
-		bool _windowChanged;
 };
 
 #endif // LOCAL_UPDATE_VISITOR_HPP

@@ -27,25 +27,18 @@ void NodeVisitor::traverse(Group* node)
 	reset(node);
 }
 
-void NodeVisitor::init(Group* node)
+void NodeVisitor::init(Group* g)
 {
-	node->reset();
+	g->reset();
 }
 
-void NodeVisitor::reset(Group* node)
+void NodeVisitor::reset(Group* g)
 {
-	node->reset();
+	g->reset();
 }
 
 void NodeVisitor::doTraverse(Node* node)
 {
-/*
-	if(node->getType() == Node::NODE)
-	{
-		std::cout << "NodeVisitor:: LEAF" << std::endl;
-		printParentChain(node);
-	}
-*/
 	//_nList.push_front(node);
 
 	// Inject itself into the node
@@ -65,15 +58,6 @@ void NodeVisitor::doTraverse(Node* node)
 	}
 
 	//_nList.pop_front();
-}
-
-void NodeVisitor::printParentChain(Node* node)
-{
-	if(node->getNrParents() > 0)
-	{
-		std::cout << "NodeVisitor:: got " << node->getNrParents() <<" Parent" << std::endl;
-		printParentChain(node->getParent());
-	}
 }
 
 void NodeVisitor::apply(Geometry* n)

@@ -43,9 +43,6 @@ class NodeVisitor{
 		virtual void reset(Group* node);
 	private:
 		void doTraverse(Node* node);
-
-
-		void printParentChain(Node* node);
 };
 
 

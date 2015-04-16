@@ -9,6 +9,7 @@ RenderNode::RenderNode()
 	_V = mat4(1.0f);
 	_P = mat4(1.0f);
 }
+
 RenderNode::~RenderNode(){};
 
 
@@ -46,7 +47,7 @@ void RenderNode::setGeometry(Geometry* g)
 {
 	_g = g;
 }
-Geometry* RenderNode::getGeometry()
+VirtualRenderNode* RenderNode::getGeometry()
 {
 	return _g;
 }

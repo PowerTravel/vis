@@ -6,10 +6,10 @@
 #include "Shader.hpp"
 
 #include "ParticleSystem.hpp"
+#include "RenderNode.hpp"
 #include "Geometry.hpp"
 #include "Transform.hpp"
 #include "Camera.hpp"
-#include "RenderVisitor.hpp"
 #include "LocalUpdateVisitor.hpp"
 #include "GlobalUpdateVisitor.hpp"
 #include "State.hpp"
@@ -27,13 +27,14 @@ void buildBB();
 
 int main( void )
 {
-
 	MainWindow::getInstance().init(1024,768);
 
 	group_ptr grp = build_graph();
-	LocalUpdateVisitor lu = LocalUpdateVisitor();		// Visits and make LOCAL changes to the nodes
-	GlobalUpdateVisitor gu = GlobalUpdateVisitor();		// Visits and make GLOBAL changes to the nodes
-	//PhysicsVisitor fv = PhysicsVisitor();				// Updates physics related nodes
+	auto rl = std::shared_ptr<RenderList>(new RenderList); 	// A list of renderNodes that is manipulated by GlobalUpdateVisitor;
+
+	LocalUpdateVisitor lu = LocalUpdateVisitor();			// Visits and make LOCAL changes to the nodes
+	GlobalUpdateVisitor gu = GlobalUpdateVisitor(rl);		// Visits and make GLOBAL changes to the nodes
+	//PhysicsVisitor fv = PhysicsVisitor();					// Updates physics related nodes
 	
 	while(MainWindow::getInstance().isRunning())
 	{
@@ -41,9 +42,11 @@ int main( void )
 		MainWindow::getInstance().getInput();
 		MainWindow::getInstance().update();	
 
-//		std::cout << "NEW FRAME" << std::endl;	
+		//std::cout << "NEW FRAME" << std::endl;	
 		lu.traverse(grp.get());
 		gu.traverse(grp.get());
+
+		rl->draw();
 
 		MainWindow::getInstance().swap();
 	} 
@@ -92,7 +95,6 @@ group_ptr build_graph()
 	transform_ptr sphere2 = transform_ptr(new Transform());
 	sphere2->translate(vec3(2,0,0));
 	sphere2->scale(vec3(2,2,2));
-	sphere2->setState(&state);
 
 	transform_ptr sphere_spin  = transform_ptr(new Transform());
 	sphere_spin->connectCallback(callback_ptr(new RotTransCallback(sphere_spin, 1)));
@@ -235,7 +237,7 @@ group_ptr build_graph_simple()
 	transform_ptr floor = transform_ptr(new Transform());
 	floor->translate(vec3(0,-4,0));
 	floor->scale(vec3(50,0.1,50));
-	floor->connectCallback(callback_ptr(new RotTransCallback(floor, 0.2)));
+	floor->connectCallback(callback_ptr(new RotTransCallback(floor, 0.002)));
 
 	// Geometry
 	geometry_vec m_box = Geometry::loadFile("../models/box.obj");

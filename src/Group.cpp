@@ -1,6 +1,7 @@
 #include "Group.hpp"
 #include "NodeVisitor.hpp"
 #include <iostream>
+
 Group::Group()
 {
 	_type = Node::GROUP;
@@ -87,24 +88,6 @@ void Group::updateBoundingBox()
 	delete [] points;
 }
 
-void Group::dirty(dirty_bit bit)
-{
-	// Cant accept CLEAN bit
-	if(bit == CLEAN)
-	{
-		return;
-	}
-	// We set the bit if it is not already set
-	if( (bit & _dFlag) != bit  )
-	{
-		// Bits that exist in both bit and _dFlag
-		int same = _dFlag & bit; 
-		// Bits that exists in either but not both
-		int different = _dFlag ^ bit; 	
-		_dFlag = same +  different;
-	}
-}
-
 void Group::clean()
 {	
 	_dFlag = CLEAN;
@@ -117,11 +100,11 @@ int Group::getDirtyFlag()
 
 Node* Group::getChild()
 {
-	if(_cit != _childList.end())
+	if( _childList.empty() || (_cit == _childList.end()) )
 	{
-		return (*_cit).get();
+		return NULL;
 	}
-	return NULL;
+	return (*_cit).get();
 }
 
 void Group::nextChild()
@@ -139,13 +122,11 @@ void Group::firstChild()
 
 
 void Group::reset()
-{
-	//std::cout << "Grp Reset" << std::endl;
-	_cit = _childList.begin();
-	while(_cit != _childList.end())
+{ 
+	for(_cit = _childList.begin(); _cit != _childList.end(); _cit++)
 	{
 		(*_cit)->reset();
-		_cit++;
 	}
 	_cit = _childList.begin();
+	_pit = _parentList.begin();
 }

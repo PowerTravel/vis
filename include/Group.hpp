@@ -23,15 +23,9 @@ typedef std::shared_ptr<Group> group_ptr;
  *	Purpose: 	A node that can have children.
  *	Misc:		All other child-bearing nodes derive from this one.
  */
-class Group: public Node{
+class Group : public Node{
 
 	public:
-
-		enum dirty_bit{
-			CLEAN = 0,
-			STATE = 1,
-			TRANSFORM = 2
-		};
 
 		Group();
 		virtual	~Group();
@@ -44,7 +38,6 @@ class Group: public Node{
 		void updateBoundingBox();
 
 		virtual void clean();
-		void dirty(dirty_bit bit);
 		int getDirtyFlag();
 
 		// Navigation
@@ -58,7 +51,6 @@ class Group: public Node{
 		NodeList _childList;
 		NodeList::iterator _cit;
 		// Data that depends on the rest of the scenegraph
-		int _dFlag; // Dirty Flag
 
 	private:
 
