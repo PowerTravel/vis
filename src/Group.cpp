@@ -43,6 +43,7 @@ void Group::addChild(std::shared_ptr<Node> nodePtr )
 		// We set the iterator to point at it
 		_cit = _childList.begin();
 	}
+	dirty(RESET);
 }
 
 /*
@@ -86,16 +87,6 @@ void Group::updateBoundingBox()
 	}
 //	(*_glit).bb = BoundingBox(nrVertPerBox * nrBoxes, points);
 	delete [] points;
-}
-
-void Group::clean()
-{	
-	_dFlag = CLEAN;
-}
-
-int Group::getDirtyFlag()
-{
-	return _dFlag;
 }
 
 Node* Group::getChild()

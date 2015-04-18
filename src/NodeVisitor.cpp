@@ -56,7 +56,8 @@ void NodeVisitor::doTraverse(Node* node)
 			grpPtr->nextParent();
 		}
 	}
-
+	node -> printFlag();
+	// node->clean();
 	//_nList.pop_front();
 }
 

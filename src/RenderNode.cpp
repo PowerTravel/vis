@@ -4,6 +4,8 @@
 
 RenderNode::RenderNode()
 {
+	_id = std::vector<int>();
+	_id.insert(_id.begin(),1);
 	_g = NULL;
 	_M = mat4(1.0f);
 	_V = mat4(1.0f);
@@ -13,6 +15,26 @@ RenderNode::RenderNode()
 RenderNode::~RenderNode(){};
 
 
+void RenderNode::pushId(int id)
+{
+	_id.push_back(id);
+}
+
+/*
+void RenderNode::insert_id(int p, int n)
+{
+	
+	if( p < _id.size() )
+	{
+		std::cerr << "Error: RenderNode::insert_id(), Out of bounds" <<std::endl;
+		return;	
+	}
+	auto it1 = _id.begin();
+	std::advance(it1, p);
+	auto it2 = it1;
+	_id.insert(it2, n, *it1);
+}
+*/
 void RenderNode::acceptVisitor(NodeVisitor& v)
 {	
 	v.apply(this);

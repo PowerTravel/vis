@@ -32,12 +32,17 @@ class RenderNode : public VirtualRenderNode{
 		void setGeometry(Geometry* g);
 		VirtualRenderNode* getGeometry();
 
+		// p = position to insert under, n = the number of extra elements
+		//void insert_id(int p, int n);	
+		void pushId(int id);
+
 		void draw();
 
 	private:
 		mat4 _M,_V,_P;
 		VirtualRenderNode* _g;
-		
+		std::vector<int> _id;
+	
 		void send_data_to_shader();
 
 };
@@ -46,22 +51,27 @@ class RenderNode : public VirtualRenderNode{
 #ifndef RENDER_LIST
 #define RENDER_LIST
 
-struct RenderList{
-	
-	std::list<RenderNode> list;
+struct RenderList : public NodeVisitor{
 
-	RenderList(){ list = std::list<RenderNode>(); };
-	virtual ~RenderList(){};
+		static std::list<RenderNode> list;
 
-	void draw()
-	{
-		for(auto it = list.begin(); it != list.end(); it++)
+		RenderList(){ list = std::list<RenderNode>(); };
+		virtual ~RenderList(){};
+
+		
+
+		void draw()
 		{
-			it->draw();
-		}
-	};
+			for(auto it = list.begin(); it != list.end(); it++)
+			{
+				it->draw();
+			}
+		};
+	
 
 };
+
+std::list<RenderNode> RenderList::list = std::list<RenderNode>();
 
 #endif // DRAW_LIST_HPP
 

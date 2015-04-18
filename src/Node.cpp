@@ -71,6 +71,7 @@ void Node::setState(State* s)
 {
 	if(s != NULL){
 		_state.merge(s);
+		dirty(STATE);
 	}
 }
 
@@ -102,16 +103,6 @@ Node::N_Type Node::getType()
 	return _type;
 }
 
-void Node::getBoundingBoxCorners(double* points)
-{
-	// PLACEHOLDER CODE
-	BoundingBox B = BoundingBox();
-	B.getCorners(points); 
-
-
-//	(*_glit).bb.getCorners(points);
-}
-
 void Node::reset()
 {
 	_pit = _parentList.begin();	
@@ -129,6 +120,7 @@ void Node::addParent(Group* grp)
 	{
 		_pit = _parentList.begin();
 	}
+	dirty(RESET);
 }
 
 Group* Node::getParent()
@@ -176,11 +168,51 @@ void Node::dirty(dirty_bit bit)
 		return;
 	}
 	
-	// Dirty all the nodes above with the bit
+	// Dirty all the nodes above with the PATH bit telling us
+	// the road to this node.
 	Group* grp = getParent();
 	if(grp!=NULL)
 	{
-		grp->dirty(bit);
+		grp->dirty(PATH);
 	}
 }
 
+void Node::clean()
+{	
+	_dFlag = CLEAN;
+}
+
+int Node::getDirtyFlag()
+{
+	return _dFlag;
+}
+
+void Node::printFlag()
+{
+	std::cout << "Node::flag: ";
+	if( (_dFlag & STATE)  )
+	{
+		std::cout << "STATE, ";
+	}		
+	
+	if( (_dFlag & TRANSFORM)  )
+	{
+		std::cout << "TRANSFORM, ";
+	}		
+	
+	if( (_dFlag & CAM)  )
+	{
+		std::cout << "CAM, ";
+	}		
+	
+	if( (_dFlag & RESET)  )
+	{
+		std::cout << "RESET, ";
+	}	
+	
+	if( (_dFlag & PATH)  )
+	{
+		std::cout << "PATH ";
+	}	
+	std::cout << std::endl;
+}

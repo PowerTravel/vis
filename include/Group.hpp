@@ -37,8 +37,6 @@ class Group : public Node{
 		
 		void updateBoundingBox();
 
-		virtual void clean();
-		int getDirtyFlag();
 
 		// Navigation
 		void addChild( std::shared_ptr<Node> nodePtr);

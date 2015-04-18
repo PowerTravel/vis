@@ -2,6 +2,7 @@
 #define GEOMETRY_HPP
 
 #include "Node.hpp"
+#include "BoundingBox.hpp"
 #include <assimp/scene.h>
 
 #include <GL/glew.h>

@@ -5,7 +5,7 @@
 #include <list>
 #include "State.hpp"
 #include "UpdateCallback.hpp"
-#include "BoundingBox.hpp"
+//#include "BoundingBox.hpp"
 
 class Group;
 class NodeVisitor;
@@ -34,11 +34,12 @@ class Node{
 		enum N_Type{NODE, GROUP};
 		
 		enum dirty_bit{
-			CLEAN = 0,
-			STATE = 1,
-			TRANSFORM = 2,
-			CAM = 4,
-			RESET = 8
+			CLEAN = 0,		// Nothing is changed
+			PATH = 1,
+			STATE = 2,		// State Changed
+			TRANSFORM = 4,	// M changed
+			CAM = 8,		// P or V changed
+			RESET = 16		// Everything needs to be recalculated
 		};
 
 
@@ -49,6 +50,8 @@ class Node{
 		// Basic functionality
 		virtual void reset();
 		void dirty(dirty_bit bit);
+		int getDirtyFlag();
+		virtual void clean();
 
 		virtual void update();
 		virtual void acceptVisitor(class NodeVisitor& v) =  0;
@@ -59,14 +62,16 @@ class Node{
 		void setState(State* s);
 		State* getState();	
 
-		void getBoundingBoxCorners(double* points);
-
 		int getNrParents();
 		Group* getParent();
 		void firstParent();
 		void nextParent();
 
 		void addParent(Group* grp);
+
+		// DEBUG
+
+		void printFlag();
 	protected:
 		
 		N_Type _type;

@@ -9,6 +9,7 @@
 GlobalUpdateVisitor::GlobalUpdateVisitor(std::shared_ptr<RenderList> rl)
 {
 	_rList = rl;
+	_recreate = true;
 }
 GlobalUpdateVisitor::~GlobalUpdateVisitor()
 {
@@ -17,30 +18,56 @@ GlobalUpdateVisitor::~GlobalUpdateVisitor()
 
 void GlobalUpdateVisitor::init(Group* grp)
 {
+	NodeVisitor::init(grp);
+
 	std::list<RenderNode>& rl =  _rList->list;
-	rl = std::list<RenderNode>();
-	if(  rl.empty() )
-	{	
+	if(rl.empty() || (grp->getDirtyFlag() & Node::RESET) == Node::RESET )
+	{
+		_recreate = true;
+		rl = std::list<RenderNode>();
 		rl.push_back(RenderNode());
 		_rit = rl.begin();
+		std::cout << "GUV:init"  <<std::endl;
 	}
+	std::cout << "GUV:init"  <<std::endl;
+	_rit = rl.begin();
+}
+
+void GlobalUpdateVisitor::reset(Group* grp)
+{
+	NodeVisitor::reset(grp);
+	//_recreate = false;
+	std::cout << "GUV:reset" <<std::endl;
 }
 
 void GlobalUpdateVisitor::apply(ParticleSystem* n)
 {
 	_rit->setGeometry(n);
-	modify_rList(0, NULL,NULL,NULL, n->getState());
 
+	//State* st = NULL;
+	//int flag =  n->getDirtyFlag();
+	//if( (flag & (Node::RESET | Node::STATE) ) != Node::CLEAN )
+//	{
+//		st = n->getState();
+//	}
+	modify_rList(n->getDirtyFlag(), 0, NULL,NULL,NULL, n->getState());
+//	n->clean();
 	//printParentChain(n);
 }
 
 void GlobalUpdateVisitor::apply(Geometry* n)
 {
 	_rit->setGeometry(n);
-	modify_rList(0, NULL, NULL, NULL, n->getState());
+ 	
+	//State* st = NULL;
+	//int flag =  n->getDirtyFlag();
+	//if( (flag & (Node::RESET | Node::STATE) ) != Node::CLEAN )
+	//{
+	//	st = n->getState();
+	//}
+	modify_rList(n->getDirtyFlag(), 0, NULL, NULL, NULL, n->getState());
 	
 //	printParentChain(n);
-
 }
 
 /*
@@ -52,7 +79,11 @@ void GlobalUpdateVisitor::apply(Geometry* n)
  */
 void GlobalUpdateVisitor::apply(Group* n)
 {
-	modify_rList(n->getNrChildren(), NULL, NULL, NULL, n->getState());
+	//int flag =  n->getDirtyFlag();
+	//if( (flag & (Node::RESET | Node::STATE) ) != Node::CLEAN )
+	//{
+		modify_rList(n->getDirtyFlag(),  n->getNrChildren(), NULL, NULL, NULL, n->getState());
+	//}
 }
 
 /*
@@ -65,9 +96,13 @@ void GlobalUpdateVisitor::apply(Group* n)
  */
 void GlobalUpdateVisitor::apply(Camera* n)
 {
-	mat4 v = n->getViewMat();
-	mat4 p = n->getProjectionMat();
-	modify_rList(n->getNrChildren(), NULL, &v, &p, n->getState());
+	//int flag =  n->getDirtyFlag();
+	//if( ( flag & (Node::CAM | Node::STATE | Node::RESET) )!=Node::CLEAN )
+	//{
+		mat4 v = n->getViewMat();
+		mat4 p = n->getProjectionMat();
+		modify_rList(n->getDirtyFlag(), n->getNrChildren(), NULL, &v, &p, n->getState());
+	//}
 }
 
 
@@ -82,32 +117,38 @@ void GlobalUpdateVisitor::apply(Camera* n)
 void GlobalUpdateVisitor::apply(Transform* n)
 {	
 	mat4 m = n->get();
-	modify_rList(n->getNrChildren(), &m, NULL, NULL, n->getState());
+	
+	//int flag =  n->getDirtyFlag();
+	//if( ( flag & (Node::TRANSFORM | Node::STATE | Node::RESET) )!=Node::CLEAN )
+	//{
+		modify_rList(n->getDirtyFlag(), n->getNrChildren(), &m, NULL, NULL, n->getState());
+	//}
 }
 
-void GlobalUpdateVisitor::modify_rList(int count, mat4* m, mat4* v, mat4* p, State* s)
+void GlobalUpdateVisitor::modify_rList(int flag, int count, mat4* m, mat4* v, mat4* p, State* s)
 {
 	// Update the current RenderNode
-	if(m != NULL )
+	if( (flag & Node::TRANSFORM) &&  (m != NULL) )
 	{
 		_rit->setM( *m );
 	}
-	if(v != NULL)
+	if( (flag & Node::CAM) &&  (v != NULL) )
 	{
 		_rit->setV(*v);	
 	}
-	if(p != NULL)
+	if( (flag & Node::CAM) && (p != NULL) )
 	{
 		_rit->setP(*p);	
 	}
-	if(s != NULL)
+	if( (flag & Node::STATE) && (s != NULL) )
 	{
 		_rit->setState(s);
 	}
 	
 	// If the node has more than one child we make count-1 copies of the current RenderNode
-	if(count > 1)
+	if( (count > 1) && _recreate)
 	{
+		std::cout << "GUV: Creating " << count-1 << " Nodes" << std::endl;
 		std::list<RenderNode>::iterator it = _rit;
 		it++;
 		_rList->list.insert(it, count-1, *_rit );
