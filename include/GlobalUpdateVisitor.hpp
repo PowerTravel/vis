@@ -25,8 +25,6 @@ class GlobalUpdateVisitor : public NodeVisitor
 	private:
 
 		void init(Group* grp);
-		void reset(Group* grp);
-		bool _recreate; // Should we recreate the WHOLE renderList
 
 		// A list containing the updated aggregate_data at each node.
 		std::shared_ptr<RenderList> _rList;

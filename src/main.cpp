@@ -1,29 +1,16 @@
-#include <iostream>
-#include <cstdio>
-#include <stdlib.h>
 #include "MainWindow.hpp"
 
-#include "Shader.hpp"
-
-#include "ParticleSystem.hpp"
-#include "RenderNode.hpp"
-#include "Geometry.hpp"
-#include "Transform.hpp"
-#include "Camera.hpp"
 #include "LocalUpdateVisitor.hpp"
 #include "GlobalUpdateVisitor.hpp"
-#include "State.hpp"
+#include "ParticleSystem.hpp"
 
 #include "CameraMovementCallback.hpp"
 #include "RotTransCallback.hpp"
 
-#include <memory>
-#include <Eigen/Dense>
 
 group_ptr build_graph();
 group_ptr build_graph_simple();
 group_ptr build_graph_branch();
-void buildBB();
 
 int main( void )
 {
@@ -52,7 +39,7 @@ int main( void )
 	} 
 	
 	MainWindow::getInstance().destroy();
-
+	
 	return 0;
 }
 

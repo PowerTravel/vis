@@ -39,8 +39,6 @@ void NodeVisitor::reset(Group* g)
 
 void NodeVisitor::doTraverse(Node* node)
 {
-	//_nList.push_front(node);
-
 	// Inject itself into the node
 	node->acceptVisitor(*this);
 
@@ -56,9 +54,6 @@ void NodeVisitor::doTraverse(Node* node)
 			grpPtr->nextParent();
 		}
 	}
-	node -> printFlag();
-	// node->clean();
-	//_nList.pop_front();
 }
 
 void NodeVisitor::apply(Geometry* n)
