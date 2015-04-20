@@ -1,23 +1,47 @@
 #include "RenderNode.hpp"
 #include "NodeVisitor.hpp"
 #include "Geometry.hpp"
+#include <iostream>
 
 RenderNode::RenderNode()
 {
 	_id = std::vector<int>();
-	_id.insert(_id.begin(),1);
 	_g = NULL;
 	_M = mat4(1.0f);
 	_V = mat4(1.0f);
 	_P = mat4(1.0f);
 }
 
+RenderNode RenderNode::copy()
+{
+	return *this;
+}
+
 RenderNode::~RenderNode(){};
 
 
-void RenderNode::pushId(int id)
+void RenderNode::pushID(int id)
 {
 	_id.push_back(id);
+}
+
+void RenderNode::printID()
+{
+	for(int i = 0; i<_id.size(); i++)
+	{
+		std::cout << _id[i] << ", ";
+	}
+	std::cout << std::endl;
+}
+
+void RenderNode::incrementID()
+{
+	_id[_id.size()-1]++;
+}
+
+std::vector<int> RenderNode::getID()
+{
+	return _id;
 }
 
 /*

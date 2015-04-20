@@ -39,7 +39,7 @@ class Node{
 			STATE = 2,		// State Changed
 			TRANSFORM = 4,	// M changed
 			CAM = 8,		// P or V changed
-			RESET = 16		// Everything needs to be recalculated
+			REBUILD = 16	// Everything needs to be recalculated
 		};
 
 
@@ -51,7 +51,7 @@ class Node{
 		virtual void reset();
 		void dirty(dirty_bit bit);
 		int getDirtyFlag();
-		virtual void clean();
+		virtual void clean(dirty_bit bit = CLEAN);
 
 		virtual void update();
 		virtual void acceptVisitor(class NodeVisitor& v) =  0;
@@ -72,6 +72,7 @@ class Node{
 		// DEBUG
 
 		void printFlag();
+		void printFlagChain();
 	protected:
 		
 		N_Type _type;

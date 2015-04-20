@@ -69,6 +69,8 @@ class State{
 	
 		shader_ptr getShader();
 
+		void print();
+
 	private:
 
 		shader_ptr _shader;

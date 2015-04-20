@@ -120,7 +120,7 @@ void Node::addParent(Group* grp)
 	{
 		_pit = _parentList.begin();
 	}
-	dirty(RESET);
+	dirty(REBUILD);
 }
 
 Group* Node::getParent()
@@ -155,31 +155,40 @@ void Node::dirty(dirty_bit bit)
 		return;
 	}
 	// We set the bit if it is not already set
-	if( (bit & _dFlag) != bit  )
+	if( (bit & _dFlag) != bit )
 	{
+		
 		// Bits that exist in both bit and _dFlag
 		int same = _dFlag & bit; 
 		// Bits that exists in either but not both
 		int different = _dFlag ^ bit; 	
 		_dFlag = same +  different;
 //	std::cout << "Node::Dirty: " << bit << std::endl;
+
+		for(auto it = _parentList.begin(); it != _parentList.end(); it++)
+		{
+			(*it)->dirty(PATH);
+		}
 	}else{
 		// If it IS already set we return
 		return;
 	}
-	
-	// Dirty all the nodes above with the PATH bit telling us
-	// the road to this node.
-	Group* grp = getParent();
-	if(grp!=NULL)
-	{
-		grp->dirty(PATH);
-	}
 }
 
-void Node::clean()
-{	
-	_dFlag = CLEAN;
+void Node::clean(dirty_bit bit)
+{
+	if(bit==CLEAN)
+	{
+		_dFlag = CLEAN;
+	}else{
+		if(_dFlag & bit)
+		{
+			// Picks filetrs bits thate are in both bit and _dFlag
+			int tmpBit = _dFlag & bit;
+			// Sets all bits that exists in both _dflag and tmpBit to 0
+			_dFlag = _dFlag ^ tmpBit;
+		}
+	}
 }
 
 int Node::getDirtyFlag()
@@ -205,9 +214,9 @@ void Node::printFlag()
 		std::cout << "CAM, ";
 	}		
 	
-	if( (_dFlag & RESET)  )
+	if( (_dFlag & REBUILD)  )
 	{
-		std::cout << "RESET, ";
+		std::cout << "REBUILD, ";
 	}	
 	
 	if( (_dFlag & PATH)  )
@@ -215,4 +224,14 @@ void Node::printFlag()
 		std::cout << "PATH ";
 	}	
 	std::cout << std::endl;
+}
+
+void Node::printFlagChain()
+{
+	printFlag();
+	Group* grp = getParent();
+	if( grp != NULL )
+	{
+		grp->printFlagChain();
+	}
 }

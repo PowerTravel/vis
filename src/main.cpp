@@ -13,6 +13,7 @@
 #include "LocalUpdateVisitor.hpp"
 #include "GlobalUpdateVisitor.hpp"
 #include "State.hpp"
+#include "RenderList.hpp"
 
 #include "CameraMovementCallback.hpp"
 #include "RotTransCallback.hpp"
@@ -23,19 +24,24 @@
 group_ptr build_graph();
 group_ptr build_graph_simple();
 group_ptr build_graph_branch();
-void buildBB();
+//void buildBB();
 
 int main( void )
 {
 	MainWindow::getInstance().init(1024,768);
 
 	group_ptr grp = build_graph();
-	auto rl = std::shared_ptr<RenderList>(new RenderList); 	// A list of renderNodes that is manipulated by GlobalUpdateVisitor;
-
-	LocalUpdateVisitor lu = LocalUpdateVisitor();			// Visits and make LOCAL changes to the nodes
-	GlobalUpdateVisitor gu = GlobalUpdateVisitor(rl);		// Visits and make GLOBAL changes to the nodes
-	//PhysicsVisitor fv = PhysicsVisitor();					// Updates physics related nodes
 	
+	LocalUpdateVisitor lu = LocalUpdateVisitor();			// Visits and make LOCAL changes to the nodes
+	GlobalUpdateVisitor gu = GlobalUpdateVisitor();		// Visits and make GLOBAL changes to the nodes
+	lu.traverse(grp.get());
+	gu.traverse(grp.get());
+	gu.print();
+	//NodeVisitor::draw();
+	//PhysicsVisitor fv = PhysicsVisitor();					// Updates physics related nodes
+
+
+/*
 	while(MainWindow::getInstance().isRunning())
 	{
 		MainWindow::getInstance().clear();
@@ -46,11 +52,11 @@ int main( void )
 		lu.traverse(grp.get());
 		gu.traverse(grp.get());
 
-		rl->draw();
+		NodeVisitor::draw();
 
 		MainWindow::getInstance().swap();
 	} 
-	
+*/	
 	MainWindow::getInstance().destroy();
 
 	return 0;
@@ -97,7 +103,7 @@ group_ptr build_graph()
 	sphere2->scale(vec3(2,2,2));
 
 	transform_ptr sphere_spin  = transform_ptr(new Transform());
-	sphere_spin->connectCallback(callback_ptr(new RotTransCallback(sphere_spin, 1)));
+	//sphere_spin->connectCallback(callback_ptr(new RotTransCallback(sphere_spin, 1)));
 
 	// Floor
 	transform_ptr floor = transform_ptr(new Transform());

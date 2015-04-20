@@ -43,7 +43,7 @@ void Group::addChild(std::shared_ptr<Node> nodePtr )
 		// We set the iterator to point at it
 		_cit = _childList.begin();
 	}
-	dirty(RESET);
+	dirty(REBUILD);
 }
 
 /*

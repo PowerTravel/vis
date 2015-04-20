@@ -185,3 +185,30 @@ void State::remove(Attribute atr)
 	}
 }
 
+
+void State::print()
+{
+	std::cout << "State:" <<std::endl;
+	Value v;
+	if(contain(Attribute::SHADER))
+	{
+		std::cout << "SHADER, " ;
+	}
+	if(contain(Attribute::BACK_FACE_CULLING))
+	{
+		std::cout << "BACK_FACE_CULLING, " ;
+	}
+	if(contain(Attribute::RENDER_MODE))
+	{
+		std::cout << "RENDER_MODE, " ;
+	}
+	if(contain(Attribute::COLOR_MODE))
+	{
+		std::cout << "TEXTURE, " ;
+	}
+	if(contain(Attribute::MATERIAL))
+	{
+		std::cout << "MATERIAL, " ;
+	}
+	std::cout<< std::endl;
+}

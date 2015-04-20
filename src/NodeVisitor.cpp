@@ -4,6 +4,8 @@
 #include "Group.hpp"
 //#include "Transform.hpp"
 
+RenderList NodeVisitor::render_list = RenderList();
+
 NodeVisitor::NodeVisitor()
 {
 //	_nList = std::list<Node*>();
@@ -29,6 +31,11 @@ void NodeVisitor::traverse(Group* node)
 
 void NodeVisitor::init(Group* g)
 {
+	if(g->getDirtyFlag() & Node::REBUILD)
+	{
+		render_list.build(g);
+	}
+	render_list.begin();
 	g->reset();
 }
 
@@ -55,8 +62,12 @@ void NodeVisitor::doTraverse(Node* node)
 			grpPtr->nextChild();
 			grpPtr->nextParent();
 		}
+	}else{
+		render_list.next();
+		//std::cout << "NodeVisitor: -=Dirty Chain=-" << std::endl;
+		//node->printFlagChain();
 	}
-	node -> printFlag();
+//	node -> printFlag();
 	// node->clean();
 	//_nList.pop_front();
 }
@@ -96,3 +107,13 @@ void NodeVisitor::apply(RenderToTexture* n)
 	printf("Visiting RenderToTexture from NodeVisitor \n");
 }
 */
+
+void NodeVisitor::print()
+{
+	render_list.print();
+}
+
+void NodeVisitor::draw()
+{
+	render_list.draw();
+}

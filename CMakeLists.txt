@@ -20,6 +20,7 @@ add_executable(vis
 
 	src/State.cpp
 	src/NodeVisitor.cpp
+	src/RenderList.cpp
 	src/LocalUpdateVisitor.cpp
 	src/GlobalUpdateVisitor.cpp
 

@@ -2,6 +2,7 @@
 #define NODEVISITOR_HPP
 
 #include "Node.hpp"
+#include "RenderList.hpp"
 
 class Node;
 class Geometry;
@@ -35,12 +36,19 @@ class NodeVisitor{
 		virtual void apply(Camera* n);
 		virtual void apply(ParticleSystem* n);
 //		virtual void apply(RenderToTexture* n);
+
+		static void draw();
+
+		void print();
+
 		
 	protected:
 //		std::list<Node*> _nList;
 
 		virtual void init(Group* node);
 		virtual void reset(Group* node);
+
+		static RenderList render_list;
 	private:
 		void doTraverse(Node* node);
 };

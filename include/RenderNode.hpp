@@ -16,9 +16,11 @@ class RenderNode : public VirtualRenderNode{
 	public:
 
 		RenderNode();
+		RenderNode(RenderNode* r);
 		virtual ~RenderNode();
 
-		RenderNode& operator=(RenderNode& r);
+		RenderNode copy();
+		//RenderNode& operator=(RenderNode& r);
 
 		void acceptVisitor(NodeVisitor& v);
 
@@ -34,7 +36,10 @@ class RenderNode : public VirtualRenderNode{
 
 		// p = position to insert under, n = the number of extra elements
 		//void insert_id(int p, int n);	
-		void pushId(int id);
+		void pushID(int id);
+		void incrementID();
+		void printID();
+		std::vector<int> getID();
 
 		void draw();
 
@@ -46,34 +51,5 @@ class RenderNode : public VirtualRenderNode{
 		void send_data_to_shader();
 
 };
-
-
-#ifndef RENDER_LIST
-#define RENDER_LIST
-
-struct RenderList : public NodeVisitor{
-
-		static std::list<RenderNode> list;
-
-		RenderList(){ list = std::list<RenderNode>(); };
-		virtual ~RenderList(){};
-
-		
-
-		void draw()
-		{
-			for(auto it = list.begin(); it != list.end(); it++)
-			{
-				it->draw();
-			}
-		};
-	
-
-};
-
-std::list<RenderNode> RenderList::list = std::list<RenderNode>();
-
-#endif // DRAW_LIST_HPP
-
 
 #endif // RENDER_NODE_HPP
