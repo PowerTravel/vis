@@ -37,33 +37,28 @@ void Camera::lookAt(vec3 eye, vec3 at, vec3 up)
 {
 	_pos = eye;
 	_V = matlib::lookAt(eye, at, up);
-	dirty(CAM);
 }
 
 void Camera::translate(vec3 dr)
 {
 	_dr += dr;
 	_moved = true;
-	dirty(CAM);
 }
 
 void Camera::rotate(float angle, vec3 axis)
 {
 	_dw = matlib::rotate(_dw, angle, axis);	
 	_moved = true;
-	dirty(CAM);
 }
 
 void Camera::setPerspectiveProjection(float fovy, float aspect, float near, float far)
 {
 	_P = matlib::perspective(fovy, aspect, near, far);
-	dirty(CAM);
 }
 
 void Camera::setOrthographicProjection(float left, float right, float bottom, float top, float near, float far)
 {
 	_P = matlib::ortho(left, right, bottom, top, near, far);
-	dirty(CAM);
 }
 
 mat4 Camera::getProjectionMat()

@@ -33,25 +33,11 @@ class Node{
 		// Identifyer if the Node is able to have children or not.
 		enum N_Type{NODE, GROUP};
 		
-		enum dirty_bit{
-			CLEAN = 0,		// Nothing is changed
-			PATH = 1,
-			STATE = 2,		// State Changed
-			TRANSFORM = 4,	// M changed
-			CAM = 8,		// P or V changed
-			RESET = 16		// Everything needs to be recalculated
-		};
-
-
-		
 		Node();
 		virtual ~Node();
 
 		// Basic functionality
 		virtual void reset();
-		void dirty(dirty_bit bit);
-		int getDirtyFlag();
-		virtual void clean();
 
 		virtual void update();
 		virtual void acceptVisitor(class NodeVisitor& v) =  0;
@@ -70,8 +56,6 @@ class Node{
 		void addParent(Group* grp);
 
 		// DEBUG
-
-		void printFlag();
 	protected:
 		
 		N_Type _type;

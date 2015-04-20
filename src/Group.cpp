@@ -5,7 +5,6 @@
 Group::Group()
 {
 	_type = Node::GROUP;
-	_dFlag = STATE & TRANSFORM;
 	
 	_childList = NodeList();
 	_cit = _childList.begin();
@@ -43,7 +42,6 @@ void Group::addChild(std::shared_ptr<Node> nodePtr )
 		// We set the iterator to point at it
 		_cit = _childList.begin();
 	}
-	dirty(RESET);
 }
 
 /*

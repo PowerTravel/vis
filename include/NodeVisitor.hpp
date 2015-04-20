@@ -2,16 +2,33 @@
 #define NODEVISITOR_HPP
 
 #include "Node.hpp"
-
+#include "RenderNode.hpp"
 class Node;
 class Geometry;
 class Group;
 class Transform;
 class Camera;
 class ParticleSystem;
-class RenderNode;
+//class RenderNode;
 //class RenderToTexture;
 
+struct RenderList{
+
+	std::list<RenderNode> list;
+
+	RenderList(){ list = std::list<RenderNode>(); };
+	virtual ~RenderList(){};
+
+
+	//void draw();
+	void draw()
+	{
+		for(auto it = list.begin(); it != list.end(); it++)
+		{
+			it->draw();
+		}
+	};
+};
 /*	
  *	Class: 		NodeVisitor
  *	Purpose: 	BaseClass for the visitor classes. 
@@ -20,6 +37,7 @@ class RenderNode;
 class NodeVisitor{
 
 	public:
+
 
 		NodeVisitor();
 		virtual ~NodeVisitor();
@@ -35,9 +53,12 @@ class NodeVisitor{
 		virtual void apply(Camera* n);
 		virtual void apply(ParticleSystem* n);
 //		virtual void apply(RenderToTexture* n);
-		
+
+		RenderList* getRenderList();
+
 	protected:
-//		std::list<Node*> _nList;
+		static RenderList _rList;
+		std::list<RenderNode>::iterator _rit;
 
 		virtual void init(Group* node);
 		virtual void reset(Group* node);

@@ -71,7 +71,6 @@ void Node::setState(State* s)
 {
 	if(s != NULL){
 		_state.merge(s);
-		dirty(STATE);
 	}
 }
 
@@ -120,7 +119,6 @@ void Node::addParent(Group* grp)
 	{
 		_pit = _parentList.begin();
 	}
-	dirty(RESET);
 }
 
 Group* Node::getParent()
@@ -146,74 +144,3 @@ void Node::nextParent()
 		_pit ++;	
 	}
 }
-
-void Node::dirty(dirty_bit bit)
-{
-	// Cant accept CLEAN bit
-	if(bit == CLEAN)
-	{
-		return;
-	}
-	// We set the bit if it is not already set
-	if( (bit & _dFlag) != bit  )
-	{
-		// Bits that exist in both bit and _dFlag
-		int same = _dFlag & bit; 
-		// Bits that exists in either but not both
-		int different = _dFlag ^ bit; 	
-		_dFlag = same +  different;
-//	std::cout << "Node::Dirty: " << bit << std::endl;
-	}else{
-		// If it IS already set we return
-		return;
-	}
-	
-	// Dirty all the nodes above with the PATH bit telling us
-	// the road to this node.
-	Group* grp = getParent();
-	if(grp!=NULL)
-	{
-		grp->dirty(PATH);
-	}
-}
-
-void Node::clean()
-{	
-	_dFlag = CLEAN;
-}
-
-int Node::getDirtyFlag()
-{
-	return _dFlag;
-}
-
-void Node::printFlag()
-{
-	std::cout << "Node::flag: ";
-	if( (_dFlag & STATE)  )
-	{
-		std::cout << "STATE, ";
-	}		
-	
-	if( (_dFlag & TRANSFORM)  )
-	{
-		std::cout << "TRANSFORM, ";
-	}		
-	
-	if( (_dFlag & CAM)  )
-	{
-		std::cout << "CAM, ";
-	}		
-	
-	if( (_dFlag & RESET)  )
-	{
-		std::cout << "RESET, ";
-	}	
-	
-	if( (_dFlag & PATH)  )
-	{
-		std::cout << "PATH ";
-	}	
-	std::cout << std::endl;
-}
-

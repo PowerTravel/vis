@@ -6,9 +6,14 @@
 #include "Geometry.hpp"
 #include "ParticleSystem.hpp"
 
+/*
 GlobalUpdateVisitor::GlobalUpdateVisitor(std::shared_ptr<RenderList> rl)
 {
 	_rList = rl;
+}
+*/
+GlobalUpdateVisitor::GlobalUpdateVisitor()
+{
 }
 GlobalUpdateVisitor::~GlobalUpdateVisitor()
 {
@@ -19,7 +24,7 @@ void GlobalUpdateVisitor::init(Group* grp)
 {
 	NodeVisitor::init(grp);
 
-	std::list<RenderNode>& rl =  _rList->list;
+	std::list<RenderNode>& rl =  _rList.list;
 	rl = std::list<RenderNode>();
 	rl.push_back(RenderNode());
 	_rit = rl.begin();
@@ -29,14 +34,14 @@ void GlobalUpdateVisitor::apply(ParticleSystem* n)
 {
 	_rit->setGeometry(n);
 
-	modify_rList(n->getDirtyFlag(), 0, NULL,NULL,NULL, n->getState());
+	modify_rList( 0, NULL,NULL,NULL, n->getState());
 }
 
 void GlobalUpdateVisitor::apply(Geometry* n)
 {
 	_rit->setGeometry(n);
  	
-	modify_rList(n->getDirtyFlag(), 0, NULL, NULL, NULL, n->getState());
+	modify_rList( 0, NULL, NULL, NULL, n->getState());
 	
 }
 
@@ -49,7 +54,7 @@ void GlobalUpdateVisitor::apply(Geometry* n)
  */
 void GlobalUpdateVisitor::apply(Group* n)
 {
-	modify_rList(n->getDirtyFlag(),  n->getNrChildren(), NULL, NULL, NULL, n->getState());
+	modify_rList(  n->getNrChildren(), NULL, NULL, NULL, n->getState());
 }
 
 /*
@@ -64,7 +69,7 @@ void GlobalUpdateVisitor::apply(Camera* n)
 {
 	mat4 v = n->getViewMat();
 	mat4 p = n->getProjectionMat();
-	modify_rList(n->getDirtyFlag(), n->getNrChildren(), NULL, &v, &p, n->getState());
+	modify_rList( n->getNrChildren(), NULL, &v, &p, n->getState());
 }
 
 
@@ -80,11 +85,11 @@ void GlobalUpdateVisitor::apply(Transform* n)
 {	
 	mat4 m = n->get();
 	
-	modify_rList(n->getDirtyFlag(), n->getNrChildren(), &m, NULL, NULL, n->getState());
+	modify_rList( n->getNrChildren(), &m, NULL, NULL, n->getState());
 	
 }
 
-void GlobalUpdateVisitor::modify_rList(int flag, int count, mat4* m, mat4* v, mat4* p, State* s)
+void GlobalUpdateVisitor::modify_rList( int count, mat4* m, mat4* v, mat4* p, State* s)
 {
 	// Update the current RenderNode
 	if( m != NULL )
@@ -109,11 +114,11 @@ void GlobalUpdateVisitor::modify_rList(int flag, int count, mat4* m, mat4* v, ma
 	{
 		std::list<RenderNode>::iterator it = _rit;
 		it++;
-		_rList->list.insert(it, count-1, *_rit );
+		_rList.list.insert(it, count-1, *_rit );
 	}
 
 	// If we are adding a leaf (aka count == 0), Advance the iterator
-	if( (count == 0) && (_rit != _rList->list.end()) )
+	if( (count == 0) && (_rit != _rList.list.end()) )
 	{
 		_rit++;
 	}

@@ -48,21 +48,6 @@ class RenderNode : public VirtualRenderNode{
 };
 
 
-#ifndef __RENDER_LIST
-#define __RENDER_LIST
-
-struct RenderList{
-
-		static std::list<RenderNode> list;
-
-		RenderList(){ list = std::list<RenderNode>(); };
-		virtual ~RenderList(){};
-
-		void draw();
-	
-};
-
-#endif // __RENDER_LIST
 
 
 #endif // RENDER_NODE_HPP

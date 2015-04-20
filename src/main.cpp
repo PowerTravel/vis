@@ -17,10 +17,11 @@ int main( void )
 	MainWindow::getInstance().init(1024,768);
 
 	group_ptr grp = build_graph();
-	auto rl = std::shared_ptr<RenderList>(new RenderList); 	// A list of renderNodes that is manipulated by GlobalUpdateVisitor;
 
 	LocalUpdateVisitor lu = LocalUpdateVisitor();			// Visits and make LOCAL changes to the nodes
-	GlobalUpdateVisitor gu = GlobalUpdateVisitor(rl);		// Visits and make GLOBAL changes to the nodes
+	GlobalUpdateVisitor gu = GlobalUpdateVisitor();		// Visits and make GLOBAL changes to the nodes
+	
+	auto rl = lu.getRenderList(); 	// A list of renderNodes that is manipulated by GlobalUpdateVisitor;
 	//PhysicsVisitor fv = PhysicsVisitor();					// Updates physics related nodes
 	
 	while(MainWindow::getInstance().isRunning())

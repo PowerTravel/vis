@@ -4,10 +4,9 @@
 #include "Group.hpp"
 //#include "Transform.hpp"
 
-NodeVisitor::NodeVisitor()
-{
-//	_nList = std::list<Node*>();
-}
+RenderList NodeVisitor::_rList = RenderList();
+
+NodeVisitor::NodeVisitor(){}
 
 NodeVisitor::~NodeVisitor(){}
 
@@ -91,3 +90,8 @@ void NodeVisitor::apply(RenderToTexture* n)
 	printf("Visiting RenderToTexture from NodeVisitor \n");
 }
 */
+
+RenderList* NodeVisitor::getRenderList()
+{
+	return &_rList;
+}

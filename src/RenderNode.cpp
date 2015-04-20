@@ -2,7 +2,7 @@
 #include "NodeVisitor.hpp"
 #include "Geometry.hpp"
 
-std::list<RenderNode> RenderList::list = std::list<RenderNode>();
+//std::list<RenderNode> RenderList::list = std::list<RenderNode>();
 
 RenderNode::RenderNode()
 {
@@ -75,10 +75,3 @@ void RenderNode::draw()
 	}
 }
 
-void RenderList::draw()
-{
-	for(auto it = list.begin(); it != list.end(); it++)
-	{
-		it->draw();
-	}
-};
