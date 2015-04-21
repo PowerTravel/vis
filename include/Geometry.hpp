@@ -2,7 +2,6 @@
 #define GEOMETRY_HPP
 
 #include "Node.hpp"
-#include "BoundingBox.hpp"
 #include <assimp/scene.h>
 
 #include <GL/glew.h>
@@ -41,7 +40,7 @@ class Geometry : public VirtualRenderNode{
 		// Create a geometry directly from arrays of floats and ints.
 		void createGeom(int nVerts, int nFaces, float* verts, float* norm, int* face, float* texCoords);
 
-		void getBoundingBoxCorners(double* points);
+//		void getBoundingBoxCorners(double* points);
 	protected:
 		enum DataType{
 			VERTEX,
@@ -58,7 +57,6 @@ class Geometry : public VirtualRenderNode{
 		
 	private:
 
-		BoundingBox _bb;
 		bool loaded;
 
 		GLuint vertexBuffer;

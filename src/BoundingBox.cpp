@@ -2,7 +2,16 @@
 #include "Eigen/Eigenvalues"
 #include "Eigen/Dense"
 #include <iostream>
-
+/*
+BoundingBox::BoundingBox()
+{
+	_mean = vec3(0.0);
+	_x = vec3(0.0);
+	_y = vec3(0.0);
+	_z = vec3(0.0);
+	_initiated = false;
+}
+*/
 BoundingBox::BoundingBox()
 {
 	_mean = Eigen::Vector3d::Zero();
@@ -11,6 +20,7 @@ BoundingBox::BoundingBox()
 	_z = Eigen::Vector3d::Zero();
 	_initiated = false;
 }
+
 // int n is the number of points, 
 // double* points is a 3*n long array ordered  x0,y0,z0,x1,y1,z1,... etc
 BoundingBox::BoundingBox(int n, float* points)
@@ -93,7 +103,7 @@ void BoundingBox::build(int n, Eigen::VectorXd& pts)
 	_x = max(0) * coord_sys.col(0);
 	_y = max(1) * coord_sys.col(1);
 	_z = max(2) * coord_sys.col(2);
-//	std::cout << mean << std::endl;
+	setCorners();
 }
 
 bool BoundingBox::intersect(BoundingBox* box_ptr)
@@ -107,10 +117,11 @@ bool BoundingBox::intersect(BoundingBox* box_ptr1, BoundingBox* box_ptr2)
 	// Check if the two boxes intersect
 	return false;
 }
-		
-void BoundingBox::getCorners(double* corners)
+
+void BoundingBox::setCorners()
 {
-	int npv = 3; // Nr of Particles per Vertex
+	int npv = 3; // Nr of numbers per Vertex
+	double corners[24]; // 3*8 = 24; 8 corners, 3 numbers per corner
 	for(int i = 0; i<npv; i++)
 	{
 		corners[0*npv + i] = _mean(i) + _x(i) + _y(i) + _z(i);
@@ -122,17 +133,34 @@ void BoundingBox::getCorners(double* corners)
 		corners[6*npv + i] = _mean(i) - _x(i) - _y(i) + _z(i);
 		corners[7*npv + i] = _mean(i) - _x(i) - _y(i) - _z(i);
 	}
-}
 
-/*
-void BoundingBox::get(double* center, double* x, double* y, double* z)
-{
-	for(int i = 0; i<3; i++)
+	_corners = std::vector<vec4>(8);
+	for(int i=0; i<8; i++)
 	{
-		center[i] = _mean(i);
-		x[i] = _x(i);
-		y[i] = _y(i);
-		z[i] = _z(i);
+		vec4 v = vec4(corners[3*i+0],corners[3*i+1],corners[3*i+2], 1.0);
+		_corners[i] = v;
 	}
 }
-*/
+
+void BoundingBox::transform(mat4 t)
+{
+	for(int i = 0; i<8; i++)
+	{
+		_corners[i] = t*_corners[i];	
+	}
+
+}
+
+void BoundingBox::getCorners(double* p)
+{
+	if( _initiated)
+	{
+		for(int i = 0; i<8 ; i++)
+		{
+			vec4 v = _corners[i];
+			p[3*i+0] = v[0];
+			p[3*i+1] = v[1];
+			p[3*i+2] = v[2];
+		}
+	}
+}

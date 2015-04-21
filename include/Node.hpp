@@ -5,7 +5,7 @@
 #include <list>
 #include "State.hpp"
 #include "UpdateCallback.hpp"
-//#include "BoundingBox.hpp"
+#include "BoundingBox.hpp"
 
 class Group;
 class NodeVisitor;
@@ -71,6 +71,9 @@ class Node{
 class VirtualRenderNode : public Node{
 	public:
 		virtual void draw() = 0;
+		BoundingBox getBoundingBox();
+	protected:
+		BoundingBox _bb;
 };
 
 

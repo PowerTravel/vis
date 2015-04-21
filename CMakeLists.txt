@@ -29,6 +29,8 @@ add_executable(vis
 
 	src/Light.cpp
 	src/Material.cpp
+
+	src/CollisionEngine.cpp
 )
 
 find_package(OpenGL REQUIRED)

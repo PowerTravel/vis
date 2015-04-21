@@ -7,6 +7,7 @@
 #include "CameraMovementCallback.hpp"
 #include "RotTransCallback.hpp"
 
+#include "CollisionEngine.hpp"
 
 group_ptr build_graph();
 group_ptr build_graph_simple();
@@ -19,11 +20,14 @@ int main( void )
 	group_ptr grp = build_graph();
 
 	LocalUpdateVisitor lu = LocalUpdateVisitor();			// Visits and make LOCAL changes to the nodes
-	GlobalUpdateVisitor gu = GlobalUpdateVisitor();		// Visits and make GLOBAL changes to the nodes
+	GlobalUpdateVisitor gu = GlobalUpdateVisitor();			// Visits and make GLOBAL changes to the nodes
 	
-	auto rl = lu.getRenderList(); 	// A list of renderNodes that is manipulated by GlobalUpdateVisitor;
+	RenderList* rl = lu.getRenderList(); 					// A list of renderNodes that is static member of NodeVisitor and all derived classes.
+	
 	//PhysicsVisitor fv = PhysicsVisitor();					// Updates physics related nodes
-	
+
+	CollisionEngine cle = CollisionEngine(rl);
+
 	while(MainWindow::getInstance().isRunning())
 	{
 		MainWindow::getInstance().clear();
@@ -34,13 +38,14 @@ int main( void )
 		lu.traverse(grp.get());
 		gu.traverse(grp.get());
 
+		cle.update();
+
 		rl->draw();
 
 		MainWindow::getInstance().swap();
 	} 
 	
 	MainWindow::getInstance().destroy();
-	
 	return 0;
 }
 
@@ -110,7 +115,7 @@ group_ptr build_graph()
 	sphere2 -> addChild(sphere_spin);
 
 	cam->addChild(floor);
-	cam->addChild(ps);
+	//cam->addChild(ps);
 
 	for(int i = 0; i<m_sphere.size(); i++){
 		sphere_spin->addChild(m_sphere[i]);

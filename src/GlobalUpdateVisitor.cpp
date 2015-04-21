@@ -24,7 +24,7 @@ void GlobalUpdateVisitor::init(Group* grp)
 {
 	NodeVisitor::init(grp);
 
-	std::list<RenderNode>& rl =  _rList.list;
+	std::list<RenderNode>& rl =  _rList->list;
 	rl = std::list<RenderNode>();
 	rl.push_back(RenderNode());
 	_rit = rl.begin();
@@ -114,11 +114,11 @@ void GlobalUpdateVisitor::modify_rList( int count, mat4* m, mat4* v, mat4* p, St
 	{
 		std::list<RenderNode>::iterator it = _rit;
 		it++;
-		_rList.list.insert(it, count-1, *_rit );
+		_rList->list.insert(it, count-1, *_rit );
 	}
 
 	// If we are adding a leaf (aka count == 0), Advance the iterator
-	if( (count == 0) && (_rit != _rList.list.end()) )
+	if( (count == 0) && (_rit != _rList->list.end()) )
 	{
 		_rit++;
 	}

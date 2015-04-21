@@ -144,3 +144,8 @@ void Node::nextParent()
 		_pit ++;	
 	}
 }
+
+BoundingBox VirtualRenderNode::getBoundingBox()
+{
+	return _bb;
+}

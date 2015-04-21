@@ -57,7 +57,7 @@ class NodeVisitor{
 		RenderList* getRenderList();
 
 	protected:
-		static RenderList _rList;
+		static std::shared_ptr<RenderList> _rList;
 		std::list<RenderNode>::iterator _rit;
 
 		virtual void init(Group* node);

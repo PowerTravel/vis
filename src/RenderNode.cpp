@@ -18,11 +18,22 @@ void RenderNode::acceptVisitor(NodeVisitor& v)
 {	
 	v.apply(this);
 }
-
+#include <iostream>
 void RenderNode::setM(mat4 m)
 {
-	_M =_M * m;	
+	_M =_M * m;
+	updateBoundingBox();
 }
+
+void RenderNode::updateBoundingBox()
+{
+	if(_g!= NULL && _M != mat4(1.0))
+	{
+		_bb = _g->getBoundingBox();
+		_bb.transform(_M);
+	}
+}
+
 void RenderNode::setV(mat4 m)
 {
 	_V = m;
@@ -47,7 +58,9 @@ mat4 RenderNode::getP()
 void RenderNode::setGeometry(Geometry* g)
 {
 	_g = g;
+	updateBoundingBox();
 }
+
 VirtualRenderNode* RenderNode::getGeometry()
 {
 	return _g;

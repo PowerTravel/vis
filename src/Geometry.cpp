@@ -324,7 +324,9 @@ void Geometry::acceptVisitor(NodeVisitor& v)
 	v.apply(this);
 }
 
+/*
 void Geometry::getBoundingBoxCorners(double* points)
 {
 	_bb.getCorners(points);
 }
+*/

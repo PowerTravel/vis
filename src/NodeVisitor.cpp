@@ -4,7 +4,7 @@
 #include "Group.hpp"
 //#include "Transform.hpp"
 
-RenderList NodeVisitor::_rList = RenderList();
+std::shared_ptr<RenderList> NodeVisitor::_rList = std::shared_ptr< RenderList>(new RenderList);
 
 NodeVisitor::NodeVisitor(){}
 
@@ -93,5 +93,5 @@ void NodeVisitor::apply(RenderToTexture* n)
 
 RenderList* NodeVisitor::getRenderList()
 {
-	return &_rList;
+	return _rList.get();
 }

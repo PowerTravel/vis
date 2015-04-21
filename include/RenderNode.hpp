@@ -32,22 +32,16 @@ class RenderNode : public VirtualRenderNode{
 		void setGeometry(Geometry* g);
 		VirtualRenderNode* getGeometry();
 
-		// p = position to insert under, n = the number of extra elements
-		//void insert_id(int p, int n);	
-		///void pushId(int id);
-
 		void draw();
 
 	private:
 		mat4 _M,_V,_P;
 		VirtualRenderNode* _g;
-		//std::vector<int> _id;
 	
 		void send_data_to_shader();
+		void updateBoundingBox();
 
 };
-
-
 
 
 #endif // RENDER_NODE_HPP
