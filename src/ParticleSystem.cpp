@@ -18,7 +18,6 @@ ParticleSystem::ParticleSystem()
 	_life = 10;				// lifetime [s]
 	_forces_changed = true;
 
-
 	_mdata = new Metadata[_N];
 	//_M = Eigen::SparseMatrix(3*_N, 3*_N);	
 	//_M = Eigen::MatrixXd(3*_N, 3*_N);	

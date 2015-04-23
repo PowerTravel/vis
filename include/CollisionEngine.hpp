@@ -14,13 +14,13 @@ class CollisionEngine{
 		void update();
 		
 		// Get a list of indices for intersecting particles
-		void get(int n, const double* x, int* N,  int* ret);
+		void get(int n, const double* x, int& N,  int* ret);
 		
 	private:
 
 		struct container{
-			int x,y,z;	
-			std::vector<BoundingBox > bb;
+//			int x,y,z;	
+			std::vector<BoundingBox > bb_vec;
 		};
 
 		int _max_size; 		// Them max nr of containers in a direction

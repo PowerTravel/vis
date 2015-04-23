@@ -147,5 +147,9 @@ void Node::nextParent()
 
 BoundingBox VirtualRenderNode::getBoundingBox()
 {
+//	std::cout << "NODE GET BOUNDINGBOX" << std::endl;
+//	std::cout<< "w  "<< _bb.width() << std::endl;
+//	std::cout<< "h  "<< _bb.height() << std::endl;
+//	std::cout<< "d " << _bb.depth() << std::endl;
 	return _bb;
 }

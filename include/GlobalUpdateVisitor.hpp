@@ -27,10 +27,6 @@ class GlobalUpdateVisitor : public NodeVisitor
 
 		void init(Group* grp);
 
-		// A list containing the updated aggregate_data at each node.
-		//std::shared_ptr<RenderList> _rList;
-//		std::list<RenderNode>::iterator _rit;
-		
 		void modify_rList(int count, mat4* m, mat4* v, mat4* p, State* s);
 
 		// DEBUG 

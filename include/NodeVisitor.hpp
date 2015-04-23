@@ -20,7 +20,6 @@ struct RenderList{
 	virtual ~RenderList(){};
 
 
-	//void draw();
 	void draw()
 	{
 		for(auto it = list.begin(); it != list.end(); it++)
@@ -29,6 +28,7 @@ struct RenderList{
 		}
 	};
 };
+
 /*	
  *	Class: 		NodeVisitor
  *	Purpose: 	BaseClass for the visitor classes. 

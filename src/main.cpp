@@ -34,7 +34,7 @@ int main( void )
 		MainWindow::getInstance().getInput();
 		MainWindow::getInstance().update();	
 
-		//std::cout << "NEW FRAME" << std::endl;	
+		std::cout << "NEW FRAME" << std::endl;	
 		lu.traverse(grp.get());
 		gu.traverse(grp.get());
 
@@ -115,7 +115,7 @@ group_ptr build_graph()
 	sphere2 -> addChild(sphere_spin);
 
 	cam->addChild(floor);
-	//cam->addChild(ps);
+	cam->addChild(ps);
 
 	for(int i = 0; i<m_sphere.size(); i++){
 		sphere_spin->addChild(m_sphere[i]);

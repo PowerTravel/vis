@@ -1,4 +1,5 @@
 #include "CollisionEngine.hpp"
+#include "Eigen/Dense"
 #include <iostream>
 
 CollisionEngine::CollisionEngine(RenderList* rl)
@@ -17,47 +18,89 @@ void CollisionEngine::update()
 	{
 		return;	
 	}
-	
-	// Reset Grid
+
+
 	_grid = std::map<int, container>();
 	std::list<RenderNode>& list = (_rl->list);
 	for(auto it = list.begin(); it != list.end(); it++)
 	{
-		std::cout<<"COLLISIONENGINE UPDATE" << std::endl;
-		// Check all the corners in the container and add the bb to them
-		
 		BoundingBox b = it->getBoundingBox();
-		double p[24];
-		b.getCorners(p);
+		Eigen::VectorXd pts = Eigen::VectorXd(24);
+		b.getCorners(&pts[0]);
+		
+		// The connections between the points
+		// The corners of the box goes like this
+		// In positive y, (lid of the box) 	  0-1-5-4 (-1)
+		// In negative y, (bottom of the box) 2-3-7-6 (-3)
+		// The '0' is +x,+y,+z while the '2' is +x,-y,+z 
+		Eigen::Vector3d p0 = pts.segment(0,3);	// +x,+y,+z 
+		Eigen::Vector3d p1 = pts.segment(3,3);	// +x,+y -z
+		Eigen::Vector3d p2 = pts.segment(6,3);	// +x,-y,+z
+		Eigen::Vector3d p3 = pts.segment(9,3);	// +x,-y,-z
+		Eigen::Vector3d p4 = pts.segment(12,3);	// -x,+y,+z
+		Eigen::Vector3d p5 = pts.segment(15,3);	// -x,+y,-z
+		Eigen::Vector3d p6 = pts.segment(18,3);	// -x,-y,+z
+		Eigen::Vector3d p7 = pts.segment(21,3);	// -x,-y,-z
 
-		
-		std::map<int,int> key_map = std::map<int,int>();
-		int key = getKey(p[0], p[1], p[2]);
-		key_map.insert(std::pair<int,int>(key,0) );
-		addBox(key, b);
-		for(int i=1; i<8; i++)
+
+		double alpha = 1/_grid_size;
+		// # boxes in width
+		double width = b.width() * alpha;
+		// # boxes in height
+		double height = b.height() * alpha;;
+		// # boxes in depth
+		double depth = b.depth() * alpha;;
+
+		//std::cout <<_grid_size << "  "  <<width << " " << height<< " " << depth << std::endl;
+
+		double w = 0;
+		double h = 0;
+		double d = 0;
+		double dw, dh, dd;
+		if(width > 0)
 		{
-			key = getKey(p[3*i+0], p[3*i+1], p[3*i+2]);
-			
-			// We add only a  bounding box to each container in _grid once
-			if(key_map.find(key) == key_map.end())
+			dw = 1/width;
+		}else{
+			dw = 1;
+		}
+
+		if(depth > 0)
+		{
+			dh = 1/height;
+		}else{
+			dh = 1;
+		}
+		
+		if(height > 0)
+		{
+			dd = 1/depth;
+		}else{
+			dd = 1;
+		}
+	
+		while(w <= 1)
+		{
+			Eigen::Vector3d w_u_f = p4 + w * (p0 - p4);
+			Eigen::Vector3d w_l_f = p6 + w * (p2 - p6);
+			Eigen::Vector3d w_u_b = p5 + w * (p1 - p5);
+			Eigen::Vector3d w_l_b = p7 + w * (p3 - p7);
+
+			while(h <= 1)
 			{
-				key_map.insert(std::pair<int,int>(key,i) );
-				addBox(key, b);
+				Eigen::Vector3d h_f = w_l_f + h * (w_u_f - w_l_f);
+				Eigen::Vector3d h_b = w_l_b + h * (w_u_b - w_l_b);
+
+				while(d <= 1)
+				{
+					Eigen::Vector3d point = h_b + d * (h_f - h_b);
+					addBox( getKey(point(0), point(1), point(2)) , b );
+					d += dd;
+				}
+				h += dh;
+				d = 0;
 			}
-		}	
-		// if the key_map added more than one value, we may have some 
-		// interior conatiners to fill
-		if( key_map.size() > 1 )
-		{
-			// Fill in the interior containers,
-			// The corners are filled by the points in p whose index we
-			// find as values in key_map
-			
-			for(auto key_it = key_map.begin(); key_it!=key_map.end(); key_it++){
-				std::cout << key_it->first << "  "<< key_it->second << "   " << p[3 * key_it->second + 0]<< " " << p[3 * key_it->second + 1]<< " " <<  p[3 * key_it->second + 2]  <<std::endl;
-			}
-		
+			w += dw;
+			h = 0;
 		}
 	}
 }
@@ -73,7 +116,7 @@ int CollisionEngine::getKey(double x, double y, double z)
 
 void CollisionEngine::addBox(int key, BoundingBox b)
 {
-
+	_grid[key].bb_vec.push_back(b);
 }
 
 // Get a list of indices for intersecting particles
@@ -81,13 +124,25 @@ void CollisionEngine::addBox(int key, BoundingBox b)
 // N is the number of intersecting particles and ret is an array of
 // indices of what particles in x are intersecting.
 // Ret has to be as large as n, but is only filled with N values
-void CollisionEngine::get(int n, const double* x, int* N,  int* ret)
+void CollisionEngine::get(int n, const double* x, int& N,  int* ret)
 {
 		// go throgh every x,y and z index of the particles and 
 		// scale them to become a key of the _grid.
-
-		// Check if the key exists in the _grid. If it does it means
-		// it is occupied by a bounding box. See if the point intersects
-		// the bounding box .
-		// If so, add the index to the vector. and increment N.
+		N = 0;
+		for(int i = 0; i<n; i++)
+		{	
+			int key = getKey(x[3*i+0], x[3*i+1], x[3*i+2]); 
+			if(_grid.find(key ) != _grid.end())
+			{
+				auto& c = _grid.at(key).bb_vec;
+				for( auto it = c.begin(); it != c.end(); it++)
+				{
+					if(it->contain(x[3*i+0], x[3*i+1], x[3*i+2]))
+					{
+						ret[N] = i;
+						N++;
+					}
+				}
+			}
+		}
 }

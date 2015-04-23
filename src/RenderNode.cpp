@@ -27,7 +27,7 @@ void RenderNode::setM(mat4 m)
 
 void RenderNode::updateBoundingBox()
 {
-	if(_g!= NULL && _M != mat4(1.0))
+	if(_g!= NULL )//&& _M != mat4(1.0))
 	{
 		_bb = _g->getBoundingBox();
 		_bb.transform(_M);
