@@ -2,6 +2,7 @@
 
 #include "LocalUpdateVisitor.hpp"
 #include "GlobalUpdateVisitor.hpp"
+#include "PhysicsVisitor.hpp"
 #include "ParticleSystem.hpp"
 
 #include "CameraMovementCallback.hpp"
@@ -34,9 +35,10 @@ int main( void )
 		MainWindow::getInstance().getInput();
 		MainWindow::getInstance().update();	
 
-		std::cout << "NEW FRAME" << std::endl;	
+		//std::cout << "NEW FRAME" << std::endl;	
 		lu.traverse(grp.get());
 		gu.traverse(grp.get());
+		//fv.traverse();
 
 		cle.update();
 

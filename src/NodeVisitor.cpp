@@ -1,8 +1,6 @@
 #include "NodeVisitor.hpp"
 #include <iostream>
-//#include "Geometry.hpp"
 #include "Group.hpp"
-//#include "Transform.hpp"
 
 std::shared_ptr<RenderList> NodeVisitor::_rList = std::shared_ptr< RenderList>(new RenderList);
 

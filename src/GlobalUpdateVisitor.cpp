@@ -6,14 +6,9 @@
 #include "Geometry.hpp"
 #include "ParticleSystem.hpp"
 
-/*
-GlobalUpdateVisitor::GlobalUpdateVisitor(std::shared_ptr<RenderList> rl)
-{
-	_rList = rl;
-}
-*/
 GlobalUpdateVisitor::GlobalUpdateVisitor()
 {
+
 }
 GlobalUpdateVisitor::~GlobalUpdateVisitor()
 {

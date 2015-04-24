@@ -76,5 +76,4 @@ class VirtualRenderNode : public Node{
 		BoundingBox _bb;
 };
 
-
 #endif //NODE_HPP

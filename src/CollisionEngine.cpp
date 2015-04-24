@@ -105,6 +105,7 @@ void CollisionEngine::update()
 	}
 }
 
+
 int CollisionEngine::getKey(double x, double y, double z)
 {
 	double size_div = 1/_grid_size;
