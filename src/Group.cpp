@@ -34,7 +34,6 @@ void Group::destroy()
 void Group::addChild(std::shared_ptr<Node> nodePtr )
 {
 	_childList.push_back(nodePtr);
-	nodePtr->addParent(this);
 	
 	// if this was the first element
 	if(_childList.size() == 1)
@@ -112,10 +111,5 @@ void Group::firstChild()
 
 void Group::reset()
 { 
-	for(_cit = _childList.begin(); _cit != _childList.end(); _cit++)
-	{
-		(*_cit)->reset();
-	}
 	_cit = _childList.begin();
-	_pit = _parentList.begin();
 }

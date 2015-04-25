@@ -29,6 +29,8 @@ class RenderNode : public VirtualRenderNode{
 		mat4 getV();
 		mat4 getP();
 
+		void clear();
+
 		void setGeometry(Geometry* g);
 		VirtualRenderNode* getGeometry();
 

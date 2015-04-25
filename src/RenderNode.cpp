@@ -6,13 +6,19 @@
 
 RenderNode::RenderNode()
 {
+	clear();
+}
+
+RenderNode::~RenderNode(){};
+
+void RenderNode::clear()
+{
 	_g = NULL;
 	_M = mat4(1.0f);
 	_V = mat4(1.0f);
 	_P = mat4(1.0f);
-}
 
-RenderNode::~RenderNode(){};
+}
 
 void RenderNode::acceptVisitor(NodeVisitor& v)
 {	

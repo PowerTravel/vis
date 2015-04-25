@@ -7,8 +7,7 @@
 #include "UpdateCallback.hpp"
 #include "BoundingBox.hpp"
 
-class Group;
-class NodeVisitor;
+class NodeApplier;
 
 #ifndef NODE_PTR
 #define NODE_PTR
@@ -37,7 +36,6 @@ class Node{
 		virtual ~Node();
 
 		// Basic functionality
-		virtual void reset();
 
 		virtual void update();
 		virtual void acceptVisitor(class NodeVisitor& v) =  0;
@@ -48,24 +46,11 @@ class Node{
 		void setState(State* s);
 		State* getState();	
 
-		int getNrParents();
-		Group* getParent();
-		void firstParent();
-		void nextParent();
-
-		void addParent(Group* grp);
-
-		// DEBUG
 	protected:
 		
 		N_Type _type;
-		int _dFlag; // Dirty Flag
 		State _state;
 		callback_ptr _callback;
-		
-		std::list<Group*> _parentList;
-		std::list<Group*>::iterator _pit;
-		
 };
 
 class VirtualRenderNode : public Node{
@@ -75,5 +60,4 @@ class VirtualRenderNode : public Node{
 	protected:
 		BoundingBox _bb;
 };
-
 #endif //NODE_HPP

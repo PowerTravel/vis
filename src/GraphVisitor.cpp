@@ -1,22 +1,20 @@
 #include "GraphVisitor.hpp"
 #include <iostream>
-#include "Group.hpp"
+
+#include "Geometry.hpp"
+#include "Transform.hpp"
+#include "Camera.hpp"
+#include "ParticleSystem.hpp"
+//#include "Group.hpp"
 
 std::shared_ptr<RenderList> GraphVisitor::_rList = std::shared_ptr< RenderList>(new RenderList);
 
-GraphVisitor::GraphVisitor(){}
-
+GraphVisitor::GraphVisitor()
+{
+	_node_vec = std::vector<Node*>();
+}
 GraphVisitor::~GraphVisitor(){}
 
-/*
- * Name:	traverse
- * Purpose: Given a node it will traverse its sub-tree depth first 
- *			recursively. For each node it encounters it will call
- *			the nodes "accept visitor" method.
- * Input:	Node* node: the 'root node' to be traversed.	
- * Output:	-	
- * Misc:	-
- */
 void GraphVisitor::traverse(Group* node)
 {
 	init(node);
@@ -26,16 +24,21 @@ void GraphVisitor::traverse(Group* node)
 
 void GraphVisitor::init(Group* g)
 {
+	_rList->first();
+//	_rList->reset();
+
 	g->reset();
 }
 
 void GraphVisitor::reset(Group* g)
 {
-	g->reset();
 }
 
 void GraphVisitor::doTraverse(Node* node)
 {
+
+	_node_vec.push_back(node);
+
 	// Inject itself into the node
 	node->acceptVisitor(*this);
 
@@ -48,39 +51,41 @@ void GraphVisitor::doTraverse(Node* node)
 		{
 			doTraverse( childNode );
 			grpPtr->nextChild();
-			grpPtr->nextParent();
 		}
+	}else{
+		_rList->build( _node_vec );
 	}
+
+	_node_vec.pop_back();
 }
 
 void GraphVisitor::apply(Geometry* n)
 {
-	printf("Visiting Geometry from GraphVisitor \n");
+	n->update();
 }
 
 void GraphVisitor::apply(RenderNode* n)
 {
-	printf("Visiting RenderNode from GraphVisitor \n");
 }
 
 void GraphVisitor::apply(Group* n)
 {
-	printf("Visiting Group from GraphVisitor\n");
+	n->update();
 }
 
 void GraphVisitor::apply(Transform* n)
 {
-	printf("Visiting Transform from GraphVisitor \n");
+	n->update();
 }
 
 void GraphVisitor::apply(Camera* n)
 {
-	printf("Visiting Camera from GraphVisitor \n");
+	n->update();
 }
 
 void GraphVisitor::apply(ParticleSystem* n)
 {
-	printf("Visiting ParticleSystem from GraphVisitor \n");
+	n->update();
 }
 /*
 void GraphVisitor::apply(RenderToTexture* n)
@@ -93,3 +98,4 @@ RenderList* GraphVisitor::getRenderList()
 {
 	return _rList.get();
 }
+

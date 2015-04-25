@@ -5,7 +5,6 @@ add_executable(vis
 	src/main.cpp
 	src/MainWindow.cpp
 	src/Timer.cpp
-	src/Emitter.cpp
 
 	src/Shader.cpp
 
@@ -15,14 +14,18 @@ add_executable(vis
 	src/Group.cpp
 	src/Transform.cpp
 	src/Camera.cpp
-	src/ParticleSystem.cpp
+	
 	src/BoundingBox.cpp
+	src/ParticleSystem.cpp
+	src/Emitter.cpp
 
 	src/State.cpp
-	src/NodeVisitor.cpp
-	src/LocalUpdateVisitor.cpp
-	src/GlobalUpdateVisitor.cpp
-	src/PhysicsVisitor.cpp
+	src/GraphVisitor.cpp
+	src/RenderList.cpp
+#	src/LocalUpdateVisitor.cpp
+#	src/GlobalUpdateVisitor.cpp
+#	src/PhysicsVisitor.cpp
+
 
 	src/UpdateCallback.cpp
 	src/CameraMovementCallback.cpp
@@ -31,7 +34,7 @@ add_executable(vis
 	src/Light.cpp
 	src/Material.cpp
 
-	src/CollisionEngine.cpp
+#	src/CollisionEngine.cpp
 )
 
 find_package(OpenGL REQUIRED)

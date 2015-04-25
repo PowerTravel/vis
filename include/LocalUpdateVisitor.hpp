@@ -17,7 +17,6 @@ class LocalUpdateVisitor : public NodeVisitor{
 		LocalUpdateVisitor();
 		virtual ~LocalUpdateVisitor();
 
-		void windowChanged();
 
 		void apply(Geometry* n);
 		void apply(ParticleSystem* n);
