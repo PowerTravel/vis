@@ -26,11 +26,13 @@ add_executable(vis
 	src/UpdateCallback.cpp
 	src/CameraMovementCallback.cpp
 	src/RotTransCallback.cpp
+	src/ParticleSystemCallback.cpp
 
 	src/Light.cpp
 	src/Material.cpp
 
 	src/CollisionEngine.cpp
+	src/PhysicsEngine.cpp
 )
 
 find_package(OpenGL REQUIRED)

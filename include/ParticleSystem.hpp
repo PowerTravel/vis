@@ -32,7 +32,15 @@ class ParticleSystem : public Geometry
 		ParticleSystem();
 		virtual ~ParticleSystem();
 
-		void update();
+		void transform(mat4 m);
+
+		void translate(vec3 ds);
+		void translate(double dx, double dy, double dz);
+		void rotate(float angle, vec3 axis);
+		void rotate(float angle, double x, double y, double z);
+
+
+		void updatePhysics();
 		void draw();
 		
 		void acceptVisitor(NodeVisitor& v);
@@ -55,10 +63,16 @@ class ParticleSystem : public Geometry
 		Eigen::Vector3d _g;
 		Eigen::VectorXd _f; //Acceleration due to gravity of the system
 		//	Emission Properties
-		Eigen:: Vector3d _emitter_pos_spread;
-		Eigen:: Vector3d _emitter_dir_spread;
+		vec4 _emitter_pos;
+		vec4 _emitter_vel;
+		vec4 _emitter_pos_spread;
+		vec4 _emitter_dir_spread;
 		Emitter _init_pos;
 		Emitter _init_vel;
+
+		mat4 _T;
+		mat4 _R;
+
 
 		int _N;					// Max # Particles
 		int _n;					// Current # Particles

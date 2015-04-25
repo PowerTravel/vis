@@ -3,11 +3,12 @@
 
 #include "GraphVisitor.hpp"
 #include "CollisionEngine.hpp"
+#include "PhysicsEngine.hpp"
 
 #include "CameraMovementCallback.hpp"
 #include "RotTransCallback.hpp"
+#include "ParticleSystemCallback.hpp"
 
-#include "ParticleSystem.hpp"
 
 group_ptr build_graph();
 group_ptr build_graph_simple();
@@ -22,9 +23,8 @@ int main( void )
 	GraphVisitor gv = GraphVisitor();
 	RenderList* rl = gv.getRenderList(); 					// A list of renderNodes that is static member of NodeVisitor and all derived classes.
 	
-//	PhysicsVisitor fv = PhysicsVisitor();					// Updates physics related nodes
-
 	CollisionEngine cle = CollisionEngine(rl);
+	PhysicsEngine phys_eng = PhysicsEngine(rl);
 
 	while(MainWindow::getInstance().isRunning())
 	{
@@ -94,6 +94,7 @@ group_ptr build_graph()
 
 	// ParticleSystem
 	partsys_ptr ps = partsys_ptr(new ParticleSystem);
+	ps->connectCallback(callback_ptr(new ParticleSystemCallback(ps)));
 
 	// Geometry
 	geometry_vec m_sphere = Geometry::loadFile("../models/sphere.obj");

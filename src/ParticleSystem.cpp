@@ -25,8 +25,17 @@ ParticleSystem::ParticleSystem()
 	_x = Eigen::VectorXd(3*_N);	
 	_v = Eigen::VectorXd(3*_N);
 
-	_init_pos = Emitter(0.0,  0.0, 0.0, 0.1f, 0.1f, 0.1f);
-	_init_vel = Emitter(0.0, 30.0, 0.0, 1.0f, 5.0f, 1.0f);
+	_emitter_pos = vec4(0.0,0.0,0.0,1);
+	_emitter_pos_spread = vec4(0.1,0.1,0.1, 0);
+ 	_emitter_vel = vec4(0.0,30.0,0.0,0);
+	_emitter_dir_spread = vec4(1.0,5.0,1.0,0);
+
+	_T = mat4(1.0);
+	
+	_init_pos = Emitter(_emitter_pos[0],_emitter_pos[1], _emitter_pos[2],
+			_emitter_pos_spread[0],_emitter_pos_spread[1],_emitter_pos_spread[2]);
+	_init_vel = Emitter(_emitter_vel[0],_emitter_vel[1],_emitter_vel[2],
+		_emitter_dir_spread[0], _emitter_dir_spread[1], _emitter_dir_spread[2]);
 
 	// Render stuff
 	createQuad();
@@ -145,8 +154,7 @@ void ParticleSystem::calculate_forces()
 	}
 }
 
-
-void ParticleSystem::update()
+void ParticleSystem::updatePhysics()
 {
 
 	// Remove dead particles
@@ -251,4 +259,32 @@ void ParticleSystem::draw()
 void ParticleSystem::acceptVisitor(NodeVisitor& v)
 {
 	v.apply(this);
+}
+
+void ParticleSystem::translate(vec3 ds)
+{
+	mat4 m = mat4(1.0);
+	m = glm::translate(m,ds);
+	transform(m);
+}
+
+void ParticleSystem::translate(double dx, double dy, double dz)
+{
+	translate(vec3(dx,dy,dz));
+}
+
+void ParticleSystem::rotate(float angle, vec3 axis)
+{
+}
+
+void ParticleSystem::rotate(float angle, double x, double y, double z)
+{
+	rotate(angle,vec3(x,y,z));
+}
+
+void ParticleSystem::transform(mat4 m)
+{
+	_T = _T*m;
+	vec4 pos = _T * vec4(0,0,0,1);
+	_init_pos = Emitter( pos,_emitter_pos_spread );
 }
