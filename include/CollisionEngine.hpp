@@ -3,7 +3,8 @@
 
 #include <vector>
 #include <map>
-#include "NodeVisitor.hpp"
+//#include "NodeVisitor.hpp"
+#include <RenderList.hpp>
 
 class CollisionEngine{
 
@@ -19,7 +20,6 @@ class CollisionEngine{
 	private:
 
 		struct container{
-//			int x,y,z;	
 			std::vector<BoundingBox > bb_vec;
 		};
 

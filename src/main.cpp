@@ -1,26 +1,13 @@
 #include "MainWindow.hpp"
 
-//#include "LocalUpdateVisitor.hpp"
-//#include "GlobalUpdateVisitor.hpp"
 
-#include "Group.hpp"
-#include "Camera.hpp"
-#include "Transform.hpp"
-#include "Geometry.hpp"
 #include "GraphVisitor.hpp"
+#include "CollisionEngine.hpp"
+
 #include "CameraMovementCallback.hpp"
 #include "RotTransCallback.hpp"
+
 #include "ParticleSystem.hpp"
-//#include "Transform.hpp"
-
-
-//#include "PhysicsVisitor.hpp"
-//#include "ParticleSystem.hpp"
-
-//#include "CameraMovementCallback.hpp"
-//#include "RotTransCallback.hpp"
-
-//#include "CollisionEngine.hpp"
 
 group_ptr build_graph();
 group_ptr build_graph_simple();
@@ -33,19 +20,11 @@ int main( void )
 	group_ptr grp = build_graph();
 
 	GraphVisitor gv = GraphVisitor();
-
-//	gv.traverse(grp.get());
-
-//	group_ptr grp = build_graph();
-
-//	LocalUpdateVisitor lu = LocalUpdateVisitor();			// Visits and make LOCAL changes to the nodes
-//	GlobalUpdateVisitor gu = GlobalUpdateVisitor();			// Visits and make GLOBAL changes to the nodes
-	
 	RenderList* rl = gv.getRenderList(); 					// A list of renderNodes that is static member of NodeVisitor and all derived classes.
 	
-	//PhysicsVisitor fv = PhysicsVisitor();					// Updates physics related nodes
+//	PhysicsVisitor fv = PhysicsVisitor();					// Updates physics related nodes
 
-//	CollisionEngine cle = CollisionEngine(rl);
+	CollisionEngine cle = CollisionEngine(rl);
 
 	while(MainWindow::getInstance().isRunning())
 	{
@@ -53,14 +32,9 @@ int main( void )
 		MainWindow::getInstance().getInput();
 		MainWindow::getInstance().update();	
 
-		//std::cout << "NEW FRAME" << std::endl;	
-		//lu.traverse(grp.get());
-		//gu.traverse(grp.get());
-		//fv.traverse();
-
-		//cle.update();
-
+	//	std::cout << "NEW FRAME" << std::endl;	
 		gv.traverse(grp.get());
+		cle.update();
 		rl->draw();
 
 		MainWindow::getInstance().swap();

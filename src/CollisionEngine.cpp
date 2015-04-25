@@ -21,10 +21,14 @@ void CollisionEngine::update()
 
 
 	_grid = std::map<int, container>();
-	std::list<RenderNode>& list = (_rl->list);
-	for(auto it = list.begin(); it != list.end(); it++)
-	{
-		BoundingBox b = it->getBoundingBox();
+	_rl->first();
+	do{
+		BoundingBox b = _rl->get().getBoundingBox();
+		if(b.zombie() )
+		{
+			break;
+		}
+
 		Eigen::VectorXd pts = Eigen::VectorXd(24);
 		b.getCorners(&pts[0]);
 		
@@ -51,11 +55,8 @@ void CollisionEngine::update()
 		// # boxes in depth
 		double depth = b.depth() * alpha;;
 
-		//std::cout <<_grid_size << "  "  <<width << " " << height<< " " << depth << std::endl;
+		//std::;out <<_grid_size << "  "  <<width << " " << height<< " " << depth << std::endl;
 
-		double w = 0;
-		double h = 0;
-		double d = 0;
 		double dw, dh, dd;
 		if(width > 0)
 		{
@@ -77,7 +78,10 @@ void CollisionEngine::update()
 		}else{
 			dd = 1;
 		}
-	
+
+		double w = 0;
+		double h = 0;
+		double d = 0;
 		while(w <= 1)
 		{
 			Eigen::Vector3d w_u_f = p4 + w * (p0 - p4);
@@ -102,7 +106,7 @@ void CollisionEngine::update()
 			w += dw;
 			h = 0;
 		}
-	}
+	}while(_rl->next());
 }
 
 

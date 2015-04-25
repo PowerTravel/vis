@@ -28,6 +28,11 @@ BoundingBox::~BoundingBox()
 {
 }
 
+bool BoundingBox::zombie()
+{
+	return !_initiated;
+}
+
 void BoundingBox::build(int n, Eigen::VectorXd& pts)
 {
 	_coord_sys = Eigen::Matrix3d::Identity();

@@ -22,10 +22,6 @@ add_executable(vis
 	src/State.cpp
 	src/GraphVisitor.cpp
 	src/RenderList.cpp
-#	src/LocalUpdateVisitor.cpp
-#	src/GlobalUpdateVisitor.cpp
-#	src/PhysicsVisitor.cpp
-
 
 	src/UpdateCallback.cpp
 	src/CameraMovementCallback.cpp
@@ -34,7 +30,7 @@ add_executable(vis
 	src/Light.cpp
 	src/Material.cpp
 
-#	src/CollisionEngine.cpp
+	src/CollisionEngine.cpp
 )
 
 find_package(OpenGL REQUIRED)

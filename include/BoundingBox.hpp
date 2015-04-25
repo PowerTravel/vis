@@ -20,6 +20,8 @@ class BoundingBox
 		double depth();
 		double height();
 		void transform(mat4 t);
+
+		bool zombie();
 	
 		// see if the coodinate x,y,z is contained within the bb.
 		bool contain(double x, double y, double z);

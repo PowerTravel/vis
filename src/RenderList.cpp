@@ -103,7 +103,7 @@ void RenderList::build(std::vector<Node*>& vec)
 	{
 		vec[i]->acceptVisitor(*this);	
 	}
-	
+/*	
 	auto it = _it; 
 	it++;
 	if( it == _list.end()  )
@@ -112,4 +112,28 @@ void RenderList::build(std::vector<Node*>& vec)
 	}
 
 	_it++;
+*/
+	if(!next())
+	{
+		_list.push_back(RenderNode());	
+		next();
+	}
+}
+
+bool RenderList::next()
+{
+	auto it = _it; 
+	it++;
+	if( it == _list.end()  )
+	{
+		return false;
+	}
+
+	_it++;
+	return true;
+}
+
+RenderNode RenderList::get()
+{
+	return *_it;
 }

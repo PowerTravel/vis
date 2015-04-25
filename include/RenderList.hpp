@@ -18,8 +18,10 @@ class RenderList : public NodeVisitor{
 		void apply(Camera* n);
 		void apply(ParticleSystem* n);
 
-		void first();
 		void reset();
+		void first();
+		bool next();
+		RenderNode get();
 		
 		void add_data( mat4* m, mat4* v, mat4* p, State* s, Geometry* g);
 
