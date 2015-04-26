@@ -1,5 +1,5 @@
 #include "MainWindow.hpp"
-
+#include <ctime>
 
 #include "GraphVisitor.hpp"
 #include "CollisionEngine.hpp"
@@ -16,6 +16,7 @@ group_ptr build_graph_branch();
 
 int main( void )
 {
+	std::cout << time(NULL) << std::endl;
 	MainWindow::getInstance().init(1024,768);
 	
 

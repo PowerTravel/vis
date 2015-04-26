@@ -2,8 +2,6 @@
 #include "NodeVisitor.hpp"
 #include "Geometry.hpp"
 
-//std::list<RenderNode> RenderList::list = std::list<RenderNode>();
-
 RenderNode::RenderNode()
 {
 	clear();
