@@ -28,12 +28,24 @@ typedef std::shared_ptr<Geometry> geometry_ptr;
  */
 class Geometry : public VirtualRenderNode{
 	public:
+		enum DataType{
+			VERTEX,
+			TEXTURECOORDINATE,
+			NORMAL,
+			FACE,
+			STREAM
+		};
+
 		Geometry();
 		Geometry(const aiMesh* mesh);
 		virtual ~Geometry();
 
 		void acceptVisitor(NodeVisitor& v);
 		void draw();
+
+		unsigned int getVAO();
+		int getNrFaces();
+		int getNrVertives();
 
 		// Helperfunction that loads a file
 		static geometry_vec loadFile(const char* filePath);
@@ -42,13 +54,6 @@ class Geometry : public VirtualRenderNode{
 
 //		void getBoundingBoxCorners(double* points);
 	protected:
-		enum DataType{
-			VERTEX,
-			TEXTURECOORDINATE,
-			NORMAL,
-			FACE,
-			STREAM
-		};
 
 		int nrVertices;
 		int nrFaces;

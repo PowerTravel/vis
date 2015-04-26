@@ -25,7 +25,6 @@ void GraphVisitor::traverse(Group* node)
 void GraphVisitor::init(Group* g)
 {
 	_rList->first();
-//	_rList->reset();
 
 	g->reset();
 }

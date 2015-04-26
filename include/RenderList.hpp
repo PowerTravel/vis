@@ -23,7 +23,7 @@ class RenderList : public NodeVisitor{
 		bool next();
 		RenderNode get();
 		
-		void add_data( mat4* m, mat4* v, mat4* p, State* s, Geometry* g);
+		void add_data( mat4* m, mat4* v, mat4* p, State* s, VirtualRenderNode* g);
 
 		void build(std::vector<Node*>& vec);
 

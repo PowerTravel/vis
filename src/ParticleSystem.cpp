@@ -38,31 +38,35 @@ ParticleSystem::ParticleSystem()
 		_emitter_dir_spread[0], _emitter_dir_spread[1], _emitter_dir_spread[2]);
 
 	// Render stuff
+	_geom = NULL;
 	createQuad();
 	//load("../models/sphere.obj");
 	createParticleBuffer();	
 	 
 	
 	// Energy stuffu
-	_ddata = std::vector<Energy>();
+	//_ddata = std::vector<Energy>();
 }
 
 void ParticleSystem::createParticleBuffer()
 {
+	GLuint VAO = _geom->getVAO();
+
 	glBindVertexArray(VAO);
 
 	glGenBuffers(1, &particleBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, particleBuffer);
 	glBufferData(GL_ARRAY_BUFFER, _N*3*sizeof(GLfloat), NULL, GL_STREAM_DRAW);
 
-	glVertexAttribPointer(STREAM, 3, GL_FLOAT, GL_FALSE, 0,(GLvoid*) NULL);
-	glEnableVertexAttribArray(STREAM);
+	glVertexAttribPointer(Geometry::STREAM, 3, GL_FLOAT, GL_FALSE, 0,(GLvoid*) NULL);
+	glEnableVertexAttribArray(Geometry::STREAM);
 
 	glBindVertexArray(0);
 }
 
 void ParticleSystem::sendParticlesToBuffer()
 {
+	GLuint VAO = _geom->getVAO();
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, particleBuffer);
 	glBufferData(GL_ARRAY_BUFFER, _N*3*sizeof(GLfloat), NULL, GL_STREAM_DRAW);
@@ -212,7 +216,10 @@ void ParticleSystem::createQuad()
 					0,1,
 					1,1};
 	
-	Geometry::createGeom(4, 2, vec,  norm,  face, tex);
+	//Geometry::createGeom(4, 2, vec,  norm,  face, tex);
+	_geom = geometry_ptr(new Geometry());
+	_geom->createGeom(4, 2, vec, norm, face,tex);
+	_bb = _geom->getBoundingBox();
 }
 
 void ParticleSystem::load(const char* filePath)
@@ -240,26 +247,37 @@ void ParticleSystem::load(const char* filePath)
 	}else{
 		// If the mesh succseded to load we create a new geometry
 		// from it
-		Geometry::Geometry(mesh);
+		//Geometry::Geometry(mesh);
+		_geom = geometry_ptr(new Geometry(mesh));
+		_bb = _geom->getBoundingBox();
 	}
 }
 
 
 void ParticleSystem::draw()
 {
-	glDisable(GL_CULL_FACE);
-	glBindVertexArray(VAO);
-	glVertexAttribDivisor(VERTEX,0);
-	glVertexAttribDivisor(STREAM,1);
-	glDrawElementsInstanced(GL_TRIANGLES,3*nrFaces,GL_UNSIGNED_INT,(void*)NULL, _n);
-//	glDrawElements(GL_TRIANGLES, 3*nrFaces,GL_UNSIGNED_INT,0);
-	glBindVertexArray(0);
+	if(_geom != NULL)
+	{
+		int nrFaces = _geom->getNrFaces();
+		GLuint VAO = _geom->getVAO();
+		glDisable(GL_CULL_FACE);
+		glBindVertexArray(VAO);
+		glVertexAttribDivisor(Geometry::VERTEX,0);
+		glVertexAttribDivisor(Geometry::STREAM,1);
+		glDrawElementsInstanced(GL_TRIANGLES,3*nrFaces,GL_UNSIGNED_INT,(void*)NULL, _n);
+//		glDrawElements(GL_TRIANGLES, 3*nrFaces,GL_UNSIGNED_INT,0);
+		glBindVertexArray(0);
+	}
 }
 
 void ParticleSystem::acceptVisitor(NodeVisitor& v)
 {
 	v.apply(this);
 }
+
+
+
+
 
 void ParticleSystem::translate(vec3 ds)
 {

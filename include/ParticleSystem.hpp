@@ -15,7 +15,7 @@ class ParticleSystem;
 typedef std::shared_ptr<ParticleSystem> partsys_ptr;
 #endif // PARTICLE_SYSTEM_PTR
 
-class ParticleSystem : public Geometry
+class ParticleSystem : public VirtualRenderNode
 {
 	struct Energy{
 		double t; 	// Time
@@ -86,6 +86,11 @@ class ParticleSystem : public Geometry
 		Eigen::MatrixXd _M;				// Mass matrix
 		Eigen::VectorXd _x, _v;			// Position and velocity
 		Metadata* _mdata;				// Metadata about the part
+
+
+		// Visualization
+		geometry_ptr _geom;
+
 
 		// Simulation functions
 		void remove_dead_particles();

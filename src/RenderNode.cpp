@@ -61,7 +61,7 @@ mat4 RenderNode::getP()
 	return _P;
 }
 
-void RenderNode::setGeometry(Geometry* g)
+void RenderNode::setGeometry(VirtualRenderNode* g)
 {
 	_g = g;
 	updateBoundingBox();

@@ -31,7 +31,7 @@ class RenderNode : public VirtualRenderNode{
 
 		void clear();
 
-		void setGeometry(Geometry* g);
+		void setGeometry(VirtualRenderNode* g);
 		VirtualRenderNode* getGeometry();
 
 		void draw();

@@ -65,7 +65,7 @@ void RenderList::first()
 	_it = _list.begin();
 }
 
-void RenderList::add_data( mat4* m, mat4* v, mat4* p, State* s, Geometry* g)
+void RenderList::add_data( mat4* m, mat4* v, mat4* p, State* s, VirtualRenderNode* g)
 {
 	// Update the current RenderNode
 	if( m != NULL )
@@ -91,7 +91,7 @@ void RenderList::add_data( mat4* m, mat4* v, mat4* p, State* s, Geometry* g)
 }
 
 void RenderList::build(std::vector<Node*>& vec)
-{
+{	
 	if( _list.empty() )
 	{
 		_list.push_back(RenderNode());
@@ -103,16 +103,7 @@ void RenderList::build(std::vector<Node*>& vec)
 	{
 		vec[i]->acceptVisitor(*this);	
 	}
-/*	
-	auto it = _it; 
-	it++;
-	if( it == _list.end()  )
-	{
-		_list.push_back(RenderNode());	
-	}
-
-	_it++;
-*/
+	
 	if(!next())
 	{
 		_list.push_back(RenderNode());	

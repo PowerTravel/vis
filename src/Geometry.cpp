@@ -324,9 +324,15 @@ void Geometry::acceptVisitor(NodeVisitor& v)
 	v.apply(this);
 }
 
-/*
-void Geometry::getBoundingBoxCorners(double* points)
+unsigned int Geometry::getVAO()
 {
-	_bb.getCorners(points);
+	return VAO;
 }
-*/
+int Geometry::getNrFaces()
+{
+	return nrFaces;
+}
+int Geometry::getNrVertives()
+{
+	return nrVertices;
+}

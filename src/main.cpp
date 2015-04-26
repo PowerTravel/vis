@@ -17,6 +17,7 @@ group_ptr build_graph_branch();
 int main( void )
 {
 	MainWindow::getInstance().init(1024,768);
+	
 
 	group_ptr grp = build_graph();
 
@@ -25,6 +26,7 @@ int main( void )
 	
 	CollisionEngine cle = CollisionEngine(rl);
 	PhysicsEngine phys_eng = PhysicsEngine(rl);
+		
 
 	while(MainWindow::getInstance().isRunning())
 	{
