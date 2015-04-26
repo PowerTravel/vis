@@ -56,9 +56,6 @@ class ParticleSystem : public VirtualRenderNode
 			};
 		};
 
-		// Buffer ID for particles
-		GLuint particleBuffer;
-
 		// Update Properties
 		Eigen::Vector3d _g;
 		Eigen::VectorXd _f; //Acceleration due to gravity of the system
@@ -72,7 +69,6 @@ class ParticleSystem : public VirtualRenderNode
 
 		mat4 _T;
 		mat4 _R;
-
 
 		int _N;					// Max # Particles
 		int _n;					// Current # Particles
@@ -91,7 +87,6 @@ class ParticleSystem : public VirtualRenderNode
 		// Visualization
 		geometry_ptr _geom;
 
-
 		// Simulation functions
 		void remove_dead_particles();
 		void add_new_particles();
@@ -99,11 +94,10 @@ class ParticleSystem : public VirtualRenderNode
 		bool _forces_changed;
 
 		// Rendering functions
-		void initGeometry();
-		void createQuad();
+		bool initGeometry(const char* filePath = NULL);
 		void load(const char* filePath);
-		void createParticleBuffer();
-		void sendParticlesToBuffer();
+		//void createParticleBuffer();
+		//void sendParticlesToBuffer();
 
 		// Collision list
 		std::list<Node*> CollisionList;

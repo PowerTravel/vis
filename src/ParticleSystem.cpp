@@ -26,53 +26,25 @@ ParticleSystem::ParticleSystem()
 	_v = Eigen::VectorXd(3*_N);
 
 	_emitter_pos = vec4(0.0,0.0,0.0,1);
-	_emitter_pos_spread = vec4(0.1,0.1,0.1, 0);
+	_emitter_pos_spread = vec4(0.5,0.5,0.5, 0);
  	_emitter_vel = vec4(0.0,30.0,0.0,0);
-	_emitter_dir_spread = vec4(1.0,5.0,1.0,0);
+	_emitter_dir_spread = vec4(1.0,6.0,1.0,0);
 
 	_T = mat4(1.0);
 	
-	_init_pos = Emitter(_emitter_pos[0],_emitter_pos[1], _emitter_pos[2],
-			_emitter_pos_spread[0],_emitter_pos_spread[1],_emitter_pos_spread[2]);
-	_init_vel = Emitter(_emitter_vel[0],_emitter_vel[1],_emitter_vel[2],
-		_emitter_dir_spread[0], _emitter_dir_spread[1], _emitter_dir_spread[2]);
+	_init_pos = Emitter(_emitter_pos, _emitter_pos_spread);
+	_init_vel = Emitter(_emitter_vel, _emitter_dir_spread);
 
-	// Render stuff
+	
 	_geom = NULL;
-	//createQuad();
-	load("../models/sphere.obj");
-	createParticleBuffer();	
+	if( !initGeometry("../models/sphere.obj"))
+	{
+		_geom = NULL;
+		std::cerr << "ParticleSystem failed to load geometry. "<< std::endl;
+	}
 	
 	// Energy stuffu
 	//_ddata = std::vector<Energy>();
-}
-
-void ParticleSystem::createParticleBuffer()
-{
-	GLuint VAO = _geom->getVAO();
-
-	glBindVertexArray(VAO);
-
-	glGenBuffers(1, &particleBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, particleBuffer);
-	glBufferData(GL_ARRAY_BUFFER, _N*3*sizeof(GLfloat), NULL, GL_STREAM_DRAW);
-
-	glVertexAttribPointer(Geometry::STREAM, 3, GL_FLOAT, GL_FALSE, 0,(GLvoid*) NULL);
-	glEnableVertexAttribArray(Geometry::STREAM);
-
-	glBindVertexArray(0);
-}
-
-void ParticleSystem::sendParticlesToBuffer()
-{
-	GLuint VAO = _geom->getVAO();
-	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, particleBuffer);
-	glBufferData(GL_ARRAY_BUFFER, _N*3*sizeof(GLfloat), NULL, GL_STREAM_DRAW);
-	Eigen::VectorXf x = _x.segment(0,3*_n).cast<float>();
-	glBufferSubData(GL_ARRAY_BUFFER,0, _n*3*sizeof(GLfloat), &x(0));
-
-	glBindVertexArray(0);
 }
 
 
@@ -172,16 +144,12 @@ void ParticleSystem::updatePhysics()
 	// Update living particles
 	_v.segment(0,3*_n) = _v.segment(0,3*_n) + (_h/_mass)*_f.segment(0,3*_n);
 	_x.segment(0,3*_n) = _x.segment(0,3*_n) + _h*_v.segment(0,3*_n);
-//	std::cout << _n << "/" << _N <<std::endl;
-
 
 	// Calculate energy
 //	double k = 0;
 //	double k = _v.segment(0,3*_n).transpose() * _M.block(0,0,3*_n,3*_n) * _v.segment(0,3*_n);
 //	Energy sd = {_time, k, _n};
 //	_ddata.push_back( sd );
-
-	sendParticlesToBuffer();
 }
 
 void ParticleSystem::printToFile(std::string filename)
@@ -195,41 +163,45 @@ void ParticleSystem::printToFile(std::string filename)
 	file.close();
 }
 
-void ParticleSystem::createQuad()
+bool ParticleSystem::initGeometry(const char* filePath)
 {
-	float vec[] = {	-0.5,-0.5,0,
-					0.5,-0.5,0,
-					-0.5,0.5,0,
-					0.5,0.5,0};	
-
-	float norm[] = {	0,0,1,
-						0,0,1,
-						0,0,1,
-						0,0,1};
-
-	int face[] = { 	0,1,2,
-			   		1,3,2};
-
-	float tex[] = {	0,0,
-					1,0,
-					0,1,
-					1,1};
+	if(filePath == NULL)
+	{
+		float vec[] = {	-0.5,-0.5,0,
+						0.5,-0.5,0,
+						-0.5,0.5,0,
+						0.5,0.5,0};	
 	
-	_geom = geometry_ptr(new Geometry(4, 2, vec, norm, face,tex));
-	_bb = _geom->getBoundingBox();
-}
+		float norm[] = {	0,0,1,
+							0,0,1,
+							0,0,1,
+							0,0,1};
+	
+		int face[] = { 	0,1,2,
+				   		1,3,2};
+	
+		float tex[] = {	0,0,
+						1,0,
+						0,1,
+						1,1};
+		
+		_geom = geometry_ptr(new Geometry(4, 2, vec, norm, face,tex));
+	}else{
+		_geom = geometry_ptr(new Geometry(filePath));
+	}
 
-
-void ParticleSystem::initGeometry()
-{
-
+	if(_geom != NULL  && !_geom->zombie())
+	{
+		_bb = _geom->getBoundingBox();
+		return true;
+	}else{
+		return false;	
+	}
 }
 
 
 void ParticleSystem::load(const char* filePath)
 {
-	_geom = geometry_ptr(new Geometry(filePath));
-	_bb = _geom->getBoundingBox();
 }
 
 
@@ -237,15 +209,8 @@ void ParticleSystem::draw()
 {
 	if(_geom != NULL)
 	{
-		int nrFaces = _geom->getNrFaces();
-		GLuint VAO = _geom->getVAO();
-		glDisable(GL_CULL_FACE);
-		glBindVertexArray(VAO);
-		glVertexAttribDivisor(Geometry::VERTEX,0);
-		glVertexAttribDivisor(Geometry::STREAM,1);
-		glDrawElementsInstanced(GL_TRIANGLES,3*nrFaces,GL_UNSIGNED_INT,(void*)NULL, _n);
-//		glDrawElements(GL_TRIANGLES, 3*nrFaces,GL_UNSIGNED_INT,0);
-		glBindVertexArray(0);
+		Eigen::VectorXf x = _x.segment(0,3*_n).cast<float>();
+		_geom->draw(_N,_n,&x(0));
 	}
 }
 

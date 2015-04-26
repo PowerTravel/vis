@@ -2,6 +2,7 @@
 #define EMITTER_HPP
 
 #include <random>
+#include <ctime>
 #include "MatLib.hpp"
 
 class Emitter{
@@ -21,7 +22,7 @@ class Emitter{
 		void init(double mean_x, double mean_y, double mean_z, 
 				double var_x, double var_y, double var_z);
 		
-		std::default_random_engine _gauss_gen;
+		static std::default_random_engine _gauss_gen;
 		std::normal_distribution<double> _x;
 		std::normal_distribution<double> _y;
 		std::normal_distribution<double> _z;

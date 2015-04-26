@@ -44,6 +44,7 @@ class Geometry : public VirtualRenderNode{
 
 		void acceptVisitor(NodeVisitor& v);
 		void draw();
+		void draw(int N, int n, float* points);
 
 		unsigned int getVAO();
 		int getNrFaces();
@@ -54,7 +55,7 @@ class Geometry : public VirtualRenderNode{
 		// Create a geometry directly from arrays of floats and ints.
 		void createGeom(int nVerts, int nFaces, float* verts, float* norm, int* face, float* texCoords);
 
-		void instantiate();
+		bool zombie();
 	protected:
 
 		int nrVertices;
@@ -70,14 +71,17 @@ class Geometry : public VirtualRenderNode{
 		GLuint textureBuffer;
 		GLuint normalBuffer;
 		GLuint faceBuffer;
-//		GLuint instanceBuffer;
-		
+		GLuint instanceBuffer;
+	
+		bool instancing;
+
 		void createGeom( const aiMesh* mesh );
 		void loadVertices(int nrVertices, float* vertices);
 		void loadTextureCoordinates(int nrTexCoords, float* coords);
 		// Assumes they are triangles
 		void loadFaces(int nrFaces, int* faces); 
 		void loadNormals(int nrNormals, float* normals);
+		void create_instanceBuffer(int N);
 };
 
 #endif // GEOMETRY_HPP

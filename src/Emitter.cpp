@@ -1,5 +1,7 @@
 #include "Emitter.hpp"
 
+std::default_random_engine Emitter::_gauss_gen = std::default_random_engine(time(NULL));
+
 Emitter::Emitter(double mean_x, double mean_y, double mean_z, 
 				double var_x, double var_y, double var_z)
 {

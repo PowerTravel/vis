@@ -7,6 +7,6 @@ ParticleSystemCallback::~ParticleSystemCallback(){}
 
 void ParticleSystemCallback::execute()
 {
-	_pSys->translate(0.1,0,0);
+//	_pSys->translate(0.1,0,0);
 	_pSys->updatePhysics();
 }

@@ -13,6 +13,8 @@ Geometry::Geometry()
 	nrFaces = 0;
 	loaded = false;
 	glGenVertexArrays(1, &VAO);
+
+	instancing = false;
 }
 	
 Geometry::Geometry(const char* filePath)
@@ -21,6 +23,7 @@ Geometry::Geometry(const char* filePath)
 	nrVertices = 0;
 	nrFaces = 0;
 	loaded = false;
+	instancing = false;
 	glGenVertexArrays(1, &VAO);
 
 	// Let assimp read the file, Triangluate and do other
@@ -57,6 +60,7 @@ Geometry::Geometry(int nVerts, int nFaces, float* verts, float* norm, int* face,
 	nrVertices = 0;
 	nrFaces = 0;
 	loaded = false;
+	instancing = false;
 	glGenVertexArrays(1, &VAO);
 	createGeom(nVerts, nFaces, verts, norm, face, texCoords);
 }
@@ -69,6 +73,7 @@ Geometry::Geometry(const aiMesh* mesh)
 	
 	createGeom(mesh);
 	loaded = true;	
+	instancing = false;
 }
 
 Geometry::~Geometry()
@@ -350,6 +355,22 @@ void Geometry::loadFaces(int nrFaces, int* faces)
 	glBindVertexArray(0);
 }
 
+void Geometry::create_instanceBuffer(int N)
+{
+	glBindVertexArray(VAO);
+
+	glGenBuffers(1, &instanceBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, instanceBuffer);
+	glBufferData(GL_ARRAY_BUFFER, N*3*sizeof(GLfloat), NULL, GL_STREAM_DRAW);
+
+	glVertexAttribPointer(STREAM, 3, GL_FLOAT, GL_FALSE, 0,(GLvoid*) NULL);
+	glEnableVertexAttribArray(STREAM);
+	
+	glBindVertexArray(0);
+	
+	instancing = true;
+}
+
 /*
  * Name:	draw
  * Purpose: Draws the geometry
@@ -360,8 +381,27 @@ void Geometry::loadFaces(int nrFaces, int* faces)
 #include <iostream>
 void Geometry::draw()
 {
+	instancing = false;
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, 3*nrFaces, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
+}
+
+void Geometry::draw(int N, int n, float* points)
+{
+	if(!instancing)
+	{
+		create_instanceBuffer(N);
+	}
+	glBindVertexArray(VAO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, instanceBuffer);
+	glBufferSubData(GL_ARRAY_BUFFER,0, n*3*sizeof(GLfloat), points);
+
+	glVertexAttribDivisor(VERTEX,0);
+	glVertexAttribDivisor(STREAM,1);
+	glDrawElementsInstanced(GL_TRIANGLES,3*nrFaces,GL_UNSIGNED_INT,(void*)NULL, n);
+
 	glBindVertexArray(0);
 }
 
@@ -381,4 +421,9 @@ int Geometry::getNrFaces()
 int Geometry::getNrVertives()
 {
 	return nrVertices;
+}
+
+bool Geometry::zombie()
+{
+	return !loaded;
 }
