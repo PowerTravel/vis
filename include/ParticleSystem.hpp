@@ -99,6 +99,7 @@ class ParticleSystem : public VirtualRenderNode
 		bool _forces_changed;
 
 		// Rendering functions
+		void initGeometry();
 		void createQuad();
 		void load(const char* filePath);
 		void createParticleBuffer();

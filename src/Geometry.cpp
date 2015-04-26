@@ -14,6 +14,52 @@ Geometry::Geometry()
 	loaded = false;
 	glGenVertexArrays(1, &VAO);
 }
+	
+Geometry::Geometry(const char* filePath)
+{
+	_bb = BoundingBox();
+	nrVertices = 0;
+	nrFaces = 0;
+	loaded = false;
+	glGenVertexArrays(1, &VAO);
+
+	// Let assimp read the file, Triangluate and do other
+	// optimization stuff
+	Assimp::Importer importer;
+	const aiScene* scene = importer.ReadFile(filePath,
+							aiProcess_OptimizeMeshes |
+							aiProcess_Triangulate | 
+							aiProcess_JoinIdenticalVertices|
+							aiProcess_GenSmoothNormals);
+	if(!scene){
+		fprintf(stderr, "Failed to load model '%s' \n '%s'\n ", filePath, importer.GetErrorString());
+		return;
+	}
+
+	geometry_vec geomVec = geometry_vec(scene->mNumMeshes);
+	// Start to load meshes
+	aiMesh* mesh = scene-> mMeshes[0];
+	if( !mesh )
+	{
+		fprintf(stderr, "failed to load mesh. \n");
+	}else{
+		// If the mesh succseded to load we create a new geometry
+		// from it
+		createGeom(mesh);
+		loaded = true;	
+	}
+}
+
+Geometry::Geometry(int nVerts, int nFaces, float* verts, float* norm, int* face, float* texCoords)
+{
+
+	_bb = BoundingBox();
+	nrVertices = 0;
+	nrFaces = 0;
+	loaded = false;
+	glGenVertexArrays(1, &VAO);
+	createGeom(nVerts, nFaces, verts, norm, face, texCoords);
+}
 
 Geometry::Geometry(const aiMesh* mesh)
 {

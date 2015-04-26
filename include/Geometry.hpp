@@ -37,6 +37,8 @@ class Geometry : public VirtualRenderNode{
 		};
 
 		Geometry();
+		Geometry(int nVerts, int nFaces, float* verts, float* norm, int* face, float* texCoords);
+		Geometry(const char* filePath);
 		Geometry(const aiMesh* mesh);
 		virtual ~Geometry();
 
@@ -52,7 +54,7 @@ class Geometry : public VirtualRenderNode{
 		// Create a geometry directly from arrays of floats and ints.
 		void createGeom(int nVerts, int nFaces, float* verts, float* norm, int* face, float* texCoords);
 
-//		void getBoundingBoxCorners(double* points);
+		void instantiate();
 	protected:
 
 		int nrVertices;
@@ -68,6 +70,7 @@ class Geometry : public VirtualRenderNode{
 		GLuint textureBuffer;
 		GLuint normalBuffer;
 		GLuint faceBuffer;
+//		GLuint instanceBuffer;
 		
 		void createGeom( const aiMesh* mesh );
 		void loadVertices(int nrVertices, float* vertices);

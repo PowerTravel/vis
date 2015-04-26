@@ -39,10 +39,9 @@ ParticleSystem::ParticleSystem()
 
 	// Render stuff
 	_geom = NULL;
-	createQuad();
-	//load("../models/sphere.obj");
+	//createQuad();
+	load("../models/sphere.obj");
 	createParticleBuffer();	
-	 
 	
 	// Energy stuffu
 	//_ddata = std::vector<Energy>();
@@ -216,41 +215,21 @@ void ParticleSystem::createQuad()
 					0,1,
 					1,1};
 	
-	//Geometry::createGeom(4, 2, vec,  norm,  face, tex);
-	_geom = geometry_ptr(new Geometry());
-	_geom->createGeom(4, 2, vec, norm, face,tex);
+	_geom = geometry_ptr(new Geometry(4, 2, vec, norm, face,tex));
 	_bb = _geom->getBoundingBox();
 }
 
-void ParticleSystem::load(const char* filePath)
+
+void ParticleSystem::initGeometry()
 {
 
-	// Let assimp read the file, Triangluate and do other
-	// optimization stuff
-	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile(filePath,
-							aiProcess_OptimizeMeshes |
-							aiProcess_Triangulate | 
-							aiProcess_JoinIdenticalVertices|
-							aiProcess_GenSmoothNormals);
-	if(!scene){
-		fprintf(stderr, "Failed to load model '%s' \n '%s'\n ", filePath, importer.GetErrorString());
-		return;
-	}
+}
 
-	geometry_vec geomVec = geometry_vec(scene->mNumMeshes);
-	// Start to load meshes
-	aiMesh* mesh = scene-> mMeshes[0];
-	if( !mesh )
-	{
-		fprintf(stderr, "failed to load mesh. \n");
-	}else{
-		// If the mesh succseded to load we create a new geometry
-		// from it
-		//Geometry::Geometry(mesh);
-		_geom = geometry_ptr(new Geometry(mesh));
-		_bb = _geom->getBoundingBox();
-	}
+
+void ParticleSystem::load(const char* filePath)
+{
+	_geom = geometry_ptr(new Geometry(filePath));
+	_bb = _geom->getBoundingBox();
 }
 
 
