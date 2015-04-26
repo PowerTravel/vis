@@ -49,7 +49,7 @@ Node::N_Type Node::getType()
 }
 
 
-BoundingBox VirtualRenderNode::getBoundingBox()
+BoundingBox Node::getBoundingBox()
 {
 //	std::cout << "NODE GET BOUNDINGBOX" << std::endl;
 //	std::cout<< "w  "<< _bb.width() << std::endl;

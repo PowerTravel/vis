@@ -1,5 +1,4 @@
 #include "MainWindow.hpp"
-#include <ctime>
 
 #include "GraphVisitor.hpp"
 #include "CollisionEngine.hpp"
@@ -13,12 +12,13 @@
 group_ptr build_graph();
 group_ptr build_graph_simple();
 group_ptr build_graph_branch();
-
+#include<cstdlib>
+#include<ctime>
 int main( void )
 {
-	std::cout << time(NULL) << std::endl;
 	MainWindow::getInstance().init(1024,768);
-	
+
+	srand(time(NULL));
 
 	group_ptr grp = build_graph();
 
@@ -72,7 +72,7 @@ group_ptr build_graph()
 
 	// Spheres
 	transform_ptr sphere_rot = transform_ptr(new Transform());
-	sphere_rot->connectCallback(callback_ptr(new RotTransCallback(sphere_rot, 0.02)));
+	sphere_rot->connectCallback(callback_ptr(new RotTransCallback(sphere_rot, 0.2)));
 
 	state = State();
 	state.set(State::Attribute::RENDER_MODE, State::Value::LINE);
@@ -96,7 +96,13 @@ group_ptr build_graph()
 	floor->scale(vec3(50,0.1,50));
 
 	// ParticleSystem
+	state = State();
+//	shader_ptr s = shader_ptr(new Shader("../shaders/particle_vshader.glsl", "../shaders/particle_fshader.glsl"));
+//	state.set(State::Attribute::SHADER, s);
+	state.set(State::Attribute::MATERIAL, material_ptr(new Material(Material::RANDOM) ));
+	s->createUniform("p_diff_color");
 	partsys_ptr ps = partsys_ptr(new ParticleSystem);
+	ps->setState(&state);	
 	ps->connectCallback(callback_ptr(new ParticleSystemCallback(ps)));
 
 	// Geometry

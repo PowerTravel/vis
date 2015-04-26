@@ -1,4 +1,5 @@
 #include <cstdio>
+#include<cstdlib>
 #include "Material.hpp"
 #include "State.hpp"
 //#include "Light.hpp"
@@ -18,8 +19,17 @@ Material::Material(MaterialPreset m)
 
 void Material::setMaterial(MaterialPreset m)
 {
-	if(m == RUBBER_RED)
-	{
+	if(m == RANDOM){
+		_shininess = rand() % 100;
+		double v[9];
+		for(int i = 0; i<9; i++)
+		{
+			v[i] = (double) (rand() % 1000) /1000 ;
+		}
+		_ambient = vec4(v[0]/4, v[1]/4,v[2]/4,1);
+		_diffuse= vec4(v[3]/2,v[4]/2,v[5]/2,1);
+		_specular = vec4(v[6],v[7],v[8],1);
+	}else if(m == RUBBER_RED){
 		_shininess=10;
 		_ambient = vec4(0.05, 0,0,1);
 		_diffuse= vec4(0.7,0.04,0.04,1);

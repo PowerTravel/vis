@@ -26,7 +26,7 @@ ParticleSystem::ParticleSystem()
 	_v = Eigen::VectorXd(3*_N);
 
 	_emitter_pos = vec4(0.0,0.0,0.0,1);
-	_emitter_pos_spread = vec4(0.5,0.5,0.5, 0);
+	_emitter_pos_spread = vec4(0.0,0.0,0.0, 0);
  	_emitter_vel = vec4(0.0,30.0,0.0,0);
 	_emitter_dir_spread = vec4(1.0,6.0,1.0,0);
 
@@ -42,7 +42,7 @@ ParticleSystem::ParticleSystem()
 		_geom = NULL;
 		std::cerr << "ParticleSystem failed to load geometry. "<< std::endl;
 	}
-	
+
 	// Energy stuffu
 	//_ddata = std::vector<Energy>();
 }
@@ -110,6 +110,8 @@ void ParticleSystem::add_new_particles()
 		{
 			// Set metadata
 			_mdata[_n+i].life = _life;
+			_mdata[_n+i].diffuse_color = (double)( rand() % 1000) /1000.f;
+			//std::cerr << _mdata[_n+i].diffuse_color << std::endl;
 		}
 	
 		_n += n;

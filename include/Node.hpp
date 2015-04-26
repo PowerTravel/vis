@@ -46,6 +46,8 @@ class Node{
 		void setState(State* s);
 		State* getState();	
 
+		BoundingBox getBoundingBox();
+		BoundingBox _bb;
 	protected:
 		
 		N_Type _type;
@@ -56,8 +58,7 @@ class Node{
 class VirtualRenderNode : public Node{
 	public:
 		virtual void draw() = 0;
-		BoundingBox getBoundingBox();
 	protected:
-		BoundingBox _bb;
 };
+
 #endif //NODE_HPP

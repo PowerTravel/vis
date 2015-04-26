@@ -79,9 +79,12 @@ void State::apply()
 
 	
 	Light l = Light();
-	Material m = Material(Material::PEARL);
+	Material m;
+	//Material m = *_material
 	if(_material != NULL){
 		m = *_material;
+	}else{
+		m = Material(Material::RUBBER_RED);
 	}
 	vec4 diff = m.getDiffuse(&l);
 	vec4 amb  =	m.getAmbient(&l); 

@@ -39,7 +39,7 @@ Geometry::Geometry(const char* filePath)
 		return;
 	}
 
-	geometry_vec geomVec = geometry_vec(scene->mNumMeshes);
+	//geometry_vec geomVec = geometry_vec(scene->mNumMeshes);
 	// Start to load meshes
 	aiMesh* mesh = scene-> mMeshes[0];
 	if( !mesh )
@@ -49,6 +49,14 @@ Geometry::Geometry(const char* filePath)
 		// If the mesh succseded to load we create a new geometry
 		// from it
 		createGeom(mesh);
+
+		State materialState = State();
+		aiMaterial* mat =scene->mMaterials[mesh->mMaterialIndex];
+		// If the file had materials we add them to the state
+		if(mesh->mMaterialIndex != 0){
+			materialState.set(State::Attribute::MATERIAL,material_ptr(new  Material(mat) ));
+			setState(&materialState);
+		}
 		loaded = true;	
 	}
 }
@@ -134,15 +142,16 @@ geometry_vec Geometry::loadFile(const char* filePath){
 			// from it
 			geomVec[i] = geometry_ptr(new Geometry(mesh));
 
-/*
 			// this state will carry materials and textures
 			State materialState = State();
 			aiMaterial* mat =scene->mMaterials[mesh->mMaterialIndex];
 			// If the file had materials we add them to the state
 			if(mesh->mMaterialIndex != 0){
-				materialState.setMaterial(Material(mat));
+				materialState.set(State::Attribute::MATERIAL,material_ptr(new  Material(mat) ));
+				geomVec[i]->setState(&materialState);
 			}
 	
+/*
 			// Then we push all the diffuse textures
 			for(int j=0; j<mat->GetTextureCount(aiTextureType_DIFFUSE); j++){
 				aiString path;
@@ -295,6 +304,8 @@ void Geometry::createGeom( const aiMesh* mesh )
 
 		delete faces;
 	}
+			
+			
 }
 
 

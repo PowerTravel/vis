@@ -2,12 +2,14 @@
 #define PARTICLE_SYSTEM_HPP
 
 #include "Geometry.hpp"
+#include "PhysicsEngine.hpp"
 #include "Emitter.hpp"
 #include <Eigen/Dense>
 #include <Eigen/SparseCore>
 #include <list>
 
 class NodeVisitor;
+class Geometry;
 
 #ifndef PARTICLE_SYSTEM_PTR
 #define PARTICLE_SYSTEM_PTR
@@ -15,7 +17,7 @@ class ParticleSystem;
 typedef std::shared_ptr<ParticleSystem> partsys_ptr;
 #endif // PARTICLE_SYSTEM_PTR
 
-class ParticleSystem : public VirtualRenderNode
+class ParticleSystem : public VirtualRenderNode, public Physics
 {
 	struct Energy{
 		double t; 	// Time
@@ -49,6 +51,7 @@ class ParticleSystem : public VirtualRenderNode
 		
 	private:
 		struct Metadata{
+			double diffuse_color;
 			double cameraDistance;
 			double life;
 			bool operator<(Metadata& that){

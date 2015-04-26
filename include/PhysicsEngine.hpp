@@ -6,6 +6,10 @@ class PhysicsNode;
 
 #include<vector>
 
+class Physics{
+	public:
+		virtual void updatePhysics() = 0;
+};
 class PhysicsEngine{
 
 	public:
@@ -17,8 +21,9 @@ class PhysicsEngine{
 	private:
 	
 		RenderList* _rList;
-		std::vector< PhysicsNode* > _node_vec;
+		std::vector< Physics* > _phys_vec;
 
 };
+
 
 #endif // PHYSICS_ENGINE_HPP

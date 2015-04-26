@@ -2,7 +2,6 @@
 #define MATERIAL_HPP
 #include <memory>
 #include "MatLib.hpp"
-
 #include <assimp/scene.h>
 
 class Light;
@@ -24,6 +23,7 @@ class Material{
 	public:
 		// A few presets
 		enum MaterialPreset{
+			RANDOM,
 			RUBBER_RED,
 			PLASTIC_GREEN,
 			GOLD,

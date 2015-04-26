@@ -27,7 +27,7 @@ class State{
 			BACK_FACE_CULLING, 	// Value: ON, OFF
 			RENDER_MODE,	   	// Value: POINT, LINE, FILL
 			COLOR_MODE,		   	// Value: TEXTURE, MATERIAL
-			MATERIAL	 		// Value: ON
+			MATERIAL	 		// Value: ON, RANDOM
 
 
 			// NOT IMPLEMENTED
