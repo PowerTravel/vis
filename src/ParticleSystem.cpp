@@ -7,7 +7,6 @@
 
 ParticleSystem::ParticleSystem()
 {
-
 	// Simulation Constants
 	_N = 2000;
 	_n = 0;
@@ -25,7 +24,7 @@ ParticleSystem::ParticleSystem()
 	_x = Eigen::VectorXd(3*_N);	
 	_v = Eigen::VectorXd(3*_N);
 
-	_emitter_pos = vec4(0.0,0.0,0.0,1);
+	_emitter_pos = vec4(0.0,5.0,0.0,1);
 	_emitter_pos_spread = vec4(0.0,0.0,0.0, 0);
  	_emitter_vel = vec4(0.0,30.0,0.0,0);
 	_emitter_dir_spread = vec4(1.0,6.0,1.0,0);
@@ -131,9 +130,19 @@ void ParticleSystem::calculate_forces()
 	}
 }
 
-void ParticleSystem::updatePhysics()
+void ParticleSystem::acceptPhysicsVisitor(PhysicsVisitor& v)
 {
+	v.apply(this);
 
+	// Calculate energy
+//	double k = 0;
+//	double k = _v.segment(0,3*_n).transpose() * _M.block(0,0,3*_n,3*_n) * _v.segment(0,3*_n);
+//	Energy sd = {_time, k, _n};
+//	_ddata.push_back( sd );
+}
+
+void ParticleSystem::updateParticlePosition()
+{
 	// Remove dead particles
 	remove_dead_particles();
 	
@@ -146,12 +155,6 @@ void ParticleSystem::updatePhysics()
 	// Update living particles
 	_v.segment(0,3*_n) = _v.segment(0,3*_n) + (_h/_mass)*_f.segment(0,3*_n);
 	_x.segment(0,3*_n) = _x.segment(0,3*_n) + _h*_v.segment(0,3*_n);
-
-	// Calculate energy
-//	double k = 0;
-//	double k = _v.segment(0,3*_n).transpose() * _M.block(0,0,3*_n,3*_n) * _v.segment(0,3*_n);
-//	Energy sd = {_time, k, _n};
-//	_ddata.push_back( sd );
 }
 
 void ParticleSystem::printToFile(std::string filename)
@@ -209,7 +212,7 @@ void ParticleSystem::load(const char* filePath)
 
 void ParticleSystem::draw()
 {
-	if(_geom != NULL)
+	if(_geom != NULL && _n != 0)
 	{
 		Eigen::VectorXf x = _x.segment(0,3*_n).cast<float>();
 		_geom->draw(_N,_n,&x(0));
@@ -251,4 +254,17 @@ void ParticleSystem::transform(mat4 m)
 	_T = _T*m;
 	vec4 pos = _T * vec4(0,0,0,1);
 	_init_pos = Emitter( pos,_emitter_pos_spread );
+}
+		
+int ParticleSystem::getNrLiveParticles()
+{
+	return _n;
+}
+const double* ParticleSystem::getParticleVec()
+{
+	return &_x(0);
+}
+int ParticleSystem::getTotNrParticles()
+{
+	return _N;
 }

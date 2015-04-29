@@ -26,7 +26,7 @@ int main( void )
 	RenderList* rl = gv.getRenderList(); 					// A list of renderNodes that is static member of NodeVisitor and all derived classes.
 	
 	CollisionEngine cle = CollisionEngine(rl);
-	PhysicsEngine phys_eng = PhysicsEngine(rl);
+	PhysicsEngine phys_eng = PhysicsEngine(rl,&cle);
 		
 
 	while(MainWindow::getInstance().isRunning())
@@ -38,6 +38,7 @@ int main( void )
 	//	std::cout << "NEW FRAME" << std::endl;	
 		gv.traverse(grp.get());
 		cle.update();
+		phys_eng.update();
 		rl->draw();
 
 		MainWindow::getInstance().swap();
@@ -93,7 +94,7 @@ group_ptr build_graph()
 	// Floor
 	transform_ptr floor = transform_ptr(new Transform());
 	floor->translate(vec3(0,-4,0));
-	floor->scale(vec3(50,0.1,50));
+	floor->scale(vec3(50,2,50));
 
 	// ParticleSystem
 	state = State();
@@ -103,7 +104,7 @@ group_ptr build_graph()
 	s->createUniform("p_diff_color");
 	partsys_ptr ps = partsys_ptr(new ParticleSystem);
 	ps->setState(&state);	
-	ps->connectCallback(callback_ptr(new ParticleSystemCallback(ps)));
+//	ps->connectCallback(callback_ptr(new ParticleSystemCallback(ps)));
 
 	// Geometry
 	geometry_vec m_sphere = Geometry::loadFile("../models/sphere.obj");

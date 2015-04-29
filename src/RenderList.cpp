@@ -65,7 +65,7 @@ void RenderList::first()
 	_it = _list.begin();
 }
 
-void RenderList::add_data( mat4* m, mat4* v, mat4* p, State* s, VirtualRenderNode* g)
+void RenderList::add_data( mat4* m, mat4* v, mat4* p, State* s, PhysicsInterface* n)
 {
 	// Update the current RenderNode
 	if( m != NULL )
@@ -84,9 +84,9 @@ void RenderList::add_data( mat4* m, mat4* v, mat4* p, State* s, VirtualRenderNod
 	{
 		_it->setState(s);
 	}
-	if( g != NULL )
+	if( n != NULL )
 	{
-		_it->setGeometry(g);
+		_it->setPhysicsNode(n);
 	}
 }
 

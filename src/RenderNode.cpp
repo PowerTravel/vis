@@ -1,5 +1,6 @@
 #include "RenderNode.hpp"
 #include "NodeVisitor.hpp"
+#include "PhysicsVisitor.hpp"
 #include "Geometry.hpp"
 
 RenderNode::RenderNode()
@@ -11,7 +12,7 @@ RenderNode::~RenderNode(){};
 
 void RenderNode::clear()
 {
-	_g = NULL;
+	_pn = NULL;
 	_M = mat4(1.0f);
 	_V = mat4(1.0f);
 	_P = mat4(1.0f);
@@ -31,9 +32,9 @@ void RenderNode::setM(mat4 m)
 
 void RenderNode::updateBoundingBox()
 {
-	if(_g!= NULL )//&& _M != mat4(1.0))
+	if(_pn!= NULL )//&& _M != mat4(1.0))
 	{
-		_bb = _g->getBoundingBox();
+		_bb = _pn->getBoundingBox();
 		_bb.transform(_M);
 	}
 }
@@ -59,15 +60,15 @@ mat4 RenderNode::getP()
 	return _P;
 }
 
-void RenderNode::setGeometry(VirtualRenderNode* g)
+void RenderNode::setPhysicsNode(PhysicsInterface* n)
 {
-	_g = g;
+	_pn = n;
 	updateBoundingBox();
 }
 
-VirtualRenderNode* RenderNode::getGeometry()
+PhysicsInterface* RenderNode::getPhysicsNode()
 {
-	return _g;
+	return _pn;
 }
 
 void RenderNode::send_data_to_shader()
@@ -85,10 +86,17 @@ void RenderNode::send_data_to_shader()
 
 void RenderNode::draw()
 {
-	if(_g != NULL)
+	if(_pn != NULL)
 	{
 		send_data_to_shader();
-		_g -> draw();
+		_pn -> draw();
 	}
 }
 
+void RenderNode::acceptPhysicsVisitor(PhysicsVisitor& v)
+{
+	if(_pn != NULL)
+	{
+		_pn->acceptPhysicsVisitor(v);
+	}
+}

@@ -4,7 +4,7 @@
 
 CollisionEngine::CollisionEngine(RenderList* rl)
 {
-	_rl = rl;
+	_rList = rl;
 	_max_size = 1000;
 	_grid_size = 4;
 	_grid = std::map<int, container>();
@@ -14,16 +14,16 @@ CollisionEngine::~CollisionEngine(){}
 
 void CollisionEngine::update()
 {
-	if(_rl == NULL)
+	if(_rList == NULL)
 	{
 		return;	
 	}
 
 
 	_grid = std::map<int, container>();
-	_rl->first();
+	_rList->first();
 	do{
-		BoundingBox b = _rl->get().getBoundingBox();
+		BoundingBox b = _rList->get().getBoundingBox();
 		if(b.zombie() )
 		{
 			break;
@@ -106,7 +106,7 @@ void CollisionEngine::update()
 			w += dw;
 			h = 0;
 		}
-	}while(_rl->next());
+	}while(_rList->next());
 }
 
 
@@ -125,7 +125,7 @@ void CollisionEngine::addBox(int key, BoundingBox b)
 }
 
 // Get a list of indices for intersecting particles
-// n is the nr of particles and x is an array of particle positions
+// n is the nr of live particles and x is an array of particle positions
 // N is the number of intersecting particles and ret is an array of
 // indices of what particles in x are intersecting.
 // Ret has to be as large as n, but is only filled with N values
@@ -144,6 +144,7 @@ void CollisionEngine::get(int n, const double* x, int& N,  int* ret)
 				{
 					if(it->contain(x[3*i+0], x[3*i+1], x[3*i+2]))
 					{
+						std::cout << "CollisionEngine  " << i <<" " << x[3*i+0] <<" "  << x[3*i+1] <<" "  << x[3*i+2] << std::endl;
 						ret[N] = i;
 						N++;
 					}
@@ -151,3 +152,4 @@ void CollisionEngine::get(int n, const double* x, int& N,  int* ret)
 			}
 		}
 }
+

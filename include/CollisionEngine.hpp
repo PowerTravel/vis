@@ -3,7 +3,6 @@
 
 #include <vector>
 #include <map>
-//#include "NodeVisitor.hpp"
 #include <RenderList.hpp>
 
 class CollisionEngine{
@@ -15,8 +14,9 @@ class CollisionEngine{
 		void update();
 		
 		// Get a list of indices for intersecting particles
-		void get(int n, const double* x, int& N,  int* ret);
+	//	void get(int n, const double* x, int& N,  int* ret);
 		
+		void get(int n, const double* x, int& N,  int* ret);
 	private:
 
 		struct container{
@@ -25,7 +25,7 @@ class CollisionEngine{
 
 		int _max_size; 		// Them max nr of containers in a direction
 		double _grid_size;	// The size of a containers
-		RenderList* _rl;
+		RenderList* _rList;
 		// The key is x + y * _max_size + z * _max_size^2
 		// This gives a unique key for every point on the grid map
 		std::map<int, container> _grid;

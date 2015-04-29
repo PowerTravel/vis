@@ -2,27 +2,24 @@
 #define PHYSICS_ENGINE_HPP
 
 class RenderList;
-class PhysicsNode;
+class CollisionEngine;
 
-#include<vector>
+#include "PhysicsVisitor.hpp"
 
-class Physics{
-	public:
-		virtual void updatePhysics() = 0;
-};
-class PhysicsEngine{
+class PhysicsEngine : public PhysicsVisitor{
 
 	public:
-		PhysicsEngine(RenderList* rl);
+		PhysicsEngine(RenderList* rl, CollisionEngine* ce);
 		virtual ~PhysicsEngine();
 
 		void update();
+		
+		void apply(ParticleSystem* n);
 
 	private:
 	
 		RenderList* _rList;
-		std::vector< Physics* > _phys_vec;
-
+		CollisionEngine* _clEng;
 };
 
 

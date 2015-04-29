@@ -438,3 +438,8 @@ bool Geometry::zombie()
 {
 	return !loaded;
 }
+
+void Geometry::acceptPhysicsVisitor(PhysicsVisitor& v)
+{
+
+}

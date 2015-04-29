@@ -11,16 +11,20 @@ class RenderNode;
 typedef std::shared_ptr<RenderNode> render_node_ptr;
 #endif // RENDER_NODE_PTR
 
-class RenderNode : public VirtualRenderNode{
+class RenderNode : public PhysicsInterface{
 	
 	public:
 
 		RenderNode();
 		virtual ~RenderNode();
 
-		RenderNode& operator=(RenderNode& r);
-
 		void acceptVisitor(NodeVisitor& v);
+
+		void draw();
+		void acceptPhysicsVisitor(PhysicsVisitor& v);
+
+
+
 
 		void setM(mat4 m);
 		void setV(mat4 m);
@@ -28,17 +32,14 @@ class RenderNode : public VirtualRenderNode{
 		mat4 getM();
 		mat4 getV();
 		mat4 getP();
+		void setPhysicsNode(PhysicsInterface* g);
+		PhysicsInterface* getPhysicsNode();
 
 		void clear();
 
-		void setGeometry(VirtualRenderNode* g);
-		VirtualRenderNode* getGeometry();
-
-		void draw();
-
 	private:
 		mat4 _M,_V,_P;
-		VirtualRenderNode* _g;
+		PhysicsInterface* _pn;
 	
 		void send_data_to_shader();
 		void updateBoundingBox();

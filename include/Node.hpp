@@ -7,8 +7,8 @@
 #include "UpdateCallback.hpp"
 #include "BoundingBox.hpp"
 
-class NodeApplier;
-
+//class NodeApplier;
+class PhysicsVisitor;
 #ifndef NODE_PTR
 #define NODE_PTR
 class Node;
@@ -55,10 +55,12 @@ class Node{
 		callback_ptr _callback;
 };
 
-class VirtualRenderNode : public Node{
+
+class PhysicsInterface : public Node{
 	public:
 		virtual void draw() = 0;
+		virtual void acceptPhysicsVisitor(PhysicsVisitor& v) = 0;
+
 	protected:
 };
-
 #endif //NODE_HPP

@@ -26,7 +26,7 @@ typedef std::shared_ptr<Geometry> geometry_ptr;
  * Purpose:	Loads geometries
  * Misc:
  */
-class Geometry : public VirtualRenderNode{
+class Geometry : public PhysicsInterface{
 	public:
 		enum DataType{
 			VERTEX,
@@ -45,6 +45,7 @@ class Geometry : public VirtualRenderNode{
 		void acceptVisitor(NodeVisitor& v);
 		void draw();
 		void draw(int N, int n, float* points);
+		void acceptPhysicsVisitor(PhysicsVisitor& v);
 
 		unsigned int getVAO();
 		int getNrFaces();

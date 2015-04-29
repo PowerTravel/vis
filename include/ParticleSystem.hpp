@@ -17,7 +17,7 @@ class ParticleSystem;
 typedef std::shared_ptr<ParticleSystem> partsys_ptr;
 #endif // PARTICLE_SYSTEM_PTR
 
-class ParticleSystem : public VirtualRenderNode, public Physics
+class ParticleSystem : public PhysicsInterface
 {
 	struct Energy{
 		double t; 	// Time
@@ -42,12 +42,16 @@ class ParticleSystem : public VirtualRenderNode, public Physics
 		void rotate(float angle, double x, double y, double z);
 
 
-		void updatePhysics();
+		void updateParticlePosition();
+		void acceptPhysicsVisitor(PhysicsVisitor& v);
 		void draw();
 		
 		void acceptVisitor(NodeVisitor& v);
 		void printToFile(std::string filename);
 
+		int getNrLiveParticles();
+		int getTotNrParticles();
+		const double* getParticleVec();
 		
 	private:
 		struct Metadata{
