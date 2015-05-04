@@ -43,6 +43,7 @@ class ParticleSystem : public PhysicsInterface
 
 
 		void updateParticlePosition();
+		void reflect(int n, int* id);
 		void acceptPhysicsVisitor(PhysicsVisitor& v);
 		void draw();
 		
@@ -79,10 +80,13 @@ class ParticleSystem : public PhysicsInterface
 
 		int _N;					// Max # Particles
 		int _n;					// Current # Particles
-		int _ppf;				// # Particles to add per frame
+		double _ppf;				// # Particles to add per frame
+		double _t;
+		double _pps;			// # Particles to add per second
 		double _h;				// The length of each time step
 		double _life; 			// Lifetime
 		double _mass; 		 	// Mass
+
 
 		// Particle Properties
 		//Eigen::SparseMatrix<double> _M;	// Mass matrix

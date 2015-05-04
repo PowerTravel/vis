@@ -17,9 +17,11 @@ class CollisionEngine{
 	//	void get(int n, const double* x, int& N,  int* ret);
 		
 		void get(int n, const double* x, int& N,  int* ret);
+		void PrintBoxes();
 	private:
 
 		struct container{
+			double x[3];
 			std::vector<BoundingBox > bb_vec;
 		};
 
@@ -32,8 +34,6 @@ class CollisionEngine{
 
 		int getKey(double x, double y, double z);
 		void addBox(int key, BoundingBox b);
-
-
 
 };
 

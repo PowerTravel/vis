@@ -8,45 +8,93 @@
 #include "RotTransCallback.hpp"
 #include "ParticleSystemCallback.hpp"
 
-
 group_ptr build_graph();
 group_ptr build_graph_simple();
 group_ptr build_graph_branch();
+group_ptr collision_test();
 #include<cstdlib>
 #include<ctime>
 int main( void )
 {
 	MainWindow::getInstance().init(1024,768);
+	group_ptr grp = collision_test();
 
 	srand(time(NULL));
 
-	group_ptr grp = build_graph();
-
+	//group_ptr grp = build_graph();
+	
 	GraphVisitor gv = GraphVisitor();
 	RenderList* rl = gv.getRenderList(); 					// A list of renderNodes that is static member of NodeVisitor and all derived classes.
 	
 	CollisionEngine cle = CollisionEngine(rl);
 	PhysicsEngine phys_eng = PhysicsEngine(rl,&cle);
-		
 
-	while(MainWindow::getInstance().isRunning())
+	int i = 0;
+	while(MainWindow::getInstance().isRunning() && (i == 0) )
 	{
 		MainWindow::getInstance().clear();
 		MainWindow::getInstance().getInput();
 		MainWindow::getInstance().update();	
 
-	//	std::cout << "NEW FRAME" << std::endl;	
+//		std::cout << "NEW FRAME" << std::endl;	
 		gv.traverse(grp.get());
-		cle.update();
 		phys_eng.update();
 		rl->draw();
 
+
 		MainWindow::getInstance().swap();
+//		i++;
 	} 
 	
 	MainWindow::getInstance().destroy();
 	return 0;
 }
+
+group_ptr collision_test()
+{
+	shader_ptr s = shader_ptr(new Shader("../shaders/phong_vshader.glsl", "../shaders/phong_fshader.glsl"));
+	s->createUniform("Diff");
+	s->createUniform("Amb");
+	s->createUniform("Spec");
+	s->createUniform("lPos");
+	s->createUniform("att");
+	s->createUniform("shi");
+
+	State state = State();
+	state.set(State::Attribute::SHADER,s);
+
+	// Create Nodes
+	// Root
+	group_ptr grp = group_ptr(new Group());
+	grp->setState(&state);
+
+	// Camera
+	camera_ptr cam = camera_ptr(new Camera());
+	cam->connectCallback(callback_ptr(new CameraMovementCallback(cam)));
+
+	// Floor
+	transform_ptr floor = transform_ptr(new Transform());
+	//floor->translate(vec3(0.2,-10,0));
+	floor->scale(vec3(20,1,20) );
+	floor->rotate(3.1415/20, vec3(0,0,-1));
+
+	geometry_vec m_box = Geometry::loadFile("../models/box.obj");
+		
+	state = State();
+	state.set(State::Attribute::MATERIAL, material_ptr(new Material(Material::RANDOM) ));
+	partsys_ptr ps = partsys_ptr(new ParticleSystem);
+	ps->setState(&state);	
+
+	floor->addChild(m_box[0]);
+
+	// Link the tree
+	grp->addChild(cam);
+	cam->addChild(floor);
+	cam->addChild(ps);
+
+	return grp;
+}
+
 
 group_ptr build_graph()
 {
@@ -73,7 +121,7 @@ group_ptr build_graph()
 
 	// Spheres
 	transform_ptr sphere_rot = transform_ptr(new Transform());
-	sphere_rot->connectCallback(callback_ptr(new RotTransCallback(sphere_rot, 0.2)));
+	//sphere_rot->connectCallback(callback_ptr(new RotTransCallback(sphere_rot, 0.2, vec3(1,1,1))));
 
 	state = State();
 	state.set(State::Attribute::RENDER_MODE, State::Value::LINE);
@@ -89,19 +137,21 @@ group_ptr build_graph()
 	sphere2->scale(vec3(2,2,2));
 
 	transform_ptr sphere_spin  = transform_ptr(new Transform());
-	sphere_spin->connectCallback(callback_ptr(new RotTransCallback(sphere_spin, 1)));
+	sphere_spin->connectCallback(callback_ptr(new RotTransCallback(sphere_spin, 0.01, vec3(0,0,1))));
 
 	// Floor
 	transform_ptr floor = transform_ptr(new Transform());
-	floor->translate(vec3(0,-4,0));
-	floor->scale(vec3(50,2,50));
+	floor->translate(vec3(0.2,-10,0));
+	floor->scale(vec3(20,1,20) );
+	floor->rotate(3.1415/4, vec3(0,0,-1));
+	//floor->connectCallback(callback_ptr(new RotTransCallback(floor, 0.1, vec3(1,0,0))));
 
 	// ParticleSystem
 	state = State();
 //	shader_ptr s = shader_ptr(new Shader("../shaders/particle_vshader.glsl", "../shaders/particle_fshader.glsl"));
+//	s->createUniform("p_diff_color");
 //	state.set(State::Attribute::SHADER, s);
 	state.set(State::Attribute::MATERIAL, material_ptr(new Material(Material::RANDOM) ));
-	s->createUniform("p_diff_color");
 	partsys_ptr ps = partsys_ptr(new ParticleSystem);
 	ps->setState(&state);	
 //	ps->connectCallback(callback_ptr(new ParticleSystemCallback(ps)));

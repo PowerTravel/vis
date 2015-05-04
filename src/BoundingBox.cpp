@@ -17,6 +17,7 @@ BoundingBox::BoundingBox(int n, float* points)
 	build(n, pts);
 	_initiated = true;
 }
+
 BoundingBox::BoundingBox(int n, double* points)
 {
 	Eigen::Map<Eigen::VectorXd >  tmp(points, 3*n);
@@ -24,6 +25,7 @@ BoundingBox::BoundingBox(int n, double* points)
 	build(n, pts);
 	_initiated = true;
 }
+
 BoundingBox::~BoundingBox()
 {
 }
@@ -149,12 +151,15 @@ void BoundingBox::transform(mat4 t)
 	vec4 mean = vec4(_mean(0), _mean(1), _mean(2), 1);
 	mean = t*mean;
 	_mean << mean[0], mean[1], mean[2];
-	
+
 	for(int i = 0; i<8; i++)
 	{
 		_corners[i] = t*_corners[i];
 	}
 
+	_max(0) = width()/2;
+	_max(1) = height()/2;
+	_max(2) = depth()/2;
 }
 
 void BoundingBox::getCorners(double* p)
@@ -189,6 +194,11 @@ bool BoundingBox::contain(Eigen::Vector3d v)
 	double z_min = _mean(2) - _max(2);
 	double z_max = _mean(2) + _max(2);
 
+	//std::cout << v.transpose() << std::endl; 
+	//std::cout << "BBContain xmin,xmax "<< x_min << " " << x_max << std::endl;
+	//std::cout << "BBContain ymin,ymax "<< y_min << " " << y_max << std::endl;
+	//std::cout << "BBContain zmin,zmax "<< z_min << " " << z_max << std::endl;
+
 	// If any of the coordinates are outside the bounds
 	// of the box we return false
 	if( (vp(0) <= x_min) || ( vp(0) >= x_max ) ||
@@ -197,7 +207,7 @@ bool BoundingBox::contain(Eigen::Vector3d v)
 	{
 		return false;
 	}
-
+	//print();
 	return true;
 }
 	//#include <glm/gtx/norm>	
@@ -245,3 +255,16 @@ double BoundingBox::height()
 	return -1;
 }
 
+void BoundingBox::print()
+{
+	if(_initiated)
+	{
+		std::cout << "BoundingBox::print()." << std::endl;
+		for(int i = 0; i<8; i++)
+		{
+			std::cout << glm::to_string(_corners[i]) << std::endl;
+		}
+	}else{
+		std::cerr << "BoundingBox::print() -  not initiated." << std::endl;
+	}	
+}

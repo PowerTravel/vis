@@ -17,6 +17,9 @@ PhysicsEngine::~PhysicsEngine()
 
 void PhysicsEngine::update()
 {
+
+	_clEng->update();
+
 	_rList->first();
 	do{
 		RenderNode n = _rList->get();
@@ -25,7 +28,6 @@ void PhysicsEngine::update()
 	
 	}while(_rList->next());
 	
-	_clEng->update();
 	
 
 
@@ -41,10 +43,12 @@ void PhysicsEngine::apply(ParticleSystem* n)
 	const double* x = n->getParticleVec();
 
 	int i = 0;
-	int* x_n = new int(liveParticles);
+	int* x_n = new int[liveParticles];
 
 	_clEng->get(liveParticles, x, i, x_n);
 
+	n->reflect(i, x_n);
+/*
 	if(i != 0)
 	{
 		std::cerr << "PhysicsEngine: " << i << std::endl;
@@ -55,6 +59,6 @@ void PhysicsEngine::apply(ParticleSystem* n)
 		
 		}
 	}
-
+*/
 	delete[] x_n;
 }

@@ -7,14 +7,21 @@
 
 ParticleSystem::ParticleSystem()
 {
+	// parameters 
+	_N = 100; 				// Max number of allowed particles
+	_pps = 10;				// particles created per seocnd
+	_life = 10;				// lifetime of particles in seconds
+	
+	_emitter_pos = vec4(0.0,3.0,0.0,1);   	// mean position
+	_emitter_pos_spread = vec4(1,1,1, 0);	// spread
+ 	_emitter_vel = vec4(1.0,0.0,1.0,0);		// mean spead
+	_emitter_dir_spread = vec4(1,1,1,0);	// spread
 	// Simulation Constants
-	_N = 2000;
 	_n = 0;
 	_h = 1/60.0f;			// Timesteps
 	_g << 0,-10,0;			// Gravity
 	_mass = 0.1;			// Particle mass
-	_ppf = 2;				// New particles per frame
-	_life = 10;				// lifetime [s]
+	_ppf = 0;				// New particles per frame
 	_forces_changed = true;
 
 	_mdata = new Metadata[_N];
@@ -24,17 +31,14 @@ ParticleSystem::ParticleSystem()
 	_x = Eigen::VectorXd(3*_N);	
 	_v = Eigen::VectorXd(3*_N);
 
-	_emitter_pos = vec4(0.0,5.0,0.0,1);
-	_emitter_pos_spread = vec4(0.0,0.0,0.0, 0);
- 	_emitter_vel = vec4(0.0,30.0,0.0,0);
-	_emitter_dir_spread = vec4(1.0,6.0,1.0,0);
 
 	_T = mat4(1.0);
-	
+
+	_t = 0;
+
 	_init_pos = Emitter(_emitter_pos, _emitter_pos_spread);
 	_init_vel = Emitter(_emitter_vel, _emitter_dir_spread);
 
-	
 	_geom = NULL;
 	if( !initGeometry("../models/sphere.obj"))
 	{
@@ -90,6 +94,8 @@ void ParticleSystem::remove_dead_particles()
 void ParticleSystem::add_new_particles()
 {
 	if(_n < _N){
+		_ppf =_ppf + _pps * _h;
+
 		int n = _ppf; // The number of new particles to add
 		int spaceLeft = _N - _n;
 		if(n > spaceLeft)
@@ -114,6 +120,10 @@ void ParticleSystem::add_new_particles()
 		}
 	
 		_n += n;
+		if(_ppf >=  1)
+		{
+			_ppf = 0;
+		}
 	}
 }
 
@@ -155,6 +165,7 @@ void ParticleSystem::updateParticlePosition()
 	// Update living particles
 	_v.segment(0,3*_n) = _v.segment(0,3*_n) + (_h/_mass)*_f.segment(0,3*_n);
 	_x.segment(0,3*_n) = _x.segment(0,3*_n) + _h*_v.segment(0,3*_n);
+	_t += _h;
 }
 
 void ParticleSystem::printToFile(std::string filename)
@@ -225,6 +236,17 @@ void ParticleSystem::acceptVisitor(NodeVisitor& v)
 }
 
 
+void ParticleSystem::reflect(int n, int* id)
+{
+
+	for(int i = 0; i<n; i++)
+	{
+		//std::cout << 3*id[i]+1 << " " << _v.size() << _v(3*id[i]+1) << std::endl;
+		_v(3*id[i]+1)  = -0.6 *  _v(3*id[i]+1);
+		if(_v(3*id[i]+1)< 1 || _v(3*id[i]+1)>-1)
+			_v(3*id[i]+1) = 2;
+	}
+}
 
 
 

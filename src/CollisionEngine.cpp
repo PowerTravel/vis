@@ -2,11 +2,13 @@
 #include "Eigen/Dense"
 #include <iostream>
 
+#include "Debug.hpp"
+
 CollisionEngine::CollisionEngine(RenderList* rl)
 {
 	_rList = rl;
 	_max_size = 1000;
-	_grid_size = 4;
+	_grid_size = 5;
 	_grid = std::map<int, container>();
 }
 
@@ -58,23 +60,24 @@ void CollisionEngine::update()
 		//std::;out <<_grid_size << "  "  <<width << " " << height<< " " << depth << std::endl;
 
 		double dw, dh, dd;
+		double lax = 2;
 		if(width > 0)
 		{
-			dw = 1/width;
+			dw = 1/(lax*width);
 		}else{
 			dw = 1;
 		}
 
 		if(depth > 0)
 		{
-			dh = 1/height;
+			dh = 1/(lax*height);
 		}else{
 			dh = 1;
 		}
 		
 		if(height > 0)
 		{
-			dd = 1/depth;
+			dd = 1/(lax*depth);
 		}else{
 			dd = 1;
 		}
@@ -82,22 +85,28 @@ void CollisionEngine::update()
 		double w = 0;
 		double h = 0;
 		double d = 0;
-		while(w <= 1)
+		while(w <= 1.1)
 		{
 			Eigen::Vector3d w_u_f = p4 + w * (p0 - p4);
 			Eigen::Vector3d w_l_f = p6 + w * (p2 - p6);
 			Eigen::Vector3d w_u_b = p5 + w * (p1 - p5);
 			Eigen::Vector3d w_l_b = p7 + w * (p3 - p7);
 
-			while(h <= 1)
+			while(h <= 1.1)
 			{
 				Eigen::Vector3d h_f = w_l_f + h * (w_u_f - w_l_f);
 				Eigen::Vector3d h_b = w_l_b + h * (w_u_b - w_l_b);
 
-				while(d <= 1)
+				while(d <= 1.1)
 				{
 					Eigen::Vector3d point = h_b + d * (h_f - h_b);
-					addBox( getKey(point(0), point(1), point(2)) , b );
+					int key = getKey(point(0), point(1), point(2));
+					addBox( key, b );
+					double size_div = 1/_grid_size;
+					_grid[key].x[0] = floor(point(0) * size_div);
+					_grid[key].x[1] = floor(point(1) * size_div);
+					_grid[key].x[2] = floor(point(2) * size_div);
+				//	std::cout << "KEY: " << getKey(point(0), point(1), point(2))  << "    Point   " <<  point.transpose() << std::endl;
 					d += dd;
 				}
 				h += dh;
@@ -107,8 +116,9 @@ void CollisionEngine::update()
 			h = 0;
 		}
 	}while(_rList->next());
+	
+//	PrintBoxes();
 }
-
 
 int CollisionEngine::getKey(double x, double y, double z)
 {
@@ -116,6 +126,10 @@ int CollisionEngine::getKey(double x, double y, double z)
 	int xp = floor(x*size_div);
 	int yp = floor(y*size_div);
 	int zp = floor(z*size_div);
+	//std::cout << "Coordinate: "<<x << ", " << y << ", " << z << std::endl;
+	//std::cout << "GridPoint: "<< xp << ", " << yp << ", " << zp << std::endl;
+	//std::cout << "Key: "<< xp + yp * _max_size + zp * _max_size * _max_size << std::endl;
+	//std::cout << xp <<"("<< x << "), "<< yp<<"("<< y<< "), " << zp<<"("<< z<< ") " << std::endl;
 	return xp + yp * _max_size + zp * _max_size * _max_size;
 }
 
@@ -131,25 +145,56 @@ void CollisionEngine::addBox(int key, BoundingBox b)
 // Ret has to be as large as n, but is only filled with N values
 void CollisionEngine::get(int n, const double* x, int& N,  int* ret)
 {
-		// go throgh every x,y and z index of the particles and 
-		// scale them to become a key of the _grid.
-		N = 0;
-		for(int i = 0; i<n; i++)
-		{	
-			int key = getKey(x[3*i+0], x[3*i+1], x[3*i+2]); 
-			if(_grid.find(key ) != _grid.end())
+	// go throgh every x,y and z index of the particles and 
+	// scale them to become a key of the _grid.
+	int p = 0;
+	for(int i = 0; i<n; i++)
+	{	
+		int key = getKey(x[3*i+0], x[3*i+1], x[3*i+2]); 
+		if(_grid.find(key ) != _grid.end())
+		{
+			auto& c = _grid.at(key).bb_vec;
+			for( auto it = c.begin(); it != c.end(); it++)
 			{
-				auto& c = _grid.at(key).bb_vec;
-				for( auto it = c.begin(); it != c.end(); it++)
+				if(it->contain(x[3*i+0], x[3*i+1], x[3*i+2]))
 				{
-					if(it->contain(x[3*i+0], x[3*i+1], x[3*i+2]))
-					{
-						std::cout << "CollisionEngine  " << i <<" " << x[3*i+0] <<" "  << x[3*i+1] <<" "  << x[3*i+2] << std::endl;
-						ret[N] = i;
-						N++;
-					}
+//					std::cout << "CollisionEngine  id = " << i <<", p[id] = " << x[3*i+0] <<" "  << x[3*i+1] <<" "  << x[3*i+2] << std::endl;
+					ret[p] = i;
+					p++;
 				}
 			}
 		}
+	}
+
+	N = p-1;
 }
 
+
+void CollisionEngine::PrintBoxes()
+{
+	printToFile("../matlab/gridBoxes.m", NULL);
+	for(auto it = _grid.begin(); it != _grid.end(); it++)
+	{
+		double x[3] = {it->second.x[0], it->second.x[1], it->second.x[2]};
+		printToFile("../matlab/gridBoxes.m",x);
+	}
+	
+	printToFile("../matlab/boundingBoxes.m", NULL);
+	_rList->first();
+	do{
+		BoundingBox bb = _rList->get().getBoundingBox();
+
+		double p[24];
+		bb.getCorners(p);	
+		
+		for(int i = 0; i<8; i++)
+		{
+			if(!bb.zombie())
+			{
+				double x[3] = {p[3*i], p[3*i+1], p[3*i+2]};
+				printToFile("../matlab/boundingBoxes.m", x);
+			}
+		}
+
+	}while(_rList->next());
+}
