@@ -105,17 +105,6 @@ void BoundingBox::build(int n, Eigen::VectorXd& pts)
 	setCorners();
 }
 
-bool BoundingBox::intersect(BoundingBox* box_ptr)
-{
-	// Check if this intersects box_ptr
-	return false;
-}
-
-bool BoundingBox::intersect(BoundingBox* box_ptr1, BoundingBox* box_ptr2)
-{
-	// Check if the two boxes intersect
-	return false;
-}
 
 void BoundingBox::setCorners()
 {
@@ -143,7 +132,7 @@ void BoundingBox::setCorners()
 		_corners[i] = v;
 	}
 }
-
+/*
 void BoundingBox::transform(mat4 t)
 {
 	mat4 trans_mat = mat4(1.0);
@@ -157,9 +146,25 @@ void BoundingBox::transform(mat4 t)
 		_corners[i] = t*_corners[i];
 	}
 
+
 	_max(0) = width()/2;
 	_max(1) = height()/2;
 	_max(2) = depth()/2;
+}
+*/
+
+void BoundingBox::transform(mat4 t)
+{
+	if(_initiated)
+	{
+		Eigen::VectorXd vp = Eigen::VectorXd(24);	
+		for(int i = 0; i<8; i++)
+		{
+			vec4 v = t*_corners[i];
+			vp.segment(3*i, 3) << v[0],v[1],v[2];
+		}
+		build(8, vp);
+	}
 }
 
 void BoundingBox::getCorners(double* p)
@@ -207,7 +212,7 @@ bool BoundingBox::contain(Eigen::Vector3d v)
 	{
 		return false;
 	}
-	//print();
+//	print();
 	return true;
 }
 	//#include <glm/gtx/norm>	
@@ -268,3 +273,17 @@ void BoundingBox::print()
 		std::cerr << "BoundingBox::print() -  not initiated." << std::endl;
 	}	
 }
+
+/*
+bool BoundingBox::intersect(BoundingBox* box_ptr)
+{
+	// Check if this intersects box_ptr
+	return false;
+}
+
+bool BoundingBox::intersect(BoundingBox* box_ptr1, BoundingBox* box_ptr2)
+{
+	// Check if the two boxes intersect
+	return false;
+}
+*/

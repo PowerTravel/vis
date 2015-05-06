@@ -36,14 +36,14 @@ int main( void )
 		MainWindow::getInstance().getInput();
 		MainWindow::getInstance().update();	
 
-//		std::cout << "NEW FRAME" << std::endl;	
+		//std::cout << "NEW FRAME" << std::endl;	
 		gv.traverse(grp.get());
 		phys_eng.update();
 		rl->draw();
 
 
 		MainWindow::getInstance().swap();
-//		i++;
+	//	i++;
 	} 
 	
 	MainWindow::getInstance().destroy();
@@ -76,7 +76,8 @@ group_ptr collision_test()
 	transform_ptr floor = transform_ptr(new Transform());
 	//floor->translate(vec3(0.2,-10,0));
 	floor->scale(vec3(20,1,20) );
-	floor->rotate(3.1415/20, vec3(0,0,-1));
+	floor->rotate(3.1415 / 4, vec3(0,0,-1));
+	floor->translate(vec3(0,-0,0));
 
 	geometry_vec m_box = Geometry::loadFile("../models/box.obj");
 		

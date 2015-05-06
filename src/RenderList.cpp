@@ -92,18 +92,23 @@ void RenderList::add_data( mat4* m, mat4* v, mat4* p, State* s, PhysicsInterface
 
 void RenderList::build(std::vector<Node*>& vec)
 {	
+	// If the list is empty we initiate it with a node
 	if( _list.empty() )
 	{
 		_list.push_back(RenderNode());
 		_it = _list.begin();
 	}
 
+	// Set all the attributes of the current renderNode to 0, null and identityMatrix
 	_it-> clear();
+
+	// Setquentially build the node.
 	for(int i = 0; i< vec.size(); i++)
 	{
 		vec[i]->acceptVisitor(*this);	
 	}
-	
+
+	// Move to the next node or create a new one if we are on the last one.
 	if(!next())
 	{
 		_list.push_back(RenderNode());	

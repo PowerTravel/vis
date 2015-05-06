@@ -45,6 +45,7 @@ ParticleSystem::ParticleSystem()
 		_geom = NULL;
 		std::cerr << "ParticleSystem failed to load geometry. "<< std::endl;
 	}
+	
 
 	// Energy stuffu
 	//_ddata = std::vector<Energy>();
@@ -208,7 +209,7 @@ bool ParticleSystem::initGeometry(const char* filePath)
 
 	if(_geom != NULL  && !_geom->zombie())
 	{
-		_bb = _geom->getBoundingBox();
+		_bb = BoundingBox();
 		return true;
 	}else{
 		return false;	
@@ -244,7 +245,7 @@ void ParticleSystem::reflect(int n, int* id)
 		//std::cout << 3*id[i]+1 << " " << _v.size() << _v(3*id[i]+1) << std::endl;
 		_v(3*id[i]+1)  = -0.6 *  _v(3*id[i]+1);
 		if(_v(3*id[i]+1)< 1 || _v(3*id[i]+1)>-1)
-			_v(3*id[i]+1) = 2;
+			_v(3*id[i]+1) = 0;
 	}
 }
 

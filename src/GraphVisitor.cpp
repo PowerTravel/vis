@@ -31,11 +31,11 @@ void GraphVisitor::init(Group* g)
 
 void GraphVisitor::reset(Group* g)
 {
+
 }
 
 void GraphVisitor::doTraverse(Node* node)
 {
-
 	_node_vec.push_back(node);
 
 	// Inject itself into the node

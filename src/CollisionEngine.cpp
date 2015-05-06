@@ -8,7 +8,7 @@ CollisionEngine::CollisionEngine(RenderList* rl)
 {
 	_rList = rl;
 	_max_size = 1000;
-	_grid_size = 5;
+	_grid_size = 10;
 	_grid = std::map<int, container>();
 }
 
@@ -57,47 +57,49 @@ void CollisionEngine::update()
 		// # boxes in depth
 		double depth = b.depth() * alpha;;
 
-		//std::;out <<_grid_size << "  "  <<width << " " << height<< " " << depth << std::endl;
 
-		double dw, dh, dd;
-		double lax = 2;
-		if(width > 0)
+		double dw=1;
+		double dh=1;
+		double dd=1;
+		double lax = 5;
+		if(width >= 1)
 		{
 			dw = 1/(lax*width);
-		}else{
-			dw = 1;
-		}
-
-		if(depth > 0)
-		{
-			dh = 1/(lax*height);
-		}else{
-			dh = 1;
+		}else if( (width < 1) && (width > 0) ){
+			dw = (depth / lax);
 		}
 		
-		if(height > 0)
+		if(depth >= 1)
 		{
 			dd = 1/(lax*depth);
-		}else{
-			dd = 1;
+		}else if( (depth < 1) && (depth > 0) ){
+			dd  = (depth / lax);
 		}
+
+		if(height >= 1 )
+		{
+			dh = 1/(lax*height);
+		}else if( (height < 1) && (height > 0) ){
+			dh = (height / lax);
+		}
+	
 
 		double w = 0;
 		double h = 0;
 		double d = 0;
-		while(w <= 1.1)
+		while(w <= 1.0)
 		{
 			Eigen::Vector3d w_u_f = p4 + w * (p0 - p4);
 			Eigen::Vector3d w_l_f = p6 + w * (p2 - p6);
 			Eigen::Vector3d w_u_b = p5 + w * (p1 - p5);
 			Eigen::Vector3d w_l_b = p7 + w * (p3 - p7);
 
-			while(h <= 1.1)
+			while(h <= 1.0)
 			{
 				Eigen::Vector3d h_f = w_l_f + h * (w_u_f - w_l_f);
 				Eigen::Vector3d h_b = w_l_b + h * (w_u_b - w_l_b);
 
-				while(d <= 1.1)
+				while(d <= 1.0)
 				{
 					Eigen::Vector3d point = h_b + d * (h_f - h_b);
 					int key = getKey(point(0), point(1), point(2));
@@ -106,7 +108,7 @@ void CollisionEngine::update()
 					_grid[key].x[0] = floor(point(0) * size_div);
 					_grid[key].x[1] = floor(point(1) * size_div);
 					_grid[key].x[2] = floor(point(2) * size_div);
-				//	std::cout << "KEY: " << getKey(point(0), point(1), point(2))  << "    Point   " <<  point.transpose() << std::endl;
+			//		std::cout << "KEY: " << getKey(point(0), point(1), point(2))  << "    Point   " <<  point.transpose() << std::endl;
 					d += dd;
 				}
 				h += dh;
@@ -115,9 +117,12 @@ void CollisionEngine::update()
 			w += dw;
 			h = 0;
 		}
+
 	}while(_rList->next());
 	
-//	PrintBoxes();
+
+	// Prints the bottom corners of the gridboxes so that it can be opened in matlab
+	// PrintBoxes();
 }
 
 int CollisionEngine::getKey(double x, double y, double z)

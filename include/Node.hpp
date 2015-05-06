@@ -47,9 +47,10 @@ class Node{
 		State* getState();	
 
 		BoundingBox getBoundingBox();
-		BoundingBox _bb;
+		void setBoundingBox(BoundingBox bb);
 	protected:
 		
+		BoundingBox _bb;
 		N_Type _type;
 		State _state;
 		callback_ptr _callback;

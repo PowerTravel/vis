@@ -27,8 +27,8 @@ class BoundingBox
 		bool contain(double x, double y, double z);
 		bool contain(Eigen::Vector3d v);
 
-		bool intersect(BoundingBox* box_ptr); // Not implemented
-		static bool intersect(BoundingBox* box_ptr1, BoundingBox* box_ptr2); // Not implemented
+//		bool intersect(BoundingBox* box_ptr); // Not implemented
+//		static bool intersect(BoundingBox* box_ptr1, BoundingBox* box_ptr2); // Not implemented
 
 		void print();
 	private:
