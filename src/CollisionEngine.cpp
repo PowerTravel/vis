@@ -61,7 +61,7 @@ void CollisionEngine::update()
 		double dw=1;
 		double dh=1;
 		double dd=1;
-		double lax = 5;
+		double lax = 1;
 		if(width >= 1)
 		{
 			dw = 1/(lax*width);
@@ -122,7 +122,7 @@ void CollisionEngine::update()
 	
 
 	// Prints the bottom corners of the gridboxes so that it can be opened in matlab
-	// PrintBoxes();
+//	 PrintBoxes();
 }
 
 int CollisionEngine::getKey(double x, double y, double z)

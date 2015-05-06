@@ -75,9 +75,9 @@ group_ptr collision_test()
 	// Floor
 	transform_ptr floor = transform_ptr(new Transform());
 	//floor->translate(vec3(0.2,-10,0));
-	floor->scale(vec3(20,1,20) );
+	floor->scale(vec3(50,1,50) );
 	floor->rotate(3.1415 / 4, vec3(0,0,-1));
-	floor->translate(vec3(0,-0,0));
+	floor->translate(vec3(0,-10,0));
 
 	geometry_vec m_box = Geometry::loadFile("../models/box.obj");
 		

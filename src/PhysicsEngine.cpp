@@ -35,7 +35,6 @@ void PhysicsEngine::update()
 
 void PhysicsEngine::apply(ParticleSystem* n)
 {
-	n->updateParticlePosition();
 
 	int liveParticles = n->getNrLiveParticles();
 	int totParticles = n->getTotNrParticles();
@@ -45,9 +44,13 @@ void PhysicsEngine::apply(ParticleSystem* n)
 	int i = 0;
 	int* x_n = new int[liveParticles];
 
-	_clEng->get(liveParticles, x, i, x_n);
+	//_clEng->get(liveParticles, x, i, x_n);
 
-	n->reflect(i, x_n);
+	// Change to calculate_forces or something.
+	// The point is to let the forces handle the reflection
+	//n->reflect(i, x_n);
+	
+	n->updateParticlePosition();
 /*
 	if(i != 0)
 	{

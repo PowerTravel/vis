@@ -132,38 +132,41 @@ void BoundingBox::setCorners()
 		_corners[i] = v;
 	}
 }
-/*
-void BoundingBox::transform(mat4 t)
-{
-	mat4 trans_mat = mat4(1.0);
-	glm::column(trans_mat, 3, glm::column(t,3) );
-	vec4 mean = vec4(_mean(0), _mean(1), _mean(2), 1);
-	mean = t*mean;
-	_mean << mean[0], mean[1], mean[2];
-
-	for(int i = 0; i<8; i++)
-	{
-		_corners[i] = t*_corners[i];
-	}
-
-
-	_max(0) = width()/2;
-	_max(1) = height()/2;
-	_max(2) = depth()/2;
-}
-*/
 
 void BoundingBox::transform(mat4 t)
 {
 	if(_initiated)
 	{
-		Eigen::VectorXd vp = Eigen::VectorXd(24);	
+		mat4 trans_mat = mat4(1.0);
+		glm::column(trans_mat, 3, glm::column(t,3) );
+		vec4 mean = vec4(_mean(0), _mean(1), _mean(2), 1);
+		mean = t*mean;
+		_mean << mean[0], mean[1], mean[2];
+	
 		for(int i = 0; i<8; i++)
 		{
-			vec4 v = t*_corners[i];
-			vp.segment(3*i, 3) << v[0],v[1],v[2];
+			_corners[i] = t*_corners[i];
 		}
-		build(8, vp);
+	
+	
+		_max(0) = width()/2;
+		_max(1) = height()/2;
+		_max(2) = depth()/2;
+
+		glm::vec4 x = glm::vec4(_coord_sys(0,0), _coord_sys(1,0), _coord_sys(2,0),0);
+		glm::vec4 y = glm::vec4(_coord_sys(0,1), _coord_sys(1,1), _coord_sys(2,1),0);
+		glm::vec4 z = glm::vec4(_coord_sys(0,2), _coord_sys(1,2), _coord_sys(2,2),0);
+
+		x = t*x;
+		x = glm::normalize(x);
+		y = t*y;
+		y = glm::normalize(y);
+		z = t*z;
+		z = glm::normalize(z);
+
+		_coord_sys.col(0) << x[0],x[1],x[2];
+		_coord_sys.col(1) << y[0],y[1],y[2];
+		_coord_sys.col(2) << z[0],z[1],z[2];
 	}
 }
 
