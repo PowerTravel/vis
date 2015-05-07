@@ -1,6 +1,5 @@
 clear
 hold off
-
 gridPoint = load('gridBoxes.m');
 
 gridPoint = gridPoint';
@@ -22,3 +21,4 @@ for i=[0:p-1]
     plotBox(A);
   %  pause(1)
 end
+axis equal

@@ -42,7 +42,7 @@ class ParticleSystem : public PhysicsInterface
 		void rotate(float angle, double x, double y, double z);
 
 
-		void updateParticlePosition();
+		void updateParticlePosition(double h);
 		void reflect(int n, int* id);
 		void acceptPhysicsVisitor(PhysicsVisitor& v);
 		void draw();

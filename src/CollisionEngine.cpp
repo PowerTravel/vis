@@ -153,24 +153,27 @@ void CollisionEngine::get(int n, const double* x, int& N,  int* ret)
 	// go throgh every x,y and z index of the particles and 
 	// scale them to become a key of the _grid.
 	int p = 0;
+	// For each living particle:
 	for(int i = 0; i<n; i++)
-	{	
+	{
+		// get its grid key
 		int key = getKey(x[3*i+0], x[3*i+1], x[3*i+2]); 
-		if(_grid.find(key ) != _grid.end())
+		// See if the key exists as a gridbox
+		if(_grid.find(key )!= _grid.end())
 		{
+			// Get a vector of all boundingboxes that exists in that gridbox
 			auto& c = _grid.at(key).bb_vec;
 			for( auto it = c.begin(); it != c.end(); it++)
 			{
+				// See if the particle exists is within the boundingbox
 				if(it->contain(x[3*i+0], x[3*i+1], x[3*i+2]))
 				{
-//					std::cout << "CollisionEngine  id = " << i <<", p[id] = " << x[3*i+0] <<" "  << x[3*i+1] <<" "  << x[3*i+2] << std::endl;
 					ret[p] = i;
 					p++;
 				}
 			}
 		}
 	}
-
 	N = p-1;
 }
 

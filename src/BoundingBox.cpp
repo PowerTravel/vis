@@ -191,9 +191,8 @@ bool BoundingBox::contain(double x, double y, double z)
 
 bool BoundingBox::contain(Eigen::Vector3d v)
 {
-	// Change from woorld coordinates to box-coordinates
+	// Change from woorld cordinates to box-coordinates
 	Eigen::Vector3d vp = _coord_sys.transpose() * v;	
-
 	// Find the range along the different axis
 	double x_min = _mean(0) - _max(0);
 	double x_max = _mean(0) + _max(0);
@@ -216,6 +215,7 @@ bool BoundingBox::contain(Eigen::Vector3d v)
 		return false;
 	}
 //	print();
+	//std::cout << " vp =  " <<vp.transpose() << " v =  " << v.transpose() << std::endl;
 	return true;
 }
 	//#include <glm/gtx/norm>	

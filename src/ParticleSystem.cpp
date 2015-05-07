@@ -152,8 +152,9 @@ void ParticleSystem::acceptPhysicsVisitor(PhysicsVisitor& v)
 //	_ddata.push_back( sd );
 }
 
-void ParticleSystem::updateParticlePosition()
+void ParticleSystem::updateParticlePosition(double h)
 {
+	_h = h;
 	// Remove dead particles
 	remove_dead_particles();
 	
@@ -239,13 +240,23 @@ void ParticleSystem::acceptVisitor(NodeVisitor& v)
 
 void ParticleSystem::reflect(int n, int* id)
 {
-
 	for(int i = 0; i<n; i++)
 	{
+		if(id[i]>_n)
+		{
+			std::cout << "ParticleSystem::Reflect: " << _n << "  " << id[i]  << std::endl;
+		}else{
+			_f(3*id[i]+1) = 10;
+		}
 		//std::cout << 3*id[i]+1 << " " << _v.size() << _v(3*id[i]+1) << std::endl;
-		_v(3*id[i]+1)  = -0.6 *  _v(3*id[i]+1);
-		if(_v(3*id[i]+1)< 1 || _v(3*id[i]+1)>-1)
-			_v(3*id[i]+1) = 0;
+		//_v(3*id[i]+1)  = -1.01 *  _v(3*id[i]+1);
+		//std::cout << -_v(3*id[i]+1) << std::endl;
+	//	_v(3*id[i]+1) = -_v(3*id[i]+1);
+
+		//std::cout << -_v(3*id[i]+1) << std::endl;
+	//	if(_v(3*id[i]+1)< 1 || _v(3*id[i]+1)>-1)
+	//		int k = 0;
+			//_v(3*id[i]+1) = 20;
 	}
 }
 
