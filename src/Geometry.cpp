@@ -9,7 +9,7 @@
 Geometry::Geometry() 
 {
 	_bb = BoundingBox();
-	stream_buffer_table = std::map<DataType, StreamData>();
+	stream_buffer = StreamBuffer();
 	nrVertices = 0;
 	nrFaces = 0;
 	loaded = false;
@@ -21,7 +21,7 @@ Geometry::Geometry()
 Geometry::Geometry(const char* filePath)
 {
 	_bb = BoundingBox();
-	stream_buffer_table = std::map<DataType, StreamData>();
+	stream_buffer = StreamBuffer();
 	nrVertices = 0;
 	nrFaces = 0;
 	loaded = false;
@@ -67,7 +67,7 @@ Geometry::Geometry(int nVerts, int nFaces, float* verts, float* norm, int* face,
 {
 
 	_bb = BoundingBox();
-	stream_buffer_table = std::map<DataType, StreamData>();
+	stream_buffer = StreamBuffer();
 	nrVertices = 0;
 	nrFaces = 0;
 	loaded = false;
@@ -78,7 +78,7 @@ Geometry::Geometry(int nVerts, int nFaces, float* verts, float* norm, int* face,
 
 Geometry::Geometry(const aiMesh* mesh)
 {
-	stream_buffer_table = std::map<DataType, StreamData>();
+	stream_buffer = StreamBuffer();
 	nrVertices = 0;
 	nrFaces = 0;
 	glGenVertexArrays(1, &VAO);
@@ -379,10 +379,6 @@ void Geometry::loadFaces(int nrFaces, int* faces)
 // channel = which stream to bind to
 void Geometry::create_instanceBuffer(int N, int n, int channel)
 {
-	StreamData d;
-//	d.nr_of_elements = N;
-//	d.points_per_element = n;
-
 
 	DataType stream_channel = getStreamChannel(channel);	
 	glBindVertexArray(VAO);
@@ -447,12 +443,9 @@ void Geometry::draw()
 	glBindVertexArray(0);
 }
 
-void Geometry::upload_stream_data(int channel, int N, int n, float* data)
+void Geometry::push_stream_element(int channel, int N, int size, int stride, int start)
 {
-	//if()
-	//{
-	
-//	}
+	stream_buffer.push_element(channel, N,size,stride,start);
 }
 
 void Geometry::draw(int N, int n, float* points)
@@ -463,7 +456,7 @@ void Geometry::draw(int N, int n, float* points)
 	}
 	glBindVertexArray(VAO);
 
-	glBindBuffer(GL_ARRAY_BUFFER, instanceBuffer);
+//	glBindBuffer(GL_ARRAY_BUFFER, instanceBuffer);
 	glBufferSubData(GL_ARRAY_BUFFER,0, n*3*sizeof(GLfloat), points);
 
 	glVertexAttribDivisor(VERTEX,0);
