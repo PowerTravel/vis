@@ -58,6 +58,7 @@ class ParticleSystem : public PhysicsInterface
 		struct Metadata{
 			double diffuse_color;
 			double cameraDistance;
+			double size;
 			double life;
 			bool operator<(Metadata& that){
 				return 	this->cameraDistance > that.cameraDistance;
@@ -106,7 +107,6 @@ class ParticleSystem : public PhysicsInterface
 
 		// Rendering functions
 		bool initGeometry(const char* filePath = NULL);
-		void load(const char* filePath);
 		//void createParticleBuffer();
 		//void sendParticlesToBuffer();
 

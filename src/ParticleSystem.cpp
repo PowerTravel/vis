@@ -116,7 +116,8 @@ void ParticleSystem::add_new_particles()
 		{
 			// Set metadata
 			_mdata[_n+i].life = _life;
-			_mdata[_n+i].diffuse_color = (double)( rand() % 1000) /1000.f;
+			_mdata[_n+i].size = 0.5+(double)( rand() % 1000) /1000.f;
+			//_mdata[_n+i].diffuse_color = (double)( rand() % 1000) /1000.f;
 			//std::cerr << _mdata[_n+i].diffuse_color << std::endl;
 		}
 	
@@ -217,10 +218,6 @@ bool ParticleSystem::initGeometry(const char* filePath)
 	}
 }
 
-
-void ParticleSystem::load(const char* filePath)
-{
-}
 
 
 void ParticleSystem::draw()

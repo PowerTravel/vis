@@ -9,6 +9,7 @@
 Geometry::Geometry() 
 {
 	_bb = BoundingBox();
+	stream_buffer_table = std::map<DataType, StreamData>();
 	nrVertices = 0;
 	nrFaces = 0;
 	loaded = false;
@@ -20,6 +21,7 @@ Geometry::Geometry()
 Geometry::Geometry(const char* filePath)
 {
 	_bb = BoundingBox();
+	stream_buffer_table = std::map<DataType, StreamData>();
 	nrVertices = 0;
 	nrFaces = 0;
 	loaded = false;
@@ -65,6 +67,7 @@ Geometry::Geometry(int nVerts, int nFaces, float* verts, float* norm, int* face,
 {
 
 	_bb = BoundingBox();
+	stream_buffer_table = std::map<DataType, StreamData>();
 	nrVertices = 0;
 	nrFaces = 0;
 	loaded = false;
@@ -75,6 +78,7 @@ Geometry::Geometry(int nVerts, int nFaces, float* verts, float* norm, int* face,
 
 Geometry::Geometry(const aiMesh* mesh)
 {
+	stream_buffer_table = std::map<DataType, StreamData>();
 	nrVertices = 0;
 	nrFaces = 0;
 	glGenVertexArrays(1, &VAO);
@@ -101,6 +105,10 @@ Geometry::~Geometry()
 	if(faceBuffer)
 	{
 		glDeleteBuffers(0, &faceBuffer);	
+	}
+	if(instanceBuffer)
+	{
+		glDeleteBuffers(0, &instanceBuffer);
 	}
 	
 	glDeleteVertexArrays(1, &VAO);
@@ -366,20 +374,61 @@ void Geometry::loadFaces(int nrFaces, int* faces)
 	glBindVertexArray(0);
 }
 
-void Geometry::create_instanceBuffer(int N)
+// N = Total number of elements
+// n = datapoints per element (in float)
+// channel = which stream to bind to
+void Geometry::create_instanceBuffer(int N, int n, int channel)
 {
+	StreamData d;
+//	d.nr_of_elements = N;
+//	d.points_per_element = n;
+
+
+	DataType stream_channel = getStreamChannel(channel);	
 	glBindVertexArray(VAO);
 
 	glGenBuffers(1, &instanceBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, instanceBuffer);
-	glBufferData(GL_ARRAY_BUFFER, N*3*sizeof(GLfloat), NULL, GL_STREAM_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, N*n*sizeof(GLfloat), NULL, GL_STREAM_DRAW);
+//	glBufferData(GL_ARRAY_BUFFER, d.size()*sizeof(GLfloat), NULL, GL_STREAM_DRAW);
 
-	glVertexAttribPointer(STREAM, 3, GL_FLOAT, GL_FALSE, 0,(GLvoid*) NULL);
-	glEnableVertexAttribArray(STREAM);
+	glVertexAttribPointer(stream_channel, 3, GL_FLOAT, GL_FALSE, 0,(GLvoid*) NULL);
+	glEnableVertexAttribArray(stream_channel);
 	
 	glBindVertexArray(0);
 	
 	instancing = true;
+}
+
+Geometry::DataType Geometry::getStreamChannel(int channel)
+{
+	DataType stream_channel;
+	switch(channel){
+		case 0:
+			stream_channel = STREAM_0;
+			break;
+
+		case 1:
+			stream_channel = STREAM_1;
+			break;
+
+		case 2:
+			stream_channel = STREAM_2;
+			break;
+
+		case 3:
+			stream_channel = STREAM_3;
+			break;
+
+		case 4:
+			stream_channel = STREAM_4;
+			break;
+
+		default:
+			stream_channel = STREAM_0;
+			break;
+	}
+	return stream_channel;
 }
 
 /*
@@ -398,6 +447,14 @@ void Geometry::draw()
 	glBindVertexArray(0);
 }
 
+void Geometry::upload_stream_data(int channel, int N, int n, float* data)
+{
+	//if()
+	//{
+	
+//	}
+}
+
 void Geometry::draw(int N, int n, float* points)
 {
 	if(!instancing)
@@ -410,7 +467,7 @@ void Geometry::draw(int N, int n, float* points)
 	glBufferSubData(GL_ARRAY_BUFFER,0, n*3*sizeof(GLfloat), points);
 
 	glVertexAttribDivisor(VERTEX,0);
-	glVertexAttribDivisor(STREAM,1);
+	glVertexAttribDivisor(STREAM_0,1);
 	glDrawElementsInstanced(GL_TRIANGLES,3*nrFaces,GL_UNSIGNED_INT,(void*)NULL, n);
 
 	glBindVertexArray(0);

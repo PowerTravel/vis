@@ -57,7 +57,6 @@ void CollisionEngine::update()
 		// # boxes in depth
 		double depth = b.depth() * alpha;;
 
-
 		double dw=1;
 		double dh=1;
 		double dd=1;
