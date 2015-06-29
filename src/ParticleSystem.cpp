@@ -32,6 +32,8 @@ ParticleSystem::ParticleSystem()
 	_v = Eigen::VectorXd(3*_N);
 
 
+	_collision_set = std::vector<CollisionData>();
+
 	_T = mat4(1.0);
 
 	_t = 0;
@@ -45,7 +47,6 @@ ParticleSystem::ParticleSystem()
 		_geom = NULL;
 		std::cerr << "ParticleSystem failed to load geometry. "<< std::endl;
 	}
-	
 
 	// Energy stuffu
 	//_ddata = std::vector<Energy>();
@@ -225,6 +226,7 @@ void ParticleSystem::draw()
 	if(_geom != NULL && _n != 0)
 	{
 		Eigen::VectorXf x = _x.segment(0,3*_n).cast<float>();
+
 		_geom->draw(_N,_n,&x(0));
 	}
 }
@@ -234,29 +236,26 @@ void ParticleSystem::acceptVisitor(NodeVisitor& v)
 	v.apply(this);
 }
 
-
-void ParticleSystem::reflect(int n, int* id)
+void ParticleSystem::setCollisionSet(int n, int* id, double* point)
 {
+	_collision_set.clear();
 	for(int i = 0; i<n; i++)
 	{
-		if(id[i]>_n)
+		CollisionData d;
+		d.index = id[i];
+		if(point != NULL)
 		{
-			std::cout << "ParticleSystem::Reflect: " << _n << "  " << id[i]  << std::endl;
+			d.collision_point[0] = point[3*i];
+			d.collision_point[1] = point[3*i + 1];
+			d.collision_point[2] = point[3*i + 2];
 		}else{
-			_f(3*id[i]+1) = 10;
+			d.collision_point[0] = 0;
+			d.collision_point[1] = 0;
+			d.collision_point[2] = 0;
 		}
-		//std::cout << 3*id[i]+1 << " " << _v.size() << _v(3*id[i]+1) << std::endl;
-		//_v(3*id[i]+1)  = -1.01 *  _v(3*id[i]+1);
-		//std::cout << -_v(3*id[i]+1) << std::endl;
-	//	_v(3*id[i]+1) = -_v(3*id[i]+1);
-
-		//std::cout << -_v(3*id[i]+1) << std::endl;
-	//	if(_v(3*id[i]+1)< 1 || _v(3*id[i]+1)>-1)
-	//		int k = 0;
-			//_v(3*id[i]+1) = 20;
+		_collision_set.push_back(d);
 	}
 }
-
 
 
 void ParticleSystem::translate(vec3 ds)

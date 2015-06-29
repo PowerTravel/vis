@@ -1,13 +1,14 @@
 #ifndef BOUNDING_BOX_HPP
 #define BOUNDING_BOX_HPP
 
-#include "Matlib.hpp"
+#include "CollisionGeometry.hpp"
+
 #include <vector>
 #include <iostream>
 
 class Group;
 
-class BoundingBox
+class BoundingBox : public CollisionGeometry
 {
 	public:
 		BoundingBox();
@@ -31,6 +32,7 @@ class BoundingBox
 //		static bool intersect(BoundingBox* box_ptr1, BoundingBox* box_ptr2); // Not implemented
 
 		void print();
+		void printCorners();
 	private:
 		//The center is the average of the points and the box are the eigenvectors of the covariance matrix	
 		Eigen::Matrix3d _coord_sys; // Columns are unit vectors of the aligned box
@@ -45,7 +47,6 @@ class BoundingBox
 
 		void build(int n, Eigen::VectorXd& points);
 		void setCorners();
-		
 };
 
 #endif // BOUNDING_BOX_HPP

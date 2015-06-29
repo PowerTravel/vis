@@ -101,7 +101,6 @@ void BoundingBox::build(int n, Eigen::VectorXd& pts)
 	_mean = mean;
 	_max = max;
 	//std::cout<<_T.block(0,0,3,3) * _T.block(0,0,3,3).transpose()<< std::endl<<std::endl;
-
 	setCorners();
 }
 
@@ -168,6 +167,7 @@ void BoundingBox::transform(mat4 t)
 		_coord_sys.col(1) << y[0],y[1],y[2];
 		_coord_sys.col(2) << z[0],z[1],z[2];
 	}
+	//printCorners();
 }
 
 void BoundingBox::getCorners(double* p)
@@ -183,6 +183,36 @@ void BoundingBox::getCorners(double* p)
 		}
 	}
 }
+
+void BoundingBox::printCorners()
+{
+	if( _initiated)
+	{	
+		std::cout << "BoundingBox::printCorners" << std::endl;
+		//double s = 1/sqrt(3);
+		double s = 1;
+		double sigma[] = {s,s,s, 
+					   s,s,-s,
+					   s,-s,s,
+					   s,-s,-s,
+					   -s,s,s,
+					   -s,s,-s,
+					   -s,-s,s,
+					   -s,-s,-s};
+		for(int i = 0; i<8 ; i++)
+		{
+			Eigen::Vector3d v;
+			for(int j = 0; j<3; j++)
+			{
+				v = _mean +   sigma[3*i+j] * _max(j)* _coord_sys.col(j);
+				std::cout << _coord_sys.col(j).transpose()<< std::endl;
+			}
+			//std::cout << v.transpose() << std::endl;
+			//std::cout << _mean.transpose() << std::endl;
+		}
+	}
+}
+
 
 bool BoundingBox::contain(double x, double y, double z)
 {
@@ -200,12 +230,7 @@ bool BoundingBox::contain(Eigen::Vector3d v)
 	double y_max = _mean(1) + _max(1);
 	double z_min = _mean(2) - _max(2);
 	double z_max = _mean(2) + _max(2);
-
-	//std::cout << v.transpose() << std::endl; 
-	//std::cout << "BBContain xmin,xmax "<< x_min << " " << x_max << std::endl;
-	//std::cout << "BBContain ymin,ymax "<< y_min << " " << y_max << std::endl;
-	//std::cout << "BBContain zmin,zmax "<< z_min << " " << z_max << std::endl;
-
+	
 	// If any of the coordinates are outside the bounds
 	// of the box we return false
 	if( (vp(0) <= x_min) || ( vp(0) >= x_max ) ||
@@ -215,7 +240,6 @@ bool BoundingBox::contain(Eigen::Vector3d v)
 		return false;
 	}
 //	print();
-	//std::cout << " vp =  " <<vp.transpose() << " v =  " << v.transpose() << std::endl;
 	return true;
 }
 	//#include <glm/gtx/norm>	

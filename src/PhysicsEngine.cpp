@@ -51,7 +51,7 @@ void PhysicsEngine::apply(ParticleSystem* n)
 		// Change to calculate_forces or something.
 		// The point is to let the forces handle the reflection
 
-		n->reflect(i, x_n);
+		n->setCollisionSet(i, x_n, NULL );
 
 		n->updateParticlePosition(h);
 

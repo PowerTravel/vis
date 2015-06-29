@@ -54,6 +54,8 @@ class ParticleSystem : public PhysicsInterface
 		int getTotNrParticles();
 		const double* getParticleVec();
 		
+
+		void setCollisionSet(int n, int* id, double* point);
 	private:
 		struct Metadata{
 			double diffuse_color;
@@ -63,6 +65,11 @@ class ParticleSystem : public PhysicsInterface
 			bool operator<(Metadata& that){
 				return 	this->cameraDistance > that.cameraDistance;
 			};
+		};
+
+		struct CollisionData{
+			int index;
+			double collision_point[3];
 		};
 
 		// Update Properties
@@ -88,6 +95,8 @@ class ParticleSystem : public PhysicsInterface
 		double _life; 			// Lifetime
 		double _mass; 		 	// Mass
 
+		std::vector<CollisionData> _collision_set;
+		
 
 		// Particle Properties
 		//Eigen::SparseMatrix<double> _M;	// Mass matrix

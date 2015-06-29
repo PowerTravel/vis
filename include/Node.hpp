@@ -31,12 +31,11 @@ class Node{
 
 		// Identifyer if the Node is able to have children or not.
 		enum N_Type{NODE, GROUP};
-		
+
 		Node();
 		virtual ~Node();
 
 		// Basic functionality
-
 		virtual void update();
 		virtual void acceptVisitor(class NodeVisitor& v) =  0;
 		virtual void connectCallback(callback_ptr cb);
@@ -48,9 +47,13 @@ class Node{
 
 		BoundingBox getBoundingBox();
 		void setBoundingBox(BoundingBox bb);
+		
+		CollisionGeometry getCollisionGeometry();
+		void setCollisionGeometry(CollisionGeometry cg);
 	protected:
 		
 		BoundingBox _bb;
+		CollisionGeometry _cg;
 		N_Type _type;
 		State _state;
 		callback_ptr _callback;

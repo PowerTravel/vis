@@ -58,3 +58,12 @@ void Node::setBoundingBox(BoundingBox bb)
 {
 	_bb = bb;
 }
+
+CollisionGeometry Node::getCollisionGeometry()
+{
+	return _cg;
+}
+void Node::setCollisionGeometry(CollisionGeometry cg)
+{
+	_cg = cg;
+}
