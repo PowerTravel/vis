@@ -47,23 +47,3 @@ Node::N_Type Node::getType()
 {
 	return _type;
 }
-
-
-BoundingBox Node::getBoundingBox()
-{
-	return _bb;
-}
-
-void Node::setBoundingBox(BoundingBox bb)
-{
-	_bb = bb;
-}
-
-CollisionGeometry Node::getCollisionGeometry()
-{
-	return _cg;
-}
-void Node::setCollisionGeometry(CollisionGeometry cg)
-{
-	_cg = cg;
-}

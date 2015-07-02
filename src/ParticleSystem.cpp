@@ -212,7 +212,7 @@ bool ParticleSystem::initGeometry(const char* filePath)
 
 	if(_geom != NULL  && !_geom->zombie())
 	{
-		_bb = BoundingBox();
+	//	_bb = BoundingBox();
 		return true;
 	}else{
 		return false;	

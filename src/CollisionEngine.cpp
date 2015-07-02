@@ -16,6 +16,7 @@ CollisionEngine::~CollisionEngine(){}
 
 void CollisionEngine::update()
 {
+/*
 	if(_rList == NULL)
 	{
 		return;	
@@ -119,7 +120,7 @@ void CollisionEngine::update()
 
 	}while(_rList->next());
 	
-
+*/
 	// Prints the bottom corners of the gridboxes so that it can be opened in matlab
 //	 PrintBoxes();
 }
@@ -179,6 +180,7 @@ void CollisionEngine::get(int n, const double* x, int& N,  int* ret)
 
 void CollisionEngine::PrintBoxes()
 {
+/*
 	printToFile("../matlab/gridBoxes.m", NULL);
 	for(auto it = _grid.begin(); it != _grid.end(); it++)
 	{
@@ -204,4 +206,5 @@ void CollisionEngine::PrintBoxes()
 		}
 
 	}while(_rList->next());
+*/
 }

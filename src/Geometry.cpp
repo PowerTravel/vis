@@ -4,11 +4,12 @@
 
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
-
+#include "BoundingBox.hpp"
 
 Geometry::Geometry() 
 {
-	_bb = BoundingBox();
+	_cg_ptr = NULL; // Collision Geometry Pointer	
+
 	nrVertices = 0;
 	nrFaces = 0;
 	loaded = false;
@@ -19,7 +20,8 @@ Geometry::Geometry()
 	
 Geometry::Geometry(const char* filePath)
 {
-	_bb = BoundingBox();
+	_cg_ptr = NULL; // Collision Geometry Pointer	
+
 	nrVertices = 0;
 	nrFaces = 0;
 	loaded = false;
@@ -64,7 +66,8 @@ Geometry::Geometry(const char* filePath)
 Geometry::Geometry(int nVerts, int nFaces, float* verts, float* norm, int* face, float* texCoords)
 {
 
-	_bb = BoundingBox();
+	_cg_ptr = NULL; // Collision Geometry Pointer	
+
 	nrVertices = 0;
 	nrFaces = 0;
 	loaded = false;
@@ -108,6 +111,8 @@ Geometry::~Geometry()
 	}
 	
 	glDeleteVertexArrays(1, &VAO);
+
+	_cg_ptr = NULL;
 }
 
 /*
@@ -198,7 +203,7 @@ geometry_vec Geometry::loadFile(const char* filePath){
  */
 void Geometry::createGeom(int nVerts, int nFaces, float* verts, float* norm, int* face, float* texCoords)
 {
-	_bb = BoundingBox(nVerts, verts);
+	_cg_ptr = collGeom_ptr(new BoundingBox(nVerts, verts)); // Collision Geometry Pointer	
 
 	nrVertices = nVerts;
 	nrFaces = nFaces;	
@@ -255,7 +260,8 @@ void Geometry::createGeom( const aiMesh* mesh )
 		// load the data to the gpu
 		loadVertices(nrVertices, vertices);
 
-		_bb = BoundingBox(nrVertices, vertices);
+		// Create a bounding Box
+		_cg_ptr = collGeom_ptr(new BoundingBox(nrVertices, vertices)); // Collision Geometry Pointer	
 
 		delete vertices;
 	}

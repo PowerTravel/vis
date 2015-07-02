@@ -67,25 +67,6 @@ void Group::acceptVisitor(NodeVisitor& v)
 	v.apply(this);
 }
 
-
-void Group::updateBoundingBox()
-{
-	int nrBoxes = _childList.size();
-	int nrVertPerBox = 8;
-	int nrFloatPerVert = 3;
-	int stride = nrVertPerBox * nrFloatPerVert;
-	
-	double* points = new double[nrBoxes*stride];
-	int i = 0;
-	for(NodeList::iterator it = _childList.begin(); it!=_childList.end(); it++)
-	{
-//		(*it)->getBoundingBoxCorners(&points[i*stride]);
-		i++;
-	}
-//	(*_glit).bb = BoundingBox(nrVertPerBox * nrBoxes, points);
-	delete [] points;
-}
-
 Node* Group::getChild()
 {
 	if( _childList.empty() || (_cit == _childList.end()) )

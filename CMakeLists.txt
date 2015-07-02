@@ -15,7 +15,6 @@ add_executable(vis
 	src/Transform.cpp
 	src/Camera.cpp
 	
-	src/BoundingBox.cpp
 	src/ParticleSystem.cpp
 	src/Emitter.cpp
 
@@ -32,6 +31,9 @@ add_executable(vis
 	src/Material.cpp
 
 	src/CollisionEngine.cpp
+	src/CollisionPlane.cpp
+	src/BoundingSphere.cpp
+	src/BoundingBox.cpp
 	src/PhysicsEngine.cpp
 )
 

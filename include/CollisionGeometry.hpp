@@ -3,40 +3,40 @@
 
 #include "Matlib.hpp"
 #include "Eigen/Dense"
+#include <vector>
+#include <iostream>
+
+
+#ifndef COLLISION_GEOMETRY_PTR
+#define COLLISION_GEOMETRY_PTR
+class CollisionGeometry;
+typedef std::shared_ptr<CollisionGeometry> collGeom_ptr;
+#endif // COLLISION_GEOMETRY_PTR
+
+// Defined in their separate files
+class CollisionPlane; 
+class BoundingSphere;
+class BoundingBox;
 
 class CollisionGeometry{
 
 	public:
-	
-		CollisionGeometry(){};
+
+		CollisionGeometry(){ tol = 0.1; };
 		virtual ~CollisionGeometry(){};
 
-		virtual bool contain(double x, double y, double z){return false;};
-		virtual bool contain(Eigen::Vector3d v){return false;};
-		virtual void transform(mat4 t){};
+		virtual void transform(mat4 t) = 0;
+
+		// Point
+		virtual bool intersect(Eigen::Vector3d p) = 0;
+		// Plane
+		virtual bool intersect(CollisionPlane* cp) = 0;
+		// Sphere
+		virtual bool intersect(BoundingSphere* bs) = 0;
+
+	private:
+		// Tolerance for resting contact
+		double tol;
 };
 
-class Plane : public CollisionGeometry{
-	
-	public:
-		Plane(){};
-		virtual ~Plane(){};
-
-		bool contain(double x, double y, double z){return false;};
-		bool contain(Eigen::Vector3d v){return false;};
-		void transform(mat4 t){};
-};
-
-class Sphere : public CollisionGeometry{
-	
-	public:
-		Sphere(){};
-		virtual ~Sphere(){};
-
-		bool contain(double x, double y, double z){return false;};;
-		bool contain(Eigen::Vector3d v){return false;};
-		void transform(mat4 t){};
-};
-
-
-#endif // COLLISION_GEOMETRY
+#endif // COLLISION_GEOMETRY_HPP

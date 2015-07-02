@@ -3,6 +3,11 @@
 
 #include "CollisionGeometry.hpp"
 
+#include <vector>
+#include <iostream>
+
+//class Group;
+
 class BoundingBox : public CollisionGeometry
 {
 	public:
@@ -23,15 +28,11 @@ class BoundingBox : public CollisionGeometry
 		bool contain(double x, double y, double z);
 		bool contain(Eigen::Vector3d v);
 
+//		bool intersect(BoundingBox* box_ptr); // Not implemented
+//		static bool intersect(BoundingBox* box_ptr1, BoundingBox* box_ptr2); // Not implemented
+
 		void print();
 		void printCorners();
-		
-		// Point
-		bool intersect(Eigen::Vector3d p){return false;};
-		// Plane
-		bool intersect(CollisionPlane* cp){return false;};
-		// Sphere
-		bool intersect(BoundingSphere* bs){return false;};
 	private:
 		//The center is the average of the points and the box are the eigenvectors of the covariance matrix	
 		Eigen::Matrix3d _coord_sys; // Columns are unit vectors of the aligned box

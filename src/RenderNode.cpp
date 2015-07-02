@@ -27,15 +27,18 @@ void RenderNode::acceptVisitor(NodeVisitor& v)
 void RenderNode::setM(mat4 m)
 {
 	_M =_M * m;
-	updateBoundingBox();
+	
+	updateCollisionGeometry();
 }
 
-void RenderNode::updateBoundingBox()
+void RenderNode::updateCollisionGeometry()
 {
-	if(_pn!= NULL )//&& _M != mat4(1.0))
-	{
-		_bb = _pn->getBoundingBox();
-		_bb.transform(_M);
+	// Update the CollisionGeometry if there is one
+	if(_pn != NULL ){
+		collGeom_ptr cg_ptr = _pn->getCollisionGeometry();
+		if(cg_ptr!=NULL){
+			cg_ptr->transform(_M);
+		}
 	}
 }
 
@@ -63,7 +66,7 @@ mat4 RenderNode::getP()
 void RenderNode::setPhysicsNode(PhysicsInterface* n)
 {
 	_pn = n;
-	updateBoundingBox();
+	updateCollisionGeometry();
 }
 
 PhysicsInterface* RenderNode::getPhysicsNode()

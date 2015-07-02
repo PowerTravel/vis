@@ -42,7 +42,7 @@ class RenderNode : public PhysicsInterface{
 		PhysicsInterface* _pn;
 	
 		void send_data_to_shader();
-		void updateBoundingBox();
+		void updateCollisionGeometry();
 
 };
 

@@ -136,8 +136,8 @@ void BoundingBox::transform(mat4 t)
 {
 	if(_initiated)
 	{
-		mat4 trans_mat = mat4(1.0);
-		glm::column(trans_mat, 3, glm::column(t,3) );
+		//mat4 trans_mat = mat4(1.0);
+		//glm::column(trans_mat, 3, glm::column(t,3) );
 		vec4 mean = vec4(_mean(0), _mean(1), _mean(2), 1);
 		mean = t*mean;
 		_mean << mean[0], mean[1], mean[2];

@@ -35,9 +35,6 @@ class Group : public Node{
 
 		void acceptVisitor(NodeVisitor& v);
 		
-		void updateBoundingBox();
-
-
 		// Navigation
 		void addChild( std::shared_ptr<Node> nodePtr);
 		int getNrChildren();

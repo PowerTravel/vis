@@ -5,7 +5,7 @@
 #include <list>
 #include "State.hpp"
 #include "UpdateCallback.hpp"
-#include "BoundingBox.hpp"
+#include "CollisionGeometry.hpp"
 
 //class NodeApplier;
 class PhysicsVisitor;
@@ -31,11 +31,12 @@ class Node{
 
 		// Identifyer if the Node is able to have children or not.
 		enum N_Type{NODE, GROUP};
-
+		
 		Node();
 		virtual ~Node();
 
 		// Basic functionality
+
 		virtual void update();
 		virtual void acceptVisitor(class NodeVisitor& v) =  0;
 		virtual void connectCallback(callback_ptr cb);
@@ -45,15 +46,8 @@ class Node{
 		void setState(State* s);
 		State* getState();	
 
-		BoundingBox getBoundingBox();
-		void setBoundingBox(BoundingBox bb);
-		
-		CollisionGeometry getCollisionGeometry();
-		void setCollisionGeometry(CollisionGeometry cg);
 	protected:
 		
-		BoundingBox _bb;
-		CollisionGeometry _cg;
 		N_Type _type;
 		State _state;
 		callback_ptr _callback;
@@ -61,10 +55,16 @@ class Node{
 
 
 class PhysicsInterface : public Node{
+	protected:
+		collGeom_ptr _cg_ptr; 
 	public:
+		PhysicsInterface(){ _cg_ptr = NULL; };
+		virtual ~PhysicsInterface(){ _cg_ptr = NULL; };
+
 		virtual void draw() = 0;
 		virtual void acceptPhysicsVisitor(PhysicsVisitor& v) = 0;
 
-	protected:
+		collGeom_ptr getCollisionGeometry(){return _cg_ptr;};
+		void setCollisionGeometry(collGeom_ptr cg){_cg_ptr = cg;};
 };
 #endif //NODE_HPP

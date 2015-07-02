@@ -78,6 +78,7 @@ group_ptr collision_test()
 	floor->scale(vec3(50,2,50) );
 	//floor->rotate(3.1415 / 4, vec3(0,0,-1));
 	floor->translate(vec3(10,-10,0));
+	//floor->connectCallback(callback_ptr(new RotTransCallback(floor)));
 
 	geometry_vec m_box = Geometry::loadFile("../models/box.obj");
 		
